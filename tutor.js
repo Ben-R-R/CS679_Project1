@@ -6,6 +6,7 @@
 // phase 3 - draws a yellow circle in the canvas
 // phase 4 - code re-organized
 // phase 5 - animation 
+// phase 6 - reqAnimFrame
 
 // note: I am choosing to do this as an "onload" function for the
 // window (so it gets run when the window is done loading), rather 
@@ -14,6 +15,19 @@ window.onload = function() {
     // I am putting my "Application object" inside this function
     // which might be a little bit inelegant, but it works
     
+    // figure out what the "requestAnimationFrame" function is called
+    // the problem is that different browsers call it differently
+    // if we don't have it at all, just use setTimeout
+    var reqFrame =window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function(/* function FrameRequestCallback */ callback, /* DOMElement Element */ element){
+            window.setTimeout(callback, 1000 / 60);
+        };
+
+
     // "application" level variables (not totally global, but used by all
     // of the functions defined inside this function
 	// get the canvas (assumes that its there)
@@ -77,7 +91,7 @@ window.onload = function() {
      function drawLoop() {
         moveBall();     // new position
         drawBall();     // show things
-        setTimeout(drawLoop,20);    // call us again in 20ms
+        reqFrame(drawLoop);
      }
      drawLoop();
 }
