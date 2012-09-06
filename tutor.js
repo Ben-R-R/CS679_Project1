@@ -12,6 +12,8 @@
 // phase 9 - multiple objects
 // phase 10 - click to add
 // phase 11 - bouncing
+// phase 12 - bouncing off of each other
+// phase 13 - with alignment
 
 // note: I am choosing to do this as an "onload" function for the
 // window (so it gets run when the window is done loading), rather 
@@ -42,6 +44,9 @@ window.onload = function() {
     var ballcolor = "#FFFF00";      // yellow fill
     var ballstroke = "#000000";     // black outline
     var circ = Math.PI*2;           // complete circle
+
+    // make everything go the same speed
+    var speed = 4.0;
     
     // create a prototype ball
     // this is a slightly weird way to make an object, but it's very
@@ -59,7 +64,7 @@ window.onload = function() {
             theContext.beginPath();
             theContext.arc(this.x,this.y,this.r,0,circ,true);
             theContext.moveTo(this.x,this.y);
-            theContext.lineTo(this.x + this.vX, this.y + this.vY);
+            theContext.lineTo(this.x + 4*this.vX, this.y + 4*this.vY);
             theContext.closePath();
             theContext.stroke();
             theContext.fill();
@@ -90,6 +95,21 @@ window.onload = function() {
                     this.vY = -this.vY;
                 }
             }
+        },
+
+        // normalize the velocity to the given speed
+        //         // if your velocity is zero, make a random velocity
+        norm: function () {
+            var z = Math.sqrt(this.vX * this.vX + this.vY * this.vY );
+            if (z<.001) {
+                this.vX = (Math.random() - .5) * speed;
+                this.vY = (Math.random() - .5) * speed;
+                this.norm();
+            } else {
+                z = speed / z;
+                this.vX *= z;
+                this.vY *= z;
+            }
         }
     };
 
@@ -109,9 +129,10 @@ window.onload = function() {
     
     // make an array of balls
     theBalls = [];
-    theBalls.push( makeBall(100,100) );
-    theBalls.push( makeBall(200,100) );
-    theBalls.push( makeBall(300,100) );
+    for (var i=0; i<20; i++) {
+        b = makeBall( 50+Math.random()*500, 50+Math.random()*300 );
+        theBalls.push(b)
+    }
 
     // this function will do the drawing
     function drawBalls() {
@@ -123,9 +144,41 @@ window.onload = function() {
         }
     }
     
+    // bouncing behavior - if two balls are on top of each other,
+    // have them react in a simple way
+    // this assumes that everything has the same radius as the prototype
+    function bounce(ballList) {
+        var rad = 2 * aBall.r;
+        rad = rad*rad;
+        
+        for(var i=ballList.length-1; i>=0; i--) {
+            var bi = ballList[i];
+            var bix = bi.x;
+            var biy = bi.y;
+            // notice that we do the n^2 checks here, slightly painful
+            for(var j=i-1; j>=0; j--) {
+                var bj = ballList[j];
+                var bjx = bj.x;
+                var bjy = bj.y;
+                var dx = bjx - bix;
+                var dy = bjy - biy;
+                var d = dx*dx+dy*dy;
+                if (d < rad) {
+                    bj.vX = dy;
+                    bj.vY = dx;
+                    bi.vX = -dx;
+                    bi.vY = -dy;
+                }
+            }
+        }
+    }
+        
+        
     //move the balls
     function moveBalls() {
+       bounc(theBalls);
        for (var i=0; i<theBalls.length; i++) {
+           theBalls[i].norm();
            theBalls[i].move();
        }
     }
