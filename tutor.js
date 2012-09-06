@@ -176,7 +176,7 @@ window.onload = function() {
         
     //move the balls
     function moveBalls() {
-       bounc(theBalls);
+       bounce(theBalls);
        for (var i=0; i<theBalls.length; i++) {
            theBalls[i].norm();
            theBalls[i].move();
