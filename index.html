@@ -4,10 +4,30 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link href="style.css" rel="stylesheet" type="text/css" />
 <title>Boids Tutorial</title>
+
+<script type="text/javascript" >
+  // note: I am choosing to do this as an "onload" function for the
+  // window (so it gets run when the window is done loading), rather 
+  // than as a function of the canvas.
+  window.onload = function() {
+          // get the canvas (assumes that its there)
+          theCanvas = document.getElementById("mycanvas");
+          theContext = theCanvas.getContext("2d");
+          // draw a yellow circle in it
+          theContext.strokeStyle = "#000000";     // black outline
+          theContext.fillStyle = "#FFFF00";       // yellow fill
+          circ = Math.PI*2;                       // complete circle
+          theContext.beginPath();
+          theContext.arc(100,100,50,0,circ,true);
+          theContext.closePath();
+          theContext.stroke();
+          theContext.fill();          
+  }
+</script>
 </head>
 <body>
 <p>This is Professor Gleicher's Javascript Boids tutorial. You may want to look at the <a href="instructions.html">instructions</a>.</p>
-<p>This is Phase 1. We have a blank canvas for our Javascript program to draw into.</p>
+<p>This is Phase 2. We draw a yellow circle.</p>
 <div>
     <canvas id="mycanvas" width="600" height=400 style="border-color:#999; border-style:solid;"></canvas>
 </div>
