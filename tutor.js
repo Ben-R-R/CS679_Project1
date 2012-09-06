@@ -7,6 +7,8 @@
 // phase 4 - code re-organized
 // phase 5 - animation 
 // phase 6 - reqAnimFrame
+// phase 7 - objectness
+// phase 8 - object creation
 
 // note: I am choosing to do this as an "onload" function for the
 // window (so it gets run when the window is done loading), rather 
@@ -75,18 +77,35 @@ window.onload = function() {
             }
         }
     };
+
+    // this is so Javascripty it makes my head hurt:
+    // to create a new Ball object, we make a new empty object
+    // and set its prototype to be the first ball
+    // (we probably could use create as well)
+    // then we set some other stuff if we want
+    function makeBall(x,y) {
+    Empty = function () {};
+    Empty.prototype = aBall;    // don't ask why not ball.prototype=aBall;
+    ball = new Empty();
+    ball.x = x;
+    ball.y = y;
+    return ball;
+    }
+    
+    theBall = makeBall(200,200);
+
     // this function will do the drawing
     function drawBalls() {
         // clear the window
         theContext.clearRect(0, 0, theCanvas.width, theCanvas.height);
         // draw the ball
-        aBall.draw();
+        theBall.draw();
     }
     
      // move the ball - check to see if it goes over the edge
      // if we go over the edge, wrap around
      function moveBalls() {
-         aBall.move();
+         theBall.move();
      }
      
      // note that we cannot "loop" the following code will just hang:
