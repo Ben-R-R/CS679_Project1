@@ -38,44 +38,55 @@ window.onload = function() {
     var ballstroke = "#000000";     // black outline
     var circ = Math.PI*2;           // complete circle
     
-    // these describe what will be drawn (we'll change them later)
-    var radius = 50;
-    var xPos = 100;
-    var yPos = 100;
-    var vX = 20;
-    var vY = 0;
+    // create a prototype ball
+    // this is a slightly weird way to make an object, but it's very
+    // javascripty
+    var aBall = {
+        "r" : 50,
+        "x" : 100,
+        "y" : 100,
+        "vX" : 20,
+        "vY" : 20,
     
+        draw : function() {
+            theContext.strokeStyle = ballstroke;
+            theContext.fillStyle = ballcolor;
+            theContext.beginPath();
+            theContext.arc(this.x,this.y,this.r,0,circ,true);
+            theContext.closePath();
+            theContext.stroke();
+            theContext.fill();
+        },
+    
+        move: function() {
+            this.x += this.vX;
+            this.y += this.vY;
+            if (this.x > theCanvas.width) {
+                this.x -= theCanvas.width;
+            }
+            if (this.y > theCanvas.height) {
+                this.y -= theCanvas.height;
+            }
+            if (this.x < 0) {
+                this.x += theCanvas.width;
+            }
+            if (this.y < 0) {
+                this.y += theCanvas.width;
+            }
+        }
+    };
     // this function will do the drawing
-    function drawBall() {
+    function drawBalls() {
         // clear the window
         theContext.clearRect(0, 0, theCanvas.width, theCanvas.height);
         // draw the ball
-        theContext.strokeStyle = ballstroke;
-        theContext.fillStyle = ballcolor;
-        theContext.beginPath();
-        theContext.arc(xPos,yPos,50,0,circ,true);
-        theContext.closePath();
-        theContext.stroke();
-        theContext.fill();
+        aBall.draw();
     }
     
      // move the ball - check to see if it goes over the edge
      // if we go over the edge, wrap around
-     function moveBall() {
-        xPos += vX;
-        yPos += vY;
-        if (xPos > theCanvas.width) {
-            xPos -= theCanvas.width;
-        }
-        if (yPos > theCanvas.height) {
-            yPos -= theCanvas.height;
-        }
-        if (xPos < 0) {
-            xPos += theCanvas.width;
-        }
-        if (yPos < 0) {
-            yPos += theCanvas.width;
-        }
+     function moveBalls() {
+         aBall.move();
      }
      
      // note that we cannot "loop" the following code will just hang:
@@ -89,8 +100,8 @@ window.onload = function() {
      // draws, then schedules another iteration in the future
      // WARNING: this is the simplest, but not the best, way to do this
      function drawLoop() {
-        moveBall();     // new position
-        drawBall();     // show things
+        moveBalls();     // new position
+        drawBalls();     // show things
         reqFrame(drawLoop);
      }
      drawLoop();
