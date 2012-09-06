@@ -5,6 +5,7 @@
 
 // phase 3 - draws a yellow circle in the canvas
 // phase 4 - code re-organized
+// phase 5 - animation 
 
 // note: I am choosing to do this as an "onload" function for the
 // window (so it gets run when the window is done loading), rather 
@@ -27,9 +28,14 @@ window.onload = function() {
     var radius = 50;
     var xPos = 100;
     var yPos = 100;
+    var vX = 20;
+    var vY = 0;
     
     // this function will do the drawing
     function drawBall() {
+        // clear the window
+        theContext.clearRect(0, 0, theCanvas.width, theCanvas.height);
+        // draw the ball
         theContext.strokeStyle = ballstroke;
         theContext.fillStyle = ballcolor;
         theContext.beginPath();
@@ -39,5 +45,39 @@ window.onload = function() {
         theContext.fill();
     }
     
-    drawBall();
+     // move the ball - check to see if it goes over the edge
+     // if we go over the edge, wrap around
+     function moveBall() {
+        xPos += vX;
+        yPos += vY;
+        if (xPos > theCanvas.width) {
+            xPos -= theCanvas.width;
+        }
+        if (yPos > theCanvas.height) {
+            yPos -= theCanvas.height;
+        }
+        if (xPos < 0) {
+            xPos += theCanvas.width;
+        }
+        if (yPos < 0) {
+            yPos += theCanvas.width;
+        }
+     }
+     
+     // note that we cannot "loop" the following code will just hang:
+     //while (1) {
+     //  drawBall();
+     //  moveBall();
+     //}
+     // don't even try it
+     
+     // what we need to do is define a function that updates the position
+     // draws, then schedules another iteration in the future
+     // WARNING: this is the simplest, but not the best, way to do this
+     function drawLoop() {
+        moveBall();     // new position
+        drawBall();     // show things
+        setTimeout(drawLoop,20);    // call us again in 20ms
+     }
+     drawLoop();
 }
