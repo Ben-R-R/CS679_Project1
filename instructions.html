@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Javascript Boids Tutorial Instructions</title>
+<link href="style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<h2>Javascript Flocking (Boids) Tutorial</h2>
+<p>Michael Gleicher</p>
+<p>September, 2012</p>
+<p>This is designed to be a basic introduction to what you need to know about Javascript in order to get started with doing the flocking project. I'll use the term boids, since that's what the objects are usually called (although, in my code they are circles, and I called them balls). </p>
+<p>What you'll encounter:</p>
+<ol>
+  <li>Making a page with a canvas</li>
+  <li>Getting Javascript to draw something on that canvas</li>
+  <li>Making that thing move (creating animation)</li>
+  <li>Seeing some of the ways you can do objects and structure code in Javascript.</li>
+  <li>Seeing a really implementation of the flocking ideas.</li>
+</ol>
+<p>At the end, we'll basically have gotten boids including bouncing (off the walls and each other) and alignment (the key Reynolds thing). This is based off of my original Javascript experiment (see it <a href="http://pages.cs.wisc.edu/~gleicher/Hacks/Boids/">here</a>). That used jQuery for a user interface. This one will try to be more self-contained. (you might play with that one to get a sense of what the parameters do).</p>
+<h2>Using this Tutorial</h2>
+<p>This tutorial is created as a Mercurial repository. Mercurial is a distributed source control system - very similar to GIT. A side effect of the tutorial is to give you some experience with Mercurial.</p>
+<p>The repository is:</p>
+<div class="repo">	http://graphics.cs.wisc.edu/Courses/Games12/Tutorial1/</div>
+<p>You should &quot;clone&quot; the Tutorial repository. The address for the repository is a web address (you can visit that web page in a browser and explore it - see different revisions, etc.). But it's best if you clone (e.g. take a copy) of it for yourself. That way you can shift between different revisions easily to see different versions of my program. This web page is in the repository.</p>
+<p>The basic idea of this tutorial is that you will be able to see all the versions as we go along, to see how I develop things piece by piece. The secret for doing this will be that I will place each version of the code as a different version in the source repository. Pick the version of the repository that has the code version you want to see.</p>
+<p>So to start, &quot;update&quot; to the version that says &quot;phase 0&quot; in the name (this may have revision number 0, but Mercurial plays oddly with version numbers). You should be able to use the version numbers, but I'd recommend using a tool like TortoiseHG that allows you to see the version names.</p>
+<p>You'll see that the directory has only 3 &quot;real&quot; files (index.html, instructions.html (this file), and style.css). The actual work is in index.html, and it doesn't have much yet.</p>
+<p>When you get to the last phase (phase 12), you'll have a lot of boids bumping around. There will be a 4th file (tutor.js).</p>
+<p>Be sure to look at the code and understand what happens between each step.</p>
+<p>You might find things in earlier versions that get fixed later - I can't go back and fix old stuff without re-creating everything.</p>
+<h2>Phase 0</h2>
+<p>Make sure you're &quot;updated&quot; to Phase 0 in the repo!</p>
+<p>To make something using Javascript, you need an HTML page to put it on. So in this phase, we have a very minimal HTML page (look at index.html). You might want to take a moment to make sure you know what the HTML code looks like before it gets more complicated.</p>
+<p>This isn't the most basic HTML page since it has the following things (that you might not need):</p>
+<ol>
+  <li>It has the doctype and meta tags. (Adobe Dreamweaver made these for me - I don't know if they are important or not)</li>
+  <li>It has a link to a style file with the CSS. This is useful for me to set my fonts and whatnot. You will probably want to learn about CSS in order to make your web pages look nice (which will be useful, since your javascript things will live on web pages). </li>
+</ol>
+<p>Once you've had a look, switch the code to revision 1, and we'll actually put something useful on that web page.</p>
+<h2>Phase 1</h2>
+<p>Here, I have added a canvas to the web page. You'll see that I put a border around it, so it's easier to see. I've also named it &quot;mycanvas&quot; so my Javascript program can refer to it.</p>
+<p>Now move on to revision 2, and we'll see some actual Javascript code...</p>
+<h2>Phase 2</h2>
+<p>Now I will add some Javascript code to my HTML.</p>
+<p>I have added some javascript right into my HTML (inside the script tag). It draws a yellow circle by first finding that canvas that we made in the last phase, and then doing some actual drawing commands.</p>
+<p>Note that I am sticking the javascript code directly into the HTML. This is probably not the best practice, but it gives us something to fix in the next phase.</p>
+<p>You should also consider when the code runs: after the window is done loading. We need to wait until the canvas is create before we can find it and draw into it.</p>
+<p>After you see what's happening here, move on to the next phase by bringing up the revision for Phase 3.</p>
+<h2>Phase 3 </h2>
+<p>You should see that a new file, tutor.js has appeared. I prefer to keep Javascript code out of my HTML. This does the same thing as Phase 2. It just organizes the files a bit better.</p>
+<p>In the next phase, we'll actually organize the code a little.</p>
+<h2>Phase 4</h2>
+<p>Again, nothing has changed, except that I've organized the code a little bit. It might be useful for you to look over the code so you can get rid of javascript. Notice how I am making use of lexical scoping to define variables. I don't use it for much. Yet. </p>
+<h2>Phase 5</h2>
+<p>Now we have animation.</p>
+<p>Some things to note:</p>
+<ol>
+  <li>I added variables for velocity</li>
+  <li>I changed the draw function to clear the canvas first (you can remove this line to see what happens - but you should be able to guess)</li>
+  <li>I added a new function to move the ball, based on its velocity. It wraps the ball around if it goes off the screen.</li>
+  <li>I created a loop to move the ball, draw, repeat. However, a simple loop doesn't work (the browser is too smart - it realizes that you're going to draw again). So I had to define a &quot;draw loop&quot; function (that does 1 iteration), and use the scheduler mechanism to have the draw loop execute again some time in the future.</li>
+</ol>
+<p>The draw loop by scheduling a timer is a little wierd - get used to it, it's a way of life in Javascript. This isn't the best way to make it work though (since the loop keeps going even if the window is off the screen).</p>
+<p>But this is the most basic way to do animation. </p>
+<h2>Phase 6</h2>
+<p>This uses a different way to schedule the redraw. It's supposed to be better (go read about it).</p>
+<p>The catch is that different old browsers call &quot;reqAnimationFrame&quot; something different, so there's this funny statement which is effectively a big case statement (but it's done with an &quot;or&quot; - remember, that &quot;or&quot; stops as soon as it finds something true).</p>
+<h2>Phase 7</h2>
+<p>All I did this time was to make the &quot;ball&quot; an object - since I'm getting ready to have multiple ones.</p>
+<p>This is a good time to start getting used to Javascript's object weirdness/coolness. Not that I did not make a constructor: instead, I used an object literal to create an instance - I could always &quot;create&quot; from this prototype.</p>
+<p>I don't find this the most natural way to create objects either, but I wanted to do this since seeing the Javascript way can help you understand it.</p>
+<h2>Phase 8</h2>
+<p>I just made an object creation function in a uniquely Javascripty way. Understanding the creator is the key to getting how Javascript will do objects. In practice, I prefer to use a more &quot;usual&quot; style by having a constructor function.</p>
+<h2>Phase 9</h2>
+<p>OK, clearly, the goal of Phase 8 was to set up for making lots more balls. Before I do that, let's just make a few. There's an array that holds the created objects. </p>
+<p>Still boring, but getting close to what the milestone requires us to do.</p>
+<h2>Phase 10</h2>
+<p>The project milestone asks that you respond to some user input.</p>
+<p>Here, I've added a listener function for mouse click events to the canvas, and have it so it will make more balls. They still all travel in the same boring way. But this now does meet the milestone requirements: multiple moving objects, responds to user input.</p>
+<h2>Phase 11</h2>
+<p>Now the edge conditions are different (they kindof &quot;bounce&quot; in a really simplistic way), it's amazing how such a small change can make it so much more interesting.</p>
+<p>I also draw little direction vectors (useful for when we start making this into boids).</p>
+<h2>Phase 12</h2>
+<p>I added some random creation, speed normalization (useful when we start doing boid like things), and collisions (done in a simple way).</p>
+<p>Given how simple this is, it's actually suprisingly fun to watch (for me at least). </p>
+<h2>Phase 13</h2>
+<p>OK, just for completeness, I added alignment. It's less interesting since you can't tune the parameters (except by editing the code, or trying the original version).</p>
+<p>If you look at the code, you should be able to get a real sense of how simple it is. It doesn't take much to make flocking! Now it's up to you to make it fun.</p>
+</body>
+</html>

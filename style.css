@@ -1,0 +1,11 @@
+@charset "utf-8";
+body {
+	font-family: Verdana, Geneva, sans-serif;
+	width: 600px;
+}
+h2 {
+	font-family: Georgia, "Times New Roman", Times, serif;
+}
+.repo {
+	font-family: "Courier New", Courier, monospace;
+}
