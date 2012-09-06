@@ -47,12 +47,12 @@ window.onload = function() {
 
     // make everything go the same speed
     var speed = 4.0;
+    var radius = 5.0;
     
     // create a prototype ball
     // this is a slightly weird way to make an object, but it's very
     // javascripty
     var aBall = {
-        "r" : 10,
         "x" : 100,
         "y" : 100,
         "vX" : 10,
@@ -62,7 +62,7 @@ window.onload = function() {
             theContext.strokeStyle = ballstroke;
             theContext.fillStyle = ballcolor;
             theContext.beginPath();
-            theContext.arc(this.x,this.y,this.r,0,circ,true);
+            theContext.arc(this.x,this.y,radius,0,circ,true);
             theContext.moveTo(this.x,this.y);
             theContext.lineTo(this.x + 4*this.vX, this.y + 4*this.vY);
             theContext.closePath();
@@ -129,7 +129,7 @@ window.onload = function() {
     
     // make an array of balls
     theBalls = [];
-    for (var i=0; i<20; i++) {
+    for (var i=0; i<40; i++) {
         b = makeBall( 50+Math.random()*500, 50+Math.random()*300 );
         theBalls.push(b)
     }
@@ -148,7 +148,7 @@ window.onload = function() {
     // have them react in a simple way
     // this assumes that everything has the same radius as the prototype
     function bounce(ballList) {
-        var rad = 2 * aBall.r;
+        var rad = 2 * radius;
         rad = rad*rad;
         
         for(var i=ballList.length-1; i>=0; i--) {
@@ -173,9 +173,47 @@ window.onload = function() {
         }
     }
         
-        
+    // Reynold's like alignment
+    // each boid tries to make it's velocity to be similar to its neighbors
+    // recipricol falloff in weight (allignment parameter + d
+    // this assumes the velocities will be renormalized
+    function align(ballList)
+    {
+        var ali = .6; // alignment parameter - between 0 and 1
+    
+        // make temp arrays to store results
+        // this is inefficient, but the goal here is to make it work first
+        var newVX = new Array(ballList.length);
+        var newVY = new Array(ballList.length);
+    
+        // do the n^2 loop over all pairs, and sum up the contribution of each
+        for(var i=ballList.length-1; i>=0; i--) {
+            var bi = ballList[i];
+            var bix = bi.x;
+            var biy = bi.y;
+            newVX[i] = 0;
+            newVY[i] = 0;
+    
+            for(var j=ballList.length-1; j>=0; j--) {
+                var bj = ballList[j];
+                // compute the distance for falloff
+                var dx = bj.x - bix;
+                var dy = bj.y - biy;
+                var d = Math.sqrt(dx*dx+dy*dy);
+                // add to the weighted sum
+                newVX[i] += (bj.vX / (d+ali));
+                newVY[i] += (bj.vY / (d+ali));
+            }
+        }
+        for(var i=ballList.length-1; i>=0; i--) {
+            ballList[i].vX = newVX[i];
+            ballList[i].vY = newVY[i];
+        } 
+    }
+    
     //move the balls
     function moveBalls() {
+       align(theBalls);
        bounce(theBalls);
        for (var i=0; i<theBalls.length; i++) {
            theBalls[i].norm();
