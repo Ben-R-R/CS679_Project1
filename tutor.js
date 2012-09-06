@@ -11,6 +11,7 @@
 // phase 8 - object creation
 // phase 9 - multiple objects
 // phase 10 - click to add
+// phase 11 - bouncing
 
 // note: I am choosing to do this as an "onload" function for the
 // window (so it gets run when the window is done loading), rather 
@@ -49,33 +50,45 @@ window.onload = function() {
         "r" : 10,
         "x" : 100,
         "y" : 100,
-        "vX" : 20,
-        "vY" : 20,
+        "vX" : 10,
+        "vY" : 10,
     
         draw : function() {
             theContext.strokeStyle = ballstroke;
             theContext.fillStyle = ballcolor;
             theContext.beginPath();
             theContext.arc(this.x,this.y,this.r,0,circ,true);
+            theContext.moveTo(this.x,this.y);
+            theContext.lineTo(this.x + this.vX, this.y + this.vY);
             theContext.closePath();
             theContext.stroke();
             theContext.fill();
         },
     
+        // make 'em "bounce" when they go over the edge
+        // no loss of velocity
         move: function() {
             this.x += this.vX;
             this.y += this.vY;
             if (this.x > theCanvas.width) {
-                this.x -= theCanvas.width;
+                if (this.vX > 0) {
+                    this.vX = -this.vX;
+                }
             }
             if (this.y > theCanvas.height) {
-                this.y -= theCanvas.height;
+                if (this.vY > 0) {
+                    this.vY = -this.vY;
+                }
             }
             if (this.x < 0) {
-                this.x += theCanvas.width;
+                if (this.vX < 0) {
+                    this.vX = -this.vX;
+                }
             }
             if (this.y < 0) {
-                this.y += theCanvas.width;
+                if (this.vY < 0) {
+                    this.vY = -this.vY;
+                }
             }
         }
     };
