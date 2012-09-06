@@ -9,6 +9,7 @@
 // phase 6 - reqAnimFrame
 // phase 7 - objectness
 // phase 8 - object creation
+// phase 9 - multiple objects
 
 // note: I am choosing to do this as an "onload" function for the
 // window (so it gets run when the window is done loading), rather 
@@ -84,44 +85,51 @@ window.onload = function() {
     // (we probably could use create as well)
     // then we set some other stuff if we want
     function makeBall(x,y) {
-    Empty = function () {};
-    Empty.prototype = aBall;    // don't ask why not ball.prototype=aBall;
-    ball = new Empty();
-    ball.x = x;
-    ball.y = y;
-    return ball;
+        Empty = function () {};
+        Empty.prototype = aBall;    // don't ask why not ball.prototype=aBall;
+        ball = new Empty();
+        ball.x = x;
+        ball.y = y;
+        return ball;
     }
     
-    theBall = makeBall(200,200);
+    // make an array of balls
+    theBalls = [];
+    theBalls.push( makeBall(100,100) );
+    theBalls.push( makeBall(200,100) );
+    theBalls.push( makeBall(300,100) );
 
     // this function will do the drawing
     function drawBalls() {
         // clear the window
         theContext.clearRect(0, 0, theCanvas.width, theCanvas.height);
-        // draw the ball
-        theBall.draw();
+        // draw the balls - too bad we can't use for i in theBalls
+        for (var i=0; i<theBalls.length; i++) {
+            theBalls[i].draw();
+        }
     }
     
-     // move the ball - check to see if it goes over the edge
-     // if we go over the edge, wrap around
-     function moveBalls() {
-         theBall.move();
-     }
+    //move the balls
+    function moveBalls() {
+       for (var i=0; i<theBalls.length; i++) {
+           theBalls[i].move();
+       }
+    }
      
-     // note that we cannot "loop" the following code will just hang:
-     //while (1) {
-     //  drawBall();
-     //  moveBall();
-     //}
-     // don't even try it
+    // note that we cannot "loop" the following code will just hang:
+    //while (1) {
+    //  drawBall();
+    //  moveBall();
+    //}
+    // don't even try it
      
-     // what we need to do is define a function that updates the position
-     // draws, then schedules another iteration in the future
-     // WARNING: this is the simplest, but not the best, way to do this
-     function drawLoop() {
+    // what we need to do is define a function that updates the position
+    // draws, then schedules another iteration in the future
+    // WARNING: this is the simplest, but not the best, way to do this
+    function drawLoop() {
         moveBalls();     // new position
         drawBalls();     // show things
         reqFrame(drawLoop);
-     }
-     drawLoop();
+    }
+    drawLoop();
 }
