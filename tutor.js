@@ -241,19 +241,19 @@ window.onload = function() {
                 
                 var dd = Math.pow(d, 1.8)
                 
-                var personalSpace = 10
+                var personalSpace = 30 ;
                 
                 if(bj.team == bi.team){
 				  	if(d < 100){
 						ballList[i].newVX  += (bj.vX / (dd+ali));
 		                ballList[i].newVY  += (bj.vY / (dd+ali));
 		        	} else {
-					    ballList[i].newVX  -= ((bix - bj.x) * .1 ) / (dd)
-	               		ballList[i].newVY  -= ((biy - bj.y) * .1 ) / (dd)
+					    ballList[i].newVX  -= ((bix - bj.x) * .1 ) / (dd);
+	               		ballList[i].newVY  -= ((biy - bj.y) * .1 ) / (dd);
 					}
-					if(d < personalSpace ){
-						//ballList[i].newVX  += ((dx * .01 ) / d) * 0.001
-	                	//ballList[i].newVY  += ((dy * .01 ) / d) * 0.001
+					if(d < personalSpace && bi != bj ){
+						ballList[i].newVX -= ((dx) / dd) * 0.1;
+	                	ballList[i].newVY  -= ((dy) / dd) * 0.1;
 		                
 					}
 					  
