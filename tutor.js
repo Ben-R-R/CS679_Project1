@@ -155,6 +155,8 @@ window.onload = function() {
         allBalls.push(b)
         b = makeBall( 50+Math.random()*500, 50+Math.random()*300 , "#FF0000", 0);
         allBalls.push(b)
+        b = makeBall( 50+Math.random()*500, 50+Math.random()*300 , "#FF00FF", 3);
+        allBalls.push(b)
     }
     
     //for (var i=0; i<40; i++) {
@@ -227,21 +229,32 @@ window.onload = function() {
             ballList[i].newVY = 0;
     
             for(var j=ballList.length-1; j>=0; j--) {
+            
                 var bj = ballList[j];
-                // compute the distance for falloff
+                //if (bj == bi){
+				//	break;
+				//}
+				// compute the distance for falloff
                 var dx = bj.x - bix;
                 var dy = bj.y - biy;
                 var d = Math.sqrt(dx*dx+dy*dy);
                 
                 var dd = Math.pow(d, 1.8)
                 
+                var personalSpace = 10
+                
                 if(bj.team == bi.team){
-				  	if(d < 100 ){
+				  	if(d < 100){
 						ballList[i].newVX  += (bj.vX / (dd+ali));
 		                ballList[i].newVY  += (bj.vY / (dd+ali));
-					}  else {
+		        	} else {
 					    ballList[i].newVX  -= ((bix - bj.x) * .1 ) / (dd)
 	               		ballList[i].newVY  -= ((biy - bj.y) * .1 ) / (dd)
+					}
+					if(d < personalSpace ){
+						//ballList[i].newVX  += ((dx * .01 ) / d) * 0.001
+	                	//ballList[i].newVY  += ((dy * .01 ) / d) * 0.001
+		                
 					}
 					  
 				  	
@@ -262,12 +275,12 @@ window.onload = function() {
         		
         	
         	
-            ballList[i].vX = ballList[i].newVX + (cX - ballList[i].x) * .00002 + (1 - Math.random()*2) * .03;
-            ballList[i].vY = ballList[i].newVY + (cY - ballList[i].y) * .00002 + (1 - Math.random()*2) * .03;
+            ballList[i].vX = ballList[i].newVX + (cX - ballList[i].x) * .00005; //+ (1 - Math.random()*2) * .03;
+            ballList[i].vY = ballList[i].newVY + (cY - ballList[i].y) * .00005; //+ (1 - Math.random()*2) * .03;
             if(Math.random() * 100 > 99){
 			   	//angleTemp = Math.random()
-				ballList[i].vX = 2 - Math.random()*4;
-            	ballList[i].vY = 2 - Math.random()*4;
+			//	ballList[i].vX = 2 - Math.random()*4;
+            //	ballList[i].vY = 2 - Math.random()*4;
 			}
         } 
     }
