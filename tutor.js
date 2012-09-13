@@ -57,15 +57,21 @@ window.onload = function() {
         "y" : 100,
         "vX" : 10,
         "vY" : 10,
-    
+        "ballcolor" : "#FFFF00",
+        "newVX" : 0,
+        "team" : 0,
+        "health" : 100,
         draw : function() {
+        
             theContext.strokeStyle = ballstroke;
-            theContext.fillStyle = ballcolor;
+            theContext.fillStyle = this.ballcolor;
+            
             theContext.beginPath();
-            theContext.arc(this.x,this.y,radius,0,circ,true);
-            theContext.moveTo(this.x,this.y);
-            theContext.lineTo(this.x + 4*this.vX, this.y + 4*this.vY);
+	            theContext.arc(this.x,this.y,radius,0,circ,true); 
+	            theContext.moveTo(this.x,this.y);
+	            theContext.lineTo(this.x + 4*this.vX, this.y + 4*this.vY);
             theContext.closePath();
+            
             theContext.stroke();
             theContext.fill();
         },
@@ -76,24 +82,32 @@ window.onload = function() {
             this.x += this.vX;
             this.y += this.vY;
             if (this.x > theCanvas.width) {
-                if (this.vX > 0) {
+            	this.x = 0;// theCanvas.width
+            	this.vY = -this.vY;
+                /*if (this.vX > 0) {
                     this.vX = -this.vX;
-                }
+                }  */
             }
             if (this.y > theCanvas.height) {
-                if (this.vY > 0) {
+            	this.y = 0;
+            	this.vX = -this.vX;
+                /*if (this.vY > 0) {
                     this.vY = -this.vY;
-                }
+                } */
             }
             if (this.x < 0) {
-                if (this.vX < 0) {
+            	this.x = theCanvas.width;
+            	this.vY = -this.vY;
+                /*if (this.vX < 0) {
                     this.vX = -this.vX;
-                }
+                }  */
             }
             if (this.y < 0) {
-                if (this.vY < 0) {
+            	this.y = theCanvas.height;
+            	this.vX = -this.vX;
+                /*if (this.vY < 0) {
                     this.vY = -this.vY;
-                }
+                } */
             }
         },
 
@@ -118,29 +132,47 @@ window.onload = function() {
     // and set its prototype to be the first ball
     // (we probably could use create as well)
     // then we set some other stuff if we want
-    function makeBall(x,y) {
+    function makeBall(x,y,color,team) {
         Empty = function () {};
         Empty.prototype = aBall;    // don't ask why not ball.prototype=aBall;
         ball = new Empty();
         ball.x = x;
         ball.y = y;
+        ball.ballcolor = color;
+        ball.team = team;
+        ball.health = 100;
         return ball;
     }
     
     // make an array of balls
-    theBalls = [];
+    theBlues = [];
+    theReds = [];
+    
+    allBalls = [];
+    
     for (var i=0; i<40; i++) {
-        b = makeBall( 50+Math.random()*500, 50+Math.random()*300 );
-        theBalls.push(b)
+        b = makeBall( 50+Math.random()*500, 50+Math.random()*300 , "#0000FF", 1);
+        allBalls.push(b)
+        b = makeBall( 50+Math.random()*500, 50+Math.random()*300 , "#FF0000", 0);
+        allBalls.push(b)
     }
+    
+    //for (var i=0; i<40; i++) {
+    //    b = makeBall( 50+Math.random()*500, 50+Math.random()*300 , "#0000FF");
+    //    theBlues.push(b)
+    //}
+    
+    //for (var i=0; i < 40; i++){
+	//	b = makeBall( 50+Math.random()*500, 50+Math.random()*300,"#FF0000" );
+    //    theReds.push(b)
+	//}
 
     // this function will do the drawing
-    function drawBalls() {
-        // clear the window
-        theContext.clearRect(0, 0, theCanvas.width, theCanvas.height);
+    function drawBalls(ballList) {
+        
         // draw the balls - too bad we can't use for i in theBalls
-        for (var i=0; i<theBalls.length; i++) {
-            theBalls[i].draw();
+        for (var i=0; i < ballList.length; i++) {
+            ballList[i].draw();
         }
     }
     
@@ -179,20 +211,20 @@ window.onload = function() {
     // this assumes the velocities will be renormalized
     function align(ballList)
     {
-        var ali = .6; // alignment parameter - between 0 and 1
+        var ali = 25; // alignment parameter - between 0 and 1
     
         // make temp arrays to store results
         // this is inefficient, but the goal here is to make it work first
-        var newVX = new Array(ballList.length);
-        var newVY = new Array(ballList.length);
+        //var newVX = new Array(ballList.length);
+        //var newVY = new Array(ballList.length);
     
         // do the n^2 loop over all pairs, and sum up the contribution of each
         for(var i=ballList.length-1; i>=0; i--) {
             var bi = ballList[i];
             var bix = bi.x;
             var biy = bi.y;
-            newVX[i] = 0;
-            newVY[i] = 0;
+            ballList[i].newVX = 0;
+            ballList[i].newVY = 0;
     
             for(var j=ballList.length-1; j>=0; j--) {
                 var bj = ballList[j];
@@ -200,24 +232,46 @@ window.onload = function() {
                 var dx = bj.x - bix;
                 var dy = bj.y - biy;
                 var d = Math.sqrt(dx*dx+dy*dy);
-                // add to the weighted sum
-                newVX[i] += (bj.vX / (d+ali));
-                newVY[i] += (bj.vY / (d+ali));
+                
+                d = Math.pow(d, 1.8)
+                
+                if(bj.team == bi.team){
+				  	// add to the weighted sum
+	                ballList[i].newVX  += (bj.vX / (d+ali));
+	                ballList[i].newVY  += (bj.vY / (d+ali));
+				} else {
+				    ballList[i].newVX  -= (bj.vX / (d+ali));
+	                ballList[i].newVY  -= (bj.vY / (d+ali));
+				}
+                
             }
         }
+        
+        var cX = theCanvas.width/2
+        var cY = theCanvas.height/2
+        
         for(var i=ballList.length-1; i>=0; i--) {
-            ballList[i].vX = newVX[i];
-            ballList[i].vY = newVY[i];
+        	// The balls want to be in the center of of the field:
+        		
+        	
+        	
+            ballList[i].vX = ballList[i].newVX + (cX - ballList[i].x) * .00002 + (1 - Math.random()*2) * .03;
+            ballList[i].vY = ballList[i].newVY + (cY - ballList[i].y) * .00002 + (1 - Math.random()*2) * .03;
+            if(Math.random() * 100 > 99){
+			   	//angleTemp = Math.random()
+				ballList[i].vX = 2 - Math.random()*4;
+            	ballList[i].vY = 2 - Math.random()*4;
+			}
         } 
     }
     
     //move the balls
-    function moveBalls() {
-       align(theBalls);
-       bounce(theBalls);
-       for (var i=0; i<theBalls.length; i++) {
-           theBalls[i].norm();
-           theBalls[i].move();
+    function moveBalls(ballList) {
+       align(ballList);
+       bounce(ballList);
+       for (var i=0; i<ballList.length; i++) {
+           ballList[i].norm();
+           ballList[i].move();
        }
     }
      
@@ -226,8 +280,15 @@ window.onload = function() {
         // a catch - we need to adjust for where the canvas is!
         // this is quite ugly without some degree of support from
         // a library
-        theBalls.push( makeBall(evt.pageX - theCanvas.offsetLeft,
-        evt.pageY - theCanvas.offsetTop) );
+        allBalls .push( 
+			makeBall
+			(
+				evt.pageX - theCanvas.offsetLeft,
+	        	evt.pageY - theCanvas.offsetTop,
+	        	"#0000FF",
+	        	1
+			)
+		);
     }
     theCanvas.addEventListener("click",doClick,false);
 
@@ -235,8 +296,13 @@ window.onload = function() {
     // draws, then schedules another iteration in the future
     // WARNING: this is the simplest, but not the best, way to do this
     function drawLoop() {
-        moveBalls();     // new position
-        drawBalls();     // show things
+        moveBalls(allBalls );     // new position
+      
+	    // clear the window
+        theContext.clearRect(0, 0, theCanvas.width, theCanvas.height);
+        
+        drawBalls(allBalls );     // show things
+       
         reqFrame(drawLoop);
     }
     drawLoop();
