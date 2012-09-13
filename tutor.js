@@ -252,8 +252,8 @@ window.onload = function() {
 	               		ballList[i].newVY  -= ((biy - bj.y) * .1 ) / (dd);
 					}
 					if(d < personalSpace && bi != bj ){
-						ballList[i].newVX -= ((dx) / dd) * 0.1;
-	                	ballList[i].newVY  -= ((dy) / dd) * 0.1;
+						ballList[i].newVX -= ((dx) / dd) * .1;
+	                	ballList[i].newVY  -= ((dy) / dd) * .1;
 		                
 					}
 					  
