@@ -233,15 +233,22 @@ window.onload = function() {
                 var dy = bj.y - biy;
                 var d = Math.sqrt(dx*dx+dy*dy);
                 
-                d = Math.pow(d, 1.8)
+                var dd = Math.pow(d, 1.8)
                 
                 if(bj.team == bi.team){
-				  	// add to the weighted sum
-	                ballList[i].newVX  += (bj.vX / (d+ali));
-	                ballList[i].newVY  += (bj.vY / (d+ali));
+				  	if(d < 100 ){
+						ballList[i].newVX  += (bj.vX / (dd+ali));
+		                ballList[i].newVY  += (bj.vY / (dd+ali));
+					}  else {
+					    ballList[i].newVX  -= ((bix - bj.x) * .1 ) / (dd)
+	               		ballList[i].newVY  -= ((biy - bj.y) * .1 ) / (dd)
+					}
+					  
+				  	
+	                
 				} else {
-				    ballList[i].newVX  -= (bj.vX / (d+ali));
-	                ballList[i].newVY  -= (bj.vY / (d+ali));
+				    ballList[i].newVX  += ((bix - bj.x) * .01 ) / (dd)
+	                ballList[i].newVY  += ((biy - bj.y) * .01 ) / (dd)
 				}
                 
             }
@@ -285,8 +292,8 @@ window.onload = function() {
 			(
 				evt.pageX - theCanvas.offsetLeft,
 	        	evt.pageY - theCanvas.offsetTop,
-	        	"#0000FF",
-	        	1
+	        	"#008800",
+	        	2
 			)
 		);
     }
