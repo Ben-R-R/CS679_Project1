@@ -77,35 +77,36 @@ window.onload = function() {
         },
     
         // make 'em "bounce" when they go over the edge
+        // not anymore, now they wrap over the edge.
         // no loss of velocity
         move: function() {
             this.x += this.vX;
             this.y += this.vY;
             if (this.x > theCanvas.width) {
             	this.x = 0;// theCanvas.width
-            	this.vY = -this.vY;
-                /*if (this.vX > 0) {
+            	/*this.vY = -this.vY;
+                if (this.vX > 0) {
                     this.vX = -this.vX;
                 }  */
             }
             if (this.y > theCanvas.height) {
             	this.y = 0;
-            	this.vX = -this.vX;
-                /*if (this.vY > 0) {
+            	/*this.vX = -this.vX;
+                if (this.vY > 0) {
                     this.vY = -this.vY;
                 } */
             }
             if (this.x < 0) {
             	this.x = theCanvas.width;
-            	this.vY = -this.vY;
-                /*if (this.vX < 0) {
+            	/*this.vY = -this.vY;
+                if (this.vX < 0) {
                     this.vX = -this.vX;
                 }  */
             }
             if (this.y < 0) {
             	this.y = theCanvas.height;
-            	this.vX = -this.vX;
-                /*if (this.vY < 0) {
+            	/*this.vX = -this.vX;
+                if (this.vY < 0) {
                     this.vY = -this.vY;
                 } */
             }
@@ -241,27 +242,30 @@ window.onload = function() {
                 
                 var dd = Math.pow(d, 1.8)
                 
-                var personalSpace = 10
+                var personalSpace = 25
                 
                 if(bj.team == bi.team){
 				  	if(d < 100){
 						ballList[i].newVX  += (bj.vX / (dd+ali));
 		                ballList[i].newVY  += (bj.vY / (dd+ali));
 		        	} else {
-					    ballList[i].newVX  -= ((bix - bj.x) * .1 ) / (dd)
-	               		ballList[i].newVY  -= ((biy - bj.y) * .1 ) / (dd)
+					    ballList[i].newVX  -= ((bix - bj.x) * .1 ) / (dd);
+	               		ballList[i].newVY  -= ((biy - bj.y) * .1 ) / (dd);
 					}
-					if(d < personalSpace ){
-						//ballList[i].newVX  += ((dx * .01 ) / d) * 0.001
-	                	//ballList[i].newVY  += ((dy * .01 ) / d) * 0.001
+					if(d < personalSpace && d > 0){
+						//d > 0 requirement to prevent dividing by zero at the start.
+						//as same-team balls approach each other, the repulsion goes up exponentially.
+						ballList[i].newVX  -= (dx / d) * 0.01;
+	                	ballList[i].newVY  -= (dy / d) * 0.01;
 		                
 					}
 					  
 				  	
 	                
 				} else {
-				    ballList[i].newVX  += ((bix - bj.x) * .01 ) / (dd)
-	                ballList[i].newVY  += ((biy - bj.y) * .01 ) / (dd)
+					//
+				    ballList[i].newVX  += ((bix - bj.x) * .01 ) / (dd);
+	                ballList[i].newVY  += ((biy - bj.y) * .01 ) / (dd);
 				}
                 
             }
@@ -311,17 +315,106 @@ window.onload = function() {
 		);
     }
     theCanvas.addEventListener("click",doClick,false);
+    
+    var Tank = {
+    	"x" : 100,
+    	"y" : 100,
+    	"speed" : 10, //maximum speed in any cardinal direction (diagonal is faster 'cause why not)
+    	"accel" : 1, //acceleration for smoother movement
+    	"vX" : 0, //current x velocity
+    	"vY" : 0, //current y velocity
+    	"health" : 0,
+        draw : function() {
+        
+            theContext.strokeStyle = ballstroke;
+            theContext.fillStyle = ballcolor;
+            
+            theContext.beginPath();
+	            theContext.arc(this.x,this.y,radius * 5,0,circ,true); 
+	            theContext.moveTo(this.x,this.y);
+	            theContext.lineTo(this.x + 4*this.vX, this.y + 4*this.vY);
+            theContext.closePath();
+            
+            theContext.stroke();
+            theContext.fill();
+        },
+        move : function() {
+            this.x += this.vX;
+            this.y += this.vY;
+            if (this.x > theCanvas.width) {
+            	this.x = 0;
+            	//this.vY = -this.vY;
+            }
+            if (this.y > theCanvas.height) {
+            	this.y = 0;
+            	//this.vX = -this.vX;
+            }
+            if (this.x < 0) {
+            	this.x = theCanvas.width;
+            	//this.vY = -this.vY;
+            }
+            if (this.y < 0) {
+            	this.y = theCanvas.height;
+            	//this.vX = -this.vX;
+            }
+        }
+    }
+    var keysDown = {};
+    window.addEventListener("keydown", function(e) {keysDown[e.keyCode] = true;}, false);
+    window.addEventListener("keyup", function(e) {delete keysDown[e.keyCode];}, false);
+    
+    function receive() { //translates keystrokes from WASD to velocity changes
+    	xstop = true;
+    	ystop = true;
+    	if (38 in keysDown || 87 in keysDown) { //Up
+    		Tank.vY -= Tank.accel;
+    		if (Tank.vY < -Tank.speed) {Tank.vY = -Tank.speed;}
+    		ystop = false;
+    	}
+    	if (40 in keysDown || 83 in keysDown) { //Down
+    		Tank.vY += Tank.accel;
+    		if (Tank.vY > Tank.speed) {Tank.vY = Tank.speed;}
+    		ystop = false;
+    	}
+    	if (37 in keysDown || 65 in keysDown) { //Left
+    		Tank.vX -= Tank.accel;
+    		if (Tank.vX < -Tank.speed) {Tank.vX = -Tank.speed;}
+    		xstop = false;
+    	}
+    	if (39 in keysDown || 68 in keysDown) { //Right
+    		Tank.vX += Tank.accel;
+    		if (Tank.vX > Tank.speed) {Tank.vX = Tank.speed;}
+    		xstop = false;
+    	}
+    	if (xstop) {
+    		if (Math.abs(Tank.vX) < Tank.accel) {Tank.vX = 0;}
+    		else if (Tank.vX > 0) {Tank.vX -= Tank.accel;}
+    		else {Tank.vX += Tank.accel;}
+    	}
+    	if (ystop) {
+    		if (Math.abs(Tank.vY) < Tank.accel) {Tank.vY = 0;}
+    		else if (Tank.vY > 0) {Tank.vY -= Tank.accel;}
+    		else {Tank.vY += Tank.accel;}
+    	}
+    }
+    
 
     // what we need to do is define a function that updates the position
     // draws, then schedules another iteration in the future
     // WARNING: this is the simplest, but not the best, way to do this
     function drawLoop() {
         moveBalls(allBalls );     // new position
+        
+        receive();		//evaluate effect of current keystrokes
+        
+        Tank.move();		//move the tank
       
 	    // clear the window
         theContext.clearRect(0, 0, theCanvas.width, theCanvas.height);
         
         drawBalls(allBalls );     // show things
+        
+        Tank.draw();	//show tank
        
         reqFrame(drawLoop);
     }
