@@ -44,10 +44,6 @@ window.onload = function() {
     var ballcolor = "#FFFF00";      // yellow fill
     var ballstroke = "#000000";     // black outline
     var circ = Math.PI*2;           // complete circle
-
-    // make everything go the same speed
-    var speed = 4.0;
-    var radius = 5.0;
     
     // create a prototype ball
     // this is a slightly weird way to make an object, but it's very
@@ -58,22 +54,46 @@ window.onload = function() {
         "vX" : 10,
         "vY" : 10,
         "ballcolor" : "#FFFF00",
+        "speed" : 4.0, //constant speed
+        "radius" : 5.0, //used for drawing & collision calculation
         "newVX" : 0,
         "team" : 0,
         "health" : 100,
+        "frame" : 0, //frame, for animation purposes
+        /*
+         * Teams:
+         * 1: P-Swarm
+         * 2: Chompers
+         * 3: Hornets
+         * 4: Lure
+         */
         draw : function() {
-        
-            theContext.strokeStyle = ballstroke;
-            theContext.fillStyle = this.ballcolor;
-            
-            theContext.beginPath();
-	            theContext.arc(this.x,this.y,radius,0,circ,true); 
-	            theContext.moveTo(this.x,this.y);
-	            theContext.lineTo(this.x + 4*this.vX, this.y + 4*this.vY);
-            theContext.closePath();
-            
-            theContext.stroke();
-            theContext.fill();
+        	theContext.strokeStyle = ballstroke;
+        	theContext.fillStyle = this.ballcolor;
+        	
+        	if(this.team == 0)
+        	{
+        		//Setup for specific draw functions
+        	} else if(this.team == 2) {
+        		theta = Math.PI/6;
+        		phi = Math.atan2(this.vY,this.vX);
+        		theContext.beginPath();
+        			theContext.arc(this.x,this.y,this.radius,phi-theta,phi+theta,true);
+        			theContext.lineTo(this.x,this.y);
+        		theContext.closePath();
+        		theContext.stroke();
+        		theContext.fill();
+        	}
+        	else {
+        		theContext.beginPath();
+	            	theContext.arc(this.x,this.y,this.radius,0,circ,true); 
+	            	theContext.moveTo(this.x,this.y);
+	            	theContext.lineTo(this.x + 4*this.vX, this.y + 4*this.vY);
+	            theContext.closePath();
+	            
+	            theContext.stroke();
+	            theContext.fill();
+	        }
         },
     
         // make 'em "bounce" when they go over the edge
@@ -117,11 +137,11 @@ window.onload = function() {
         norm: function () {
             var z = Math.sqrt(this.vX * this.vX + this.vY * this.vY );
             if (z<.001) {
-                this.vX = (Math.random() - .5) * speed;
-                this.vY = (Math.random() - .5) * speed;
+                this.vX = (Math.random() - .5) * this.speed;
+                this.vY = (Math.random() - .5) * this.speed;
                 this.norm();
             } else {
-                z = speed / z;
+                z = this.speed / z;
                 this.vX *= z;
                 this.vY *= z;
             }
@@ -141,7 +161,21 @@ window.onload = function() {
         ball.y = y;
         ball.ballcolor = color;
         ball.team = team;
-        ball.health = 100;
+        if(team == 1) { //P-swarmers
+        	ball.radius = 5.0;
+        	ball.speed = 4.0;
+        	ball.health = 10;
+        }
+        else if(team == 2) { //Chompers
+        	ball.radius = 10.0;
+        	ball.speed = 2.0;
+        	ball.health = 50;
+        }
+        else { //Miscellaneous
+        	ball.radius = 5.0;
+        	ball.speed = 4.0;
+        	ball.health = 100;
+        }
         return ball;
     }
     
@@ -152,11 +186,11 @@ window.onload = function() {
     allBalls = [];
     
     for (var i=0; i<40; i++) {
-        b = makeBall( 50+Math.random()*500, 50+Math.random()*300 , "#0000FF", 1);
+        b = makeBall( 50+Math.random()*500, 50+Math.random()*300 , "#0000FF", 2);
         allBalls.push(b)
-        b = makeBall( 50+Math.random()*500, 50+Math.random()*300 , "#FF0000", 0);
+        b = makeBall( 50+Math.random()*500, 50+Math.random()*300 , "#FF0000", 3);
         allBalls.push(b)
-        b = makeBall( 50+Math.random()*500, 50+Math.random()*300 , "#FF00FF", 3);
+        b = makeBall( 50+Math.random()*500, 50+Math.random()*300 , "#FF00FF", 4);
         allBalls.push(b)
     }
     
@@ -181,10 +215,7 @@ window.onload = function() {
     
     // bouncing behavior - if two balls are on top of each other,
     // have them react in a simple way
-    // this assumes that everything has the same radius as the prototype
     function bounce(ballList) {
-        var rad = 2 * radius;
-        rad = rad*rad;
         
         for(var i=ballList.length-1; i>=0; i--) {
             var bi = ballList[i];
@@ -195,6 +226,8 @@ window.onload = function() {
                 var bj = ballList[j];
                 var bjx = bj.x;
                 var bjy = bj.y;
+                var rad = bi.radius + bj.radius;
+                rad = rad * rad;
                 var dx = bjx - bix;
                 var dy = bjy - biy;
                 var d = dx*dx+dy*dy;
@@ -240,9 +273,9 @@ window.onload = function() {
                 var dy = bj.y - biy;
                 var d = Math.sqrt(dx*dx+dy*dy);
                 
-                var dd = Math.pow(d, 1.8)
+                var dd = Math.pow(d, 1.8);
                 
-                var personalSpace = 25
+                var personalSpace = (bi.radius + bj.radius) * 5;
                 
                 if(bj.team == bi.team){
 				  	if(d < 100){
@@ -310,31 +343,78 @@ window.onload = function() {
 				evt.pageX - theCanvas.offsetLeft,
 	        	evt.pageY - theCanvas.offsetTop,
 	        	"#008800",
-	        	2
+	        	1
 			)
 		);
     }
     theCanvas.addEventListener("click",doClick,false);
     
-    var Tank = {
+    var Tank = {	//The player avatar, can be controlled with keyboard
     	"x" : 100,
     	"y" : 100,
-    	"speed" : 10, //maximum speed in any cardinal direction (diagonal is faster 'cause why not)
-    	"accel" : 1, //acceleration for smoother movement
+    	"speed" : 5, //maximum speed in any cardinal direction (diagonal is faster 'cause why not)
+    	"accel" : 0.5, //acceleration for smoother movement
+    	"radius" : 25, //radius of tank
     	"vX" : 0, //current x velocity
     	"vY" : 0, //current y velocity
     	"health" : 0,
         draw : function() {
         
+        
             theContext.strokeStyle = ballstroke;
+            
+            //Experimenting with making appearance affected by movement
+            theContext.fillStyle = "#0099FF";
+            
+            v = Math.sqrt(this.vX*this.vX+this.vY*this.vY)/this.speed*2;
+            theContext.beginPath();
+            	theContext.arc(this.x+this.radius/1.2,this.y+this.radius/1.2,this.radius/3+v,0,circ,true);
+           	theContext.closePath();
+           	theContext.stroke();
+           	theContext.fill();
+            theContext.beginPath();
+            	theContext.arc(this.x-this.radius/1.2,this.y-this.radius/1.2,this.radius/3+v,0,circ,true);
+           	theContext.closePath();
+           	theContext.stroke();
+           	theContext.fill();
+            theContext.beginPath();
+            	theContext.arc(this.x+this.radius/1.2,this.y-this.radius/1.2,this.radius/3+v,0,circ,true);
+           	theContext.closePath();
+           	theContext.stroke();
+           	theContext.fill();
+            theContext.beginPath();
+            	theContext.arc(this.x-this.radius/1.2,this.y+this.radius/1.2,this.radius/3+v,0,circ,true);
+           	theContext.closePath();
+           	theContext.stroke();
+           	theContext.fill();
+           		
             theContext.fillStyle = ballcolor;
             
             theContext.beginPath();
-	            theContext.arc(this.x,this.y,radius * 5,0,circ,true); 
+            	theContext.arc(this.x+this.radius/1.2,this.y+this.radius/1.2,this.radius/3,0,circ,true);
+           	theContext.closePath();
+           	theContext.stroke();
+           	theContext.fill();
+            theContext.beginPath();
+            	theContext.arc(this.x-this.radius/1.2,this.y-this.radius/1.2,this.radius/3,0,circ,true);
+           	theContext.closePath();
+           	theContext.stroke();
+           	theContext.fill();
+            theContext.beginPath();
+            	theContext.arc(this.x+this.radius/1.2,this.y-this.radius/1.2,this.radius/3,0,circ,true);
+           	theContext.closePath();
+           	theContext.stroke();
+           	theContext.fill();
+            theContext.beginPath();
+            	theContext.arc(this.x-this.radius/1.2,this.y+this.radius/1.2,this.radius/3,0,circ,true);
+           	theContext.closePath();
+           	theContext.stroke();
+           	theContext.fill();
+            theContext.beginPath();
+	            theContext.arc(this.x,this.y,this.radius,0,circ,true); 
 	            theContext.moveTo(this.x,this.y);
 	            theContext.lineTo(this.x + 4*this.vX, this.y + 4*this.vY);
             theContext.closePath();
-            
             theContext.stroke();
             theContext.fill();
         },
@@ -359,39 +439,40 @@ window.onload = function() {
             }
         }
     }
-    var keysDown = {};
+    
+    var keysDown = {};	//holds all keys currently pressed
     window.addEventListener("keydown", function(e) {keysDown[e.keyCode] = true;}, false);
     window.addEventListener("keyup", function(e) {delete keysDown[e.keyCode];}, false);
     
-    function receive() { //translates keystrokes from WASD to velocity changes
+    function receive() {	//translates keystrokes from WASD to velocity changes
     	xstop = true;
     	ystop = true;
-    	if (38 in keysDown || 87 in keysDown) { //Up
+    	if (38 in keysDown || 87 in keysDown) {	//Up
     		Tank.vY -= Tank.accel;
     		if (Tank.vY < -Tank.speed) {Tank.vY = -Tank.speed;}
     		ystop = false;
     	}
-    	if (40 in keysDown || 83 in keysDown) { //Down
+    	if (40 in keysDown || 83 in keysDown) {	//Down
     		Tank.vY += Tank.accel;
     		if (Tank.vY > Tank.speed) {Tank.vY = Tank.speed;}
     		ystop = false;
     	}
-    	if (37 in keysDown || 65 in keysDown) { //Left
+    	if (37 in keysDown || 65 in keysDown) {	//Left
     		Tank.vX -= Tank.accel;
     		if (Tank.vX < -Tank.speed) {Tank.vX = -Tank.speed;}
     		xstop = false;
     	}
-    	if (39 in keysDown || 68 in keysDown) { //Right
+    	if (39 in keysDown || 68 in keysDown) {	//Right
     		Tank.vX += Tank.accel;
     		if (Tank.vX > Tank.speed) {Tank.vX = Tank.speed;}
     		xstop = false;
     	}
-    	if (xstop) {
+    	if (xstop) {	//No x movement
     		if (Math.abs(Tank.vX) < Tank.accel) {Tank.vX = 0;}
     		else if (Tank.vX > 0) {Tank.vX -= Tank.accel;}
     		else {Tank.vX += Tank.accel;}
     	}
-    	if (ystop) {
+    	if (ystop) {	//No y movement
     		if (Math.abs(Tank.vY) < Tank.accel) {Tank.vY = 0;}
     		else if (Tank.vY > 0) {Tank.vY -= Tank.accel;}
     		else {Tank.vY += Tank.accel;}
@@ -403,20 +484,21 @@ window.onload = function() {
     // draws, then schedules another iteration in the future
     // WARNING: this is the simplest, but not the best, way to do this
     function drawLoop() {
-        moveBalls(allBalls );     // new position
         
         receive();		//evaluate effect of current keystrokes
         
-        Tank.move();		//move the tank
+        moveBalls(allBalls );     //calculate new positions of swarms
+        
+        Tank.move();		//calculate new position of tank
       
 	    // clear the window
         theContext.clearRect(0, 0, theCanvas.width, theCanvas.height);
         
-        drawBalls(allBalls );     // show things
-        
         Tank.draw();	//show tank
+        
+        drawBalls(allBalls );     //show swarms
        
-        reqFrame(drawLoop);
+        reqFrame(drawLoop);		//set up another iteration of loop
     }
     drawLoop();
 }
