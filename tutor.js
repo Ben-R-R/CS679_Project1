@@ -40,10 +40,11 @@ window.onload = function() {
 	// get the canvas (assumes that its there)
 	var theCanvas = document.getElementById("mycanvas");
 	var theContext = theCanvas.getContext("2d");
-    // these are effectively the constants
     var ballcolor = "#FFFF00";      // yellow fill
     var ballstroke = "#000000";     // black outline
     var circ = Math.PI*2;           // complete circle
+    var mousex = 0;					// mouse x-coordinate
+    var mousey = 0;					// mouse y-coordinate
     
     // create a prototype ball
     // this is a slightly weird way to make an object, but it's very
@@ -71,9 +72,17 @@ window.onload = function() {
         	theContext.strokeStyle = ballstroke;
         	theContext.fillStyle = this.ballcolor;
         	
-        	if(this.team == 0)
-        	{
-        		//Setup for specific draw functions
+        	if(this.team == 1) {
+        		theta = Math.PI/4;
+        		phi = Math.atan2(this.vY,this.vX);
+        		theContext.beginPath();
+        			theContext.moveTo(this.x,this.y);
+        			theContext.lineTo(this.x-this.radius*Math.cos(phi+theta),this.y-this.radius*Math.sin(phi+theta));
+        			theContext.lineTo(this.x+this.radius*Math.cos(phi),this.y+this.radius*Math.sin(phi));
+        			theContext.lineTo(this.x-this.radius*Math.cos(phi-theta),this.y-this.radius*Math.sin(phi-theta));
+        		theContext.closePath();
+        		theContext.stroke();
+        		theContext.fill();
         	} else if(this.team == 2) {
         		theta = Math.PI/6;
         		phi = Math.atan2(this.vY,this.vX);
@@ -185,7 +194,7 @@ window.onload = function() {
     
     allBalls = [];
     
-    for (var i=0; i<40; i++) {
+    for (var i=0; i<20; i++) {
         b = makeBall( 50+Math.random()*500, 50+Math.random()*300 , "#0000FF", 2);
         allBalls.push(b)
         b = makeBall( 50+Math.random()*500, 50+Math.random()*300 , "#FF0000", 3);
@@ -361,59 +370,74 @@ window.onload = function() {
         draw : function() {
         
         
-            theContext.strokeStyle = ballstroke;
             
             //Experimenting with making appearance affected by movement
+            theContext.strokeStyle = "#0099FF";
             theContext.fillStyle = "#0099FF";
             
             v = Math.sqrt(this.vX*this.vX+this.vY*this.vY)/this.speed*2;
-            theContext.beginPath();
+            phi = Math.atan2(mousey - this.y, mousex - this.x);
+            theta = Math.PI/8;
+            theContext.beginPath();//bottom-right thrust
             	theContext.arc(this.x+this.radius/1.2,this.y+this.radius/1.2,this.radius/3+v,0,circ,true);
            	theContext.closePath();
            	theContext.stroke();
            	theContext.fill();
-            theContext.beginPath();
+            theContext.beginPath();//top-left thrust
             	theContext.arc(this.x-this.radius/1.2,this.y-this.radius/1.2,this.radius/3+v,0,circ,true);
            	theContext.closePath();
            	theContext.stroke();
            	theContext.fill();
-            theContext.beginPath();
+            theContext.beginPath();//top-right thrust
             	theContext.arc(this.x+this.radius/1.2,this.y-this.radius/1.2,this.radius/3+v,0,circ,true);
            	theContext.closePath();
            	theContext.stroke();
            	theContext.fill();
-            theContext.beginPath();
+            theContext.beginPath();//bottom-left thrust
             	theContext.arc(this.x-this.radius/1.2,this.y+this.radius/1.2,this.radius/3+v,0,circ,true);
            	theContext.closePath();
            	theContext.stroke();
            	theContext.fill();
            		
+            theContext.strokeStyle = ballstroke;
             theContext.fillStyle = ballcolor;
             
-            theContext.beginPath();
+            theContext.beginPath();//bottom-right pod
             	theContext.arc(this.x+this.radius/1.2,this.y+this.radius/1.2,this.radius/3,0,circ,true);
            	theContext.closePath();
            	theContext.stroke();
            	theContext.fill();
-            theContext.beginPath();
+            theContext.beginPath();//top-left pod
             	theContext.arc(this.x-this.radius/1.2,this.y-this.radius/1.2,this.radius/3,0,circ,true);
            	theContext.closePath();
            	theContext.stroke();
            	theContext.fill();
-            theContext.beginPath();
+            theContext.beginPath();//top-right pod
             	theContext.arc(this.x+this.radius/1.2,this.y-this.radius/1.2,this.radius/3,0,circ,true);
            	theContext.closePath();
            	theContext.stroke();
            	theContext.fill();
-            theContext.beginPath();
+            theContext.beginPath();//bottom-left pod
             	theContext.arc(this.x-this.radius/1.2,this.y+this.radius/1.2,this.radius/3,0,circ,true);
            	theContext.closePath();
            	theContext.stroke();
            	theContext.fill();
-            theContext.beginPath();
+            theContext.beginPath();//Body
 	            theContext.arc(this.x,this.y,this.radius,0,circ,true); 
+            theContext.closePath();
+            theContext.stroke();
+            theContext.fill();
+            theContext.beginPath();//Cannon
 	            theContext.moveTo(this.x,this.y);
-	            theContext.lineTo(this.x + 4*this.vX, this.y + 4*this.vY);
+	            theContext.lineTo(this.x+this.radius*Math.cos(phi+theta*2)/2,this.y+this.radius*Math.sin(phi+theta*2)/2);
+	            theContext.lineTo(this.x+this.radius*Math.cos(phi+theta)/1.1,this.y+this.radius*Math.sin(phi+theta)/1.1);
+	            theContext.lineTo(this.x+this.radius*Math.cos(phi-theta)/1.1,this.y+this.radius*Math.sin(phi-theta)/1.1);
+	            theContext.lineTo(this.x+this.radius*Math.cos(phi-theta*2)/2,this.y+this.radius*Math.sin(phi-theta*2)/2);
+            theContext.closePath();
+            theContext.stroke();
+            theContext.fill();
+            theContext.beginPath();//Turret
+	            theContext.arc(this.x,this.y,this.radius/2,0,circ,true); 
             theContext.closePath();
             theContext.stroke();
             theContext.fill();
@@ -443,10 +467,15 @@ window.onload = function() {
     var keysDown = {};	//holds all keys currently pressed
     window.addEventListener("keydown", function(e) {keysDown[e.keyCode] = true;}, false);
     window.addEventListener("keyup", function(e) {delete keysDown[e.keyCode];}, false);
+    theCanvas.addEventListener("mousemove", function(e) {
+    	mousex = e.pageX - theCanvas.offsetLeft;
+    	mousey = e.pageY - theCanvas.offsetTop;
+    }, false);
     
     function receive() {	//translates keystrokes from WASD to velocity changes
     	xstop = true;
     	ystop = true;
+    	
     	if (38 in keysDown || 87 in keysDown) {	//Up
     		Tank.vY -= Tank.accel;
     		if (Tank.vY < -Tank.speed) {Tank.vY = -Tank.speed;}
@@ -487,7 +516,7 @@ window.onload = function() {
         
         receive();		//evaluate effect of current keystrokes
         
-        moveBalls(allBalls );     //calculate new positions of swarms
+        moveBalls(allBalls );     //calculate new positions of balls
         
         Tank.move();		//calculate new position of tank
       
@@ -496,7 +525,7 @@ window.onload = function() {
         
         Tank.draw();	//show tank
         
-        drawBalls(allBalls );     //show swarms
+        drawBalls(allBalls );     //show balls
        
         reqFrame(drawLoop);		//set up another iteration of loop
     }
