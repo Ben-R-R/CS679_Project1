@@ -84,7 +84,7 @@ window.onload = function() {
         		theContext.stroke();
         		theContext.fill();
         	} else if(this.team == 2) {
-        		theta = Math.PI/6;
+        		theta = Math.PI/4;
         		phi = Math.atan2(this.vY,this.vX);
         		theContext.beginPath();
         			theContext.arc(this.x,this.y,this.radius,phi-theta,phi+theta,true);
@@ -108,32 +108,33 @@ window.onload = function() {
         // make 'em "bounce" when they go over the edge
         // not anymore, now they wrap over the edge.
         // no loss of velocity
+        // Finish comment-block to switch between wrapping and a less potent bounce mechanic
         move: function() {
             this.x += this.vX;
             this.y += this.vY;
             if (this.x > theCanvas.width) {
-            	this.x = 0;// theCanvas.width
+            	this.x = 0;//*/ theCanvas.width; this.vX = -1;
             	/*this.vY = -this.vY;
                 if (this.vX > 0) {
                     this.vX = -this.vX;
                 }  */
             }
             if (this.y > theCanvas.height) {
-            	this.y = 0;
+            	this.y = 0;//*/ theCanvas.height; this.vY = -1;
             	/*this.vX = -this.vX;
                 if (this.vY > 0) {
                     this.vY = -this.vY;
                 } */
             }
             if (this.x < 0) {
-            	this.x = theCanvas.width;
+            	this.x = theCanvas.width;//*/ 0; this.vX = 1;
             	/*this.vY = -this.vY;
                 if (this.vX < 0) {
                     this.vX = -this.vX;
                 }  */
             }
             if (this.y < 0) {
-            	this.y = theCanvas.height;
+            	this.y = theCanvas.height;//*/ 0; this.vY = 1;
             	/*this.vX = -this.vX;
                 if (this.vY < 0) {
                     this.vY = -this.vY;
@@ -284,32 +285,65 @@ window.onload = function() {
                 
                 var dd = Math.pow(d, 1.8);
                 
-                var personalSpace = (bi.radius + bj.radius) * 5;
+                var personalSpace = bi.radius * 10;
                 
-                if(bj.team == bi.team){
-				  	if(d < 100){
-						ballList[i].newVX  += (bj.vX / (dd+ali));
-		                ballList[i].newVY  += (bj.vY / (dd+ali));
-		        	} else {
-					    ballList[i].newVX  -= ((bix - bj.x) * .1 ) / (dd);
-	               		ballList[i].newVY  -= ((biy - bj.y) * .1 ) / (dd);
+                if(bj.team == bi.team){//Interactions with same team
+                	if(bi.team == 0) {
+                		
+                	} else if(bi.team == 1) {//P-swarm
+				  		if(d < 100){
+							ballList[i].newVX  += (bj.vX / (dd+ali));
+		                	ballList[i].newVY  += (bj.vY / (dd+ali));
+		        		} else {
+					    	ballList[i].newVX  += (dx * .1 ) / (dd);
+	               			ballList[i].newVY  += (dy * .1 ) / (dd);
+						}
+						if(d < personalSpace && d > 0){
+							//d > 0 requirement to prevent dividing by zero at the start.
+							//as same-team balls approach each other, the repulsion goes up exponentially.
+							ballList[i].newVX  -= (dx / d) * 0.02;
+	                		ballList[i].newVY  -= (dy / d) * 0.02; 
+						}  
+                } else if(bi.team == 2) {//Chomper
+						if(d < personalSpace && d > 0){
+							//d > 0 requirement to prevent dividing by zero at the start.
+							//as same-team balls approach each other, the repulsion goes up exponentially.
+							ballList[i].newVX  -= (dx / d) * 0.01;
+	                		ballList[i].newVY  -= (dy / d) * 0.01; 
+						}  
+                } else {//Other
+				  		if(d < 100){
+							ballList[i].newVX  += (bj.vX / (dd+ali));
+		                	ballList[i].newVY  += (bj.vY / (dd+ali));
+		        		} else {
+					    	ballList[i].newVX  += (dx * .1 ) / (dd);
+	               			ballList[i].newVY  += (dx * .1 ) / (dd);
+						}
+						if(d < personalSpace && d > 0){
+							//d > 0 requirement to prevent dividing by zero at the start.
+							//as same-team balls approach each other, the repulsion goes up exponentially.
+							ballList[i].newVX  -= (dx / d) * 0.01;
+	                		ballList[i].newVY  -= (dy / d) * 0.01; 
+						}  
 					}
-					if(d < personalSpace && d > 0){
-						//d > 0 requirement to prevent dividing by zero at the start.
-						//as same-team balls approach each other, the repulsion goes up exponentially.
-						ballList[i].newVX  -= (dx / d) * 0.01;
-	                	ballList[i].newVY  -= (dy / d) * 0.01;
-		                
+				} else {//Interactions with other teams
+					if(bi.team == 0) {
+						
+	             	} else if(bi.team == 1) {//P-swarm
+	             		if(bj.team == 2 && d < 100) {
+				    		ballList[i].newVX  -= ((bix - bj.x) * 1 ) / dd;
+	                		ballList[i].newVY  -= ((biy - bj.y) * 1 ) / dd;
+	             		}
+	             	} else if(bi.team == 2) {//Chompers
+	             		if(bj.team == 1 && d < 200) {
+				    		ballList[i].newVX  += ((bix - bj.x) * .1 ) / dd;
+	                		ballList[i].newVY  += ((biy - bj.y) * .1 ) / dd;
+	             		}
+	             	} else {
+				    	ballList[i].newVX  += ((bix - bj.x) * .01 ) / dd;
+	                	ballList[i].newVY  += ((biy - bj.y) * .01 ) / dd;
 					}
-					  
-				  	
-	                
-				} else {
-					//
-				    ballList[i].newVX  += ((bix - bj.x) * .01 ) / (dd);
-	                ballList[i].newVY  += ((biy - bj.y) * .01 ) / (dd);
-				}
-                
+              	}
             }
         }
         
@@ -317,17 +351,22 @@ window.onload = function() {
         var cY = theCanvas.height/2
         
         for(var i=ballList.length-1; i>=0; i--) {
-        	// The balls want to be in the center of of the field:
-        		
-        	
-        	
-            ballList[i].vX = ballList[i].newVX + (cX - ballList[i].x) * .00005; //+ (1 - Math.random()*2) * .03;
-            ballList[i].vY = ballList[i].newVY + (cY - ballList[i].y) * .00005; //+ (1 - Math.random()*2) * .03;
             if(Math.random() * 100 > 99){
 			   	//angleTemp = Math.random()
 			//	ballList[i].vX = 2 - Math.random()*4;
             //	ballList[i].vY = 2 - Math.random()*4;
-			}
+            }
+            if(ballList[i].team == 1) {//P-swarm
+        		ballList[i].vX = ballList[i].newVX + (mousex - ballList[i].x) * .0005; //+ (1 - Math.random()*2) * .03;
+        	    ballList[i].vY = ballList[i].newVY + (mousey - ballList[i].y) * .0005; //+ (1 - Math.random()*2) * .03;
+            } else if(ballList[i].team == 2) {//Chompers
+        		ballList[i].vX = ballList[i].newVX + (Tank.x - ballList[i].x) * .0005; //+ (1 - Math.random()*2) * .03;
+        	    ballList[i].vY = ballList[i].newVY + (Tank.y - ballList[i].y) * .0005; //+ (1 - Math.random()*2) * .03;
+            } else {
+        		// The balls want to be in the center of of the field:
+        		ballList[i].vX = ballList[i].newVX + (cX - ballList[i].x) * .00005; //+ (1 - Math.random()*2) * .03;
+         	    ballList[i].vY = ballList[i].newVY + (cY - ballList[i].y) * .00005; //+ (1 - Math.random()*2) * .03;
+            }
         } 
     }
     
