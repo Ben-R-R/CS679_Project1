@@ -222,6 +222,17 @@ window.onload = function() {
             ballList[i].draw();
         }
     }
+    // not the most efficient way to remove balls, 
+    function removeDeadBalls(ballList) {
+		var emptySpace = 0; 
+		for (var i=0; i<ballList.length; i++) {
+          	if(ballList[i].health < 0){
+		   		ballList.splice(i,1)
+		   		i--;
+		   	}
+      	}
+
+	}
     
     // bouncing behavior - if two balls are on top of each other,
     // have them react in a simple way
@@ -242,6 +253,8 @@ window.onload = function() {
                 var dy = bjy - biy;
                 var d = dx*dx+dy*dy;
                 if (d < rad) {
+                	bj.health --;
+                	bi.health --;
                     bj.vX = dy;
                     bj.vY = dx;
                     bi.vX = -dx;
@@ -565,7 +578,7 @@ window.onload = function() {
         Tank.draw();	//show tank
         
         drawBalls(allBalls );     //show balls
-       
+        removeDeadBalls(allBalls);
         reqFrame(drawLoop);		//set up another iteration of loop
     }
     drawLoop();
