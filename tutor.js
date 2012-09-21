@@ -43,11 +43,14 @@ window.onload = function() {
     var ballcolor = "#FFFF00";      // yellow fill
     var ballstroke = "#000000";     // black outline
     var circ = Math.PI*2;           // complete circle
-    var mousex = 0;					// mouse x-coordinate
-    var mousey = 0;					// mouse y-coordinate
+    var mousex = 0;					// mouse x-coordinate in field coordinates
+    var mousey = 0;					// mouse y-coordinate in field coordinates
     
     var originX = 0;
     var originY = 0;
+    
+    var fieldSizeX = 2000;
+    var fieldSizeY = 2000;
     
     // create a prototype ball
     // this is a slightly weird way to make an object, but it's very
@@ -117,14 +120,14 @@ window.onload = function() {
         move: function() {
             this.x += this.vX;
             this.y += this.vY;
-            if (this.x > theCanvas.width) {
+            if (this.x > fieldSizeX) {
             	this.x = 0;//*/ theCanvas.width; this.vX = -1;
             	/*this.vY = -this.vY;
                 if (this.vX > 0) {
                     this.vX = -this.vX;
                 }  */
             }
-            if (this.y > theCanvas.height) {
+            if (this.y > fieldSizeY) {
             	this.y = 0;//*/ theCanvas.height; this.vY = -1;
             	/*this.vX = -this.vX;
                 if (this.vY > 0) {
@@ -132,14 +135,14 @@ window.onload = function() {
                 } */
             }
             if (this.x < 0) {
-            	this.x = theCanvas.width;//*/ 0; this.vX = 1;
+            	this.x = fieldSizeX;//*/ 0; this.vX = 1;
             	/*this.vY = -this.vY;
                 if (this.vX < 0) {
                     this.vX = -this.vX;
                 }  */
             }
             if (this.y < 0) {
-            	this.y = theCanvas.height;//*/ 0; this.vY = 1;
+            	this.y = fieldSizeY;//*/ 0; this.vY = 1;
             	/*this.vX = -this.vX;
                 if (this.vY < 0) {
                     this.vY = -this.vY;
@@ -423,11 +426,11 @@ window.onload = function() {
             
             
             v = Math.sqrt(this.vX*this.vX+this.vY*this.vY)/this.speed*2;
-            phi = Math.atan2((mousey) - _Y, (mousex) - _X);
+            phi = Math.atan2((mousey) - this.x, (mousex) - this.y);
             
             theContext.fillStyle = "#0099FF"
-            var tstX = originX;
-            var tstY = originY; 
+            var tstX = 0 + originX;
+            var tstY = 0 + originY; 
             theContext.beginPath();//Test Object
             	theContext.arc(tstX+this.radius/1.2,tstY+this.radius/1.2,this.radius/3+v,0,circ,true);
            	theContext.closePath();
@@ -435,8 +438,8 @@ window.onload = function() {
            	theContext.fill();
            	
            	theContext.fillStyle = "#9911FF"
-           	tstX = mousex;
-            tstY = mousey; 
+           	tstX = mousex + originX;
+            tstY = mousey + originY; 
             theContext.beginPath();//Test Object
             	theContext.arc(tstX+this.radius/1.2,tstY+this.radius/1.2,this.radius/3+v,0,circ,true);
            	theContext.closePath();
@@ -514,20 +517,20 @@ window.onload = function() {
         move : function() {
             this.x += this.vX;
             this.y += this.vY;
-            if (this.x > theCanvas.width) {
+            if (this.x > fieldSizeX) {
             	this.x = 0;
             	//this.vY = -this.vY;
             }
-            if (this.y > theCanvas.height) {
+            if (this.y > fieldSizeY) {
             	this.y = 0;
             	//this.vX = -this.vX;
             }
             if (this.x < 0) {
-            	this.x = theCanvas.width;
+            	this.x = fieldSizeX;
             	//this.vY = -this.vY;
             }
             if (this.y < 0) {
-            	this.y = theCanvas.height;
+            	this.y = fieldSizeY;
             	//this.vX = -this.vX;
             }
         }
@@ -559,10 +562,14 @@ window.onload = function() {
     	"remove" : false, //flips to true when the object should be removed
     	
     	draw : function() {
-    		theContext.strokeStyle = ballstroke;
+    		
+			var _X = this.x + originX;
+			var _Y = this.y + originY;
+			
+			theContext.strokeStyle = ballstroke;
     		theContext.fillStyle = "#555555"; //TODO: color changes as nears destination (gray to red, 555555 to FF0000)
     		theContext.beginPath();
-    			theContext.arc(this.x,this.y,this.radius,0,circ,true);
+    			theContext.arc(_X,_Y,this.radius,0,circ,true);
     		theContext.closePath();
     		theContext.stroke();
     		theContext.fill();
@@ -609,8 +616,8 @@ window.onload = function() {
 		bomb.y = Tank.y + Tank.radius * Math.sin(theta);
 		bomb.vX = aBomb.speed * Math.cos(theta);
 		bomb.vY = aBomb.speed * Math.sin(theta);
-		dx = mousex - bomb.x;
-		dy = mousey - bomb.y;
+		dx = mousex - bomb.x ;
+		dy = mousey - bomb.y ;
 		bomb.steps = Math.sqrt(dx*dx+dy*dy)/aBomb.speed;
 		Stuff.push(bomb);
     }
@@ -658,8 +665,8 @@ window.onload = function() {
 		    originX = preDragOrigX + dragPixX;
     		originY = preDragOrigY + dragPixY;
 		}
-		mousex = e.pageX - theCanvas.offsetLeft;
-    	mousey = e.pageY - theCanvas.offsetTop;
+		mousex = (e.pageX - theCanvas.offsetLeft) - originX;
+    	mousey = (e.pageY - theCanvas.offsetTop) - originY;
     	
     }, false);
     
@@ -699,12 +706,32 @@ window.onload = function() {
     	}
     }
     
+    function drawField(){
+    	var _X = 0 + originX;
+    	var _Y = 0 + originY;
+    	
+    	theContext.strokeStyle = "#000000";
+    	theContext.fillStyle = "#EEEEEE"; //TODO: color changes as nears destination (gray to red, 555555 to FF0000)
+    	
+			
+    	
+	 	theContext.beginPath();//Cannon
+			theContext.moveTo(_X,_Y);
+			
+			theContext.lineTo(_X             , _Y + fieldSizeY);
+			theContext.lineTo(_X + fieldSizeX, _Y + fieldSizeY);
+			theContext.lineTo(_X + fieldSizeX, _Y);
+			theContext.lineTo(_X             , _Y);
+		theContext.closePath();
+	    theContext.stroke();
+        theContext.fill();
+	}
 
     // what we need to do is define a function that updates the position
     // draws, then schedules another iteration in the future
     // WARNING: this is the simplest, but not the best, way to do this
     function drawLoop() {
-        
+         
         receive();		//evaluate effect of current keystrokes
         
         moveBalls(allBalls );     //calculate new positions of balls
@@ -715,7 +742,7 @@ window.onload = function() {
       
 	    // clear the window
         theContext.clearRect(0, 0, theCanvas.width, theCanvas.height);
-        
+        drawField();
         Tank.draw();	//show tank
         
         drawBalls(allBalls );     //show balls
