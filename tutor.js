@@ -380,22 +380,6 @@ window.onload = function() {
        }
     }
      
-    // what to do when things get clicked
-    function doClick(evt){
-        // a catch - we need to adjust for where the canvas is!
-        // this is quite ugly without some degree of support from
-        // a library
-        allBalls .push( 
-			makeBall
-			(
-				evt.pageX - theCanvas.offsetLeft,
-	        	evt.pageY - theCanvas.offsetTop,
-	        	"#008800",
-	        	1
-			)
-		);
-    }
-    theCanvas.addEventListener("click",doClick,false);
     
     var Tank = {	//The player avatar, can be controlled with keyboard
     	"x" : 100,
@@ -405,7 +389,7 @@ window.onload = function() {
     	"radius" : 25, //radius of tank
     	"vX" : 0, //current x velocity
     	"vY" : 0, //current y velocity
-    	"health" : 0,
+    	"health" : 200,
         draw : function() {
         
         
@@ -503,6 +487,88 @@ window.onload = function() {
         }
     }
     
+    Stuff = [];//holds all miscellaneous objects (except Tank)
+    
+    function moveStuff() {//simple method, just goes through misc objects and runs move commands
+    	for(var i = 0; i < Stuff.length; i++) {
+    		Stuff[i].move();
+    	}
+    }
+    function cull(a,b) {//sorting function for Stuff, puts stuff tagged for removal at end to be popped.
+    	if(a.remove) {return 1;}
+    	else if(b.remove) {return -1;}
+    	else {return 0;}
+    }
+    
+    var aBomb = {	//Prototype for bombs shot by Tank, goes in straight line to destination then explodes into a group of P-swarmers
+    	"x" : 0,
+    	"y" : 0,
+    	"speed" : 10,	//speed of bombs (constant)
+    	"vX" : 0,
+    	"vY" : 0,
+    	"radius" : 10,
+    	"progress" : 0,	//how many steps taken so far
+    	"steps" : 0,	//Number of steps until target is reached
+    	"yield" : 5,	//Number of swarmers carried
+    	"remove" : false, //flips to true when the object should be removed
+    	
+    	draw : function() {
+    		theContext.strokeStyle = ballstroke;
+    		theContext.fillStyle = "#555555"; //TODO: color changes as nears destination (gray to red, 555555 to FF0000)
+    		theContext.beginPath();
+    			theContext.arc(this.x,this.y,this.radius,0,circ,true);
+    		theContext.closePath();
+    		theContext.stroke();
+    		theContext.fill();
+    	},
+    	move : function() {
+    		if(this.progress < this.steps) {
+    			this.x += this.vX;
+    			this.y += this.vY;
+    			this.progress++;
+    		} else {
+    			this.remove = true;//Flags, sorts and removes from list
+    			Stuff.sort(cull);
+    			Stuff.pop();
+    			for(var i = 0; i < this.yield; i++) {//Spawns swarmers per bomb yield
+    				allBalls.push(
+    					makeBall(
+    						this.x+this.radius*Math.cos(i*circ/this.yield)/2,
+    						this.y+this.radius*Math.sin(i*circ/this.yield)/2,
+    						"#008800",
+    						1
+    					)
+    				);
+    			}
+    		}
+    	}
+    }
+    
+    // what to do when things get clicked
+    function doClick(){
+        /*allBalls .push( 
+			makeBall
+			(
+				evt.pageX - theCanvas.offsetLeft,
+	        	evt.pageY - theCanvas.offsetTop,
+	        	"#008800",
+	        	1
+			)
+		);*/
+		theta = Math.atan2(mousey - Tank.y,mousex - Tank.x);
+		Empty = function() {};
+		Empty.prototype = aBomb;
+		bomb = new Empty();
+		bomb.x = Tank.x + Tank.radius * Math.cos(theta);
+		bomb.y = Tank.y + Tank.radius * Math.sin(theta);
+		bomb.vX = aBomb.speed * Math.cos(theta);
+		bomb.vY = aBomb.speed * Math.sin(theta);
+		dx = mousex - bomb.x;
+		dy = mousey - bomb.y;
+		bomb.steps = Math.sqrt(dx*dx+dy*dy)/aBomb.speed;
+		Stuff.push(bomb);
+    }
+    theCanvas.addEventListener("click",doClick,false);
     var keysDown = {};	//holds all keys currently pressed
     window.addEventListener("keydown", function(e) {keysDown[e.keyCode] = true;}, false);
     window.addEventListener("keyup", function(e) {delete keysDown[e.keyCode];}, false);
@@ -557,6 +623,8 @@ window.onload = function() {
         
         moveBalls(allBalls );     //calculate new positions of balls
         
+        moveStuff();		//calculate new positions/qualities of other objects
+        
         Tank.move();		//calculate new position of tank
       
 	    // clear the window
@@ -565,6 +633,8 @@ window.onload = function() {
         Tank.draw();	//show tank
         
         drawBalls(allBalls );     //show balls
+        
+        drawBalls(Stuff);
        
         reqFrame(drawLoop);		//set up another iteration of loop
     }
