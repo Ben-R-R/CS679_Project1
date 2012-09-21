@@ -267,7 +267,7 @@ window.onload = function() {
                 var dx = bjx - bix;
                 var dy = bjy - biy;
                 var d = dx*dx+dy*dy;
-                if (d < rad) {
+                if (d < rad && (bj.team != bi.team)) {
                 	bj.health --;
                 	bi.health --;
                     bj.vX = dy;
@@ -426,7 +426,7 @@ window.onload = function() {
             
             
             v = Math.sqrt(this.vX*this.vX+this.vY*this.vY)/this.speed*2;
-            phi = Math.atan2((mousey) - this.x, (mousex) - this.y);
+            phi = Math.atan2((mousey) - this.y, (mousex) - this.x);
             
             theContext.fillStyle = "#0099FF"
             var tstX = 0 + originX;
@@ -593,7 +593,7 @@ window.onload = function() {
     	"radius" : 10,
     	"progress" : 0,	//how many steps taken so far
     	"steps" : 0,	//Number of steps until target is reached
-    	"yield" : 5,	//Number of swarmers carried
+    	"yield" : 10,	//Number of swarmers carried
     	"remove" : false, //flips to true when the object should be removed
     	
     	draw : function() {
