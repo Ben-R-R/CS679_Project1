@@ -94,6 +94,8 @@ window.onload = function() {
         		theContext.fill();
         	}
         	else {
+        		drawBoid(theContext,ballstroke, this);
+        		/*
         		theContext.beginPath();
 	            	theContext.arc(this.x,this.y,this.radius,0,circ,true); 
 	            	theContext.moveTo(this.x,this.y);
@@ -101,7 +103,7 @@ window.onload = function() {
 	            theContext.closePath();
 	            
 	            theContext.stroke();
-	            theContext.fill();
+	            theContext.fill(); */
 	        }
         },
     
