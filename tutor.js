@@ -69,13 +69,17 @@ window.onload = function () {
         "frame": 0, //frame, for animation purposes
         "remove": false, //tag for removal
         "attacking": false,
-        "fleeing" : false,
+        "fleeing": false,
+        "state": "pursue",
+        "bloodLevel": 0,
+
         /*
         * Teams:
         * 1: P-Swarm
         * 2: Chompers
         * 3: Hornets
         * 4: Lure
+        * 5: Mosquito
         */
         draw: function () {
             theContext.strokeStyle = ballstroke;
@@ -104,19 +108,40 @@ window.onload = function () {
                 theContext.fill();
             }
             else if (this.team == 5) {
-                if (this.attacking) {
+                if (this.state == "attack") {
                     theContext.fillStyle = "#FF0000";
                     theContext.beginPath();
-                    theContext.moveTo(this.x, this.y);
+                    theContext.moveTo(_X, _Y);
                     theContext.lineTo(Tank.x, Tank.y);
                     theContext.closePath();
                     theContext.stroke();
                     this.frame++;
+                    if (this.frame > 10) {
+                        this.bloodLevel++;
+                        this.frame = 0;
+                        this.state = "flee";
+                    }
                 }
-                if (this.frame > 10) {
-                    this.frame = 0;
-                    this.attacking = false;
-                    this.fleeing = true;
+                switch (this.bloodLevel) {
+                    case 0:
+                        theContext.fillStyle = "#FFCC00";
+                        this.ballcolor = "#FFCC00";
+                        break;
+
+                    case 1:
+                        theContext.fillStyle = "#FF9900";
+                        this.ballcolor = "#FF9900";
+                        break;
+
+                    case 2:
+                        theContext.fillStyle = "#FF6600";
+                        this.ballcolor = "#FF6600";
+                        break;
+                    case 3:
+                        theContext.fillStyle = "#FF3300";
+                        this.ballcolor = "#FF3300";
+                        break;
+
                 }
 
                 theContext.beginPath();
@@ -242,7 +267,7 @@ window.onload = function () {
     allBalls = [];
 
     for (var i = 0; i < 3; i++) {
-        /*    b = makeBall( 50+Math.random()*500, 50+Math.random()*300 , "#0000FF", 2);
+        /* b = makeBall( 50+Math.random()*500, 50+Math.random()*300 , "#0000FF", 2);
         allBalls.push(b)
         b = makeBall( 50+Math.random()*500, 50+Math.random()*300 , "#FF0000", 3);
         allBalls.push(b)
@@ -382,32 +407,33 @@ window.onload = function () {
                         //   if (d < personalSpace && d > 0) {
                         //d > 0 requirement to prevent dividing by zero at the start.
                         //as same-team balls approach each other, the repulsion goes up exponentially.
-
-                        if (!bi.fleeing && (Math.abs(Tank.x - bi.x) < 50) && (Math.abs(Tank.y - bi.y) < 50)) {
-                            bi.attacking = true;
+                        if (bi.state == "flee") {
+                            ballList[i].newVX = -(Tank.x - bi.x);
+                            ballList[i].newVY = -(Tank.y - bi.y);
+                            if ((Math.abs(Tank.x - bi.x) > 400) || (Math.abs(Tank.y - bi.y) > 400)) {
+                                bi.state = "pursue";
+                                ballList[i].newVX = Tank.x - bi.x;
+                                ballList[i].newVY = Tank.y - bi.y;
+                            }
+                        }
+                        else if (bi.state == "attack" || (Math.abs(Tank.x - bi.x) < 50) && (Math.abs(Tank.y - bi.y) < 50)) {
+                            bi.state = "attack";
                             ballList[i].newVX = 0;
                             ballList[i].newVY = 0;
                             ballList[i].vX = 0;
                             ballList[i].vY = 0;
-
-                        } else {
-                            if ((Math.abs(Tank.x - bi.x) > 200) && (Math.abs(Tank.y - bi.y) < 200)) {
-                                bi.fleeing = false;
-                            }
-
-                            if (!bi.fleeing) {
-                                ballList[i].newVX = Tank.x - bi.x;
-                                ballList[i].newVY = Tank.y - bi.y;
-                            } else {
-
-                                ballList[i].newVX = -(Tank.x - bi.x);
-                                ballList[i].newVY = -(Tank.y - bi.y);
-                            }
+                        }
+                        else if (bi.state == "pursue") {
+                            bi.state = "pursue";
+                            ballList[i].newVX = Tank.x - bi.x;
+                            ballList[i].newVY = Tank.y - bi.y;
                         }
 
-
-                        // }
                     }
+                    //||(Math.abs(Tank.x - bi.x) > 1000) || (Math.abs(Tank.y - bi.y) < 1000)
+
+                    // }
+
                     else {//Other
                         if (d < 100) {
                             ballList[i].newVX += (bj.vX / (dd + ali));
@@ -604,39 +630,39 @@ window.onload = function () {
             }
             var _X = this.x + originX;
             var _Y = this.y + originY;
-            
-            if ( (_X > theCanvas.width - 100) && this.vX > 0.0001){
-				originX	-= this.vX;
-				
-			} else if ( (_X < 0 + 100)  && this.vX < -0.0001){
-				originX	-= this.vX;
-				
-			} 
-			
-			if ( (_X < 0) ){
-				originX	= -this.x + 100;
-				
-			} else if ( (_X > theCanvas.width) ){
-				originX	= -this.x + 100;
-				
-			}
-			
-			if ( (_Y > theCanvas.height - 100) && this.vY > 0.0001){
-				originY	-= this.vY;
-				
-			} else if ( (_Y < 0 + 100) && this.vY < -0.0001){
-				originY	-= this.vY;
-				
-			} 
-			
-			if ( (_Y < 0) ){
-				originY	= -this.y + 100;
-				
-			} else if ( (_Y > theCanvas.height) ){
-				originY	= -this.y + 100;
-				
-			}
-			
+
+            if ((_X > theCanvas.width - 100) && this.vX > 0.0001) {
+                originX -= this.vX;
+
+            } else if ((_X < 0 + 100) && this.vX < -0.0001) {
+                originX -= this.vX;
+
+            }
+
+            if ((_X < 0)) {
+                originX = -this.x + 100;
+
+            } else if ((_X > theCanvas.width)) {
+                originX = -this.x + 100;
+
+            }
+
+            if ((_Y > theCanvas.height - 100) && this.vY > 0.0001) {
+                originY -= this.vY;
+
+            } else if ((_Y < 0 + 100) && this.vY < -0.0001) {
+                originY -= this.vY;
+
+            }
+
+            if ((_Y < 0)) {
+                originY = -this.y + 100;
+
+            } else if ((_Y > theCanvas.height)) {
+                originY = -this.y + 100;
+
+            }
+
         }
     }
 
@@ -808,8 +834,8 @@ window.onload = function () {
             else if (Tank.vY > 0) { Tank.vY -= Tank.accel; }
             else { Tank.vY += Tank.accel; }
         }
-    	
-    	
+
+
     }
 
     function drawField() {
