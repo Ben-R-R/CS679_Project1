@@ -533,6 +533,41 @@ window.onload = function() {
             	this.y = fieldSizeY;
             	//this.vX = -this.vX;
             }
+            var _X = this.x + originX;
+            var _Y = this.y + originY;
+            
+            if ( (_X > theCanvas.width - 100) && this.vX > 0.0001){
+				originX	-= this.vX;
+				
+			} else if ( (_X < 0 + 100)  && this.vX < -0.0001){
+				originX	-= this.vX;
+				
+			} 
+			
+			if ( (_X < 0) ){
+				originX	= -this.x + 100;
+				
+			} else if ( (_X > theCanvas.width) ){
+				originX	= -this.x + 100;
+				
+			}
+			
+			if ( (_Y > theCanvas.height - 100) && this.vY > 0.0001){
+				originY	-= this.vY;
+				
+			} else if ( (_Y < 0 + 100) && this.vY < -0.0001){
+				originY	-= this.vY;
+				
+			} 
+			
+			if ( (_Y < 0) ){
+				originY	= -this.y + 100;
+				
+			} else if ( (_Y > theCanvas.height) ){
+				originY	= -this.y + 100;
+				
+			}
+			
         }
     }
     
@@ -704,6 +739,8 @@ window.onload = function() {
     		else if (Tank.vY > 0) {Tank.vY -= Tank.accel;}
     		else {Tank.vY += Tank.accel;}
     	}
+    	
+    	
     }
     
     function drawField(){
