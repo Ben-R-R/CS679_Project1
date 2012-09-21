@@ -122,7 +122,7 @@ var Ball = {
 // then we set some other stuff if we want
 function makeBall(x,y,color,team) {
     Empty = function () {};
-    Empty.prototype = aBall;    // don't ask why not ball.prototype=aBall;
+    Empty.prototype = Ball;    // don't ask why not ball.prototype=aBall;
     ball = new Empty();
     ball.x = x;
     ball.y = y;

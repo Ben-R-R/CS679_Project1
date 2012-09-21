@@ -38,13 +38,13 @@ window.onload = function() {
     // "application" level variables (not totally global, but used by all
     // of the functions defined inside this function
 	// get the canvas (assumes that its there)
-	var theCanvas = document.getElementById("mycanvas");
-	var theContext = theCanvas.getContext("2d");
-    var ballcolor = "#FFFF00";      // yellow fill
-    var ballstroke = "#000000";     // black outline
-    var circ = Math.PI*2;           // complete circle
-    var mousex = 0;					// mouse x-coordinate
-    var mousey = 0;					// mouse y-coordinate
+	theCanvas = document.getElementById("mycanvas");
+	theContext = theCanvas.getContext("2d");
+    //var ballcolor = "#FFFF00";      // yellow fill
+    //var ballstroke = "#000000";     // black outline
+    //var circ = Math.PI*2;           // complete circle
+    mousex = 0;					// mouse x-coordinate
+    mousey = 0;					// mouse y-coordinate
     
     // create a prototype ball
     // this is a slightly weird way to make an object, but it's very
@@ -165,7 +165,7 @@ window.onload = function() {
     // and set its prototype to be the first ball
     // (we probably could use create as well)
     // then we set some other stuff if we want
-    function makeBall(x,y,color,team) {
+    function makeBall2(x,y,color,team) {
         Empty = function () {};
         Empty.prototype = aBall;    // don't ask why not ball.prototype=aBall;
         ball = new Empty();
