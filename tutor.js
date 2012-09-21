@@ -61,6 +61,7 @@ window.onload = function() {
         "team" : 0,
         "health" : 100,
         "frame" : 0, //frame, for animation purposes
+        "remove" : false,	//tag for removal
         /*
          * Teams:
          * 1: P-Swarm
@@ -140,6 +141,11 @@ window.onload = function() {
                     this.vY = -this.vY;
                 } */
             }
+            if(this.health < 0) {
+            	this.remove = true;
+            	allBalls.sort(cull);
+            	allBalls.pop();
+            }
         },
 
         // normalize the velocity to the given speed
@@ -174,17 +180,17 @@ window.onload = function() {
         if(team == 1) { //P-swarmers
         	ball.radius = 5.0;
         	ball.speed = 4.0;
-        	ball.health = 10;
+        	ball.health = 50;
         }
         else if(team == 2) { //Chompers
         	ball.radius = 10.0;
         	ball.speed = 2.0;
-        	ball.health = 50;
+        	ball.health = 1000;
         }
         else { //Miscellaneous
         	ball.radius = 5.0;
         	ball.speed = 4.0;
-        	ball.health = 100;
+        	ball.health = 1000;
         }
         return ball;
     }
@@ -223,6 +229,19 @@ window.onload = function() {
         }
     }
     
+    // not the most efficient way to remove balls, 
+    /*
+    function removeDeadBalls(ballList) {
+		var emptySpace = 0; 
+		for (var i=0; i<ballList.length; i++) {
+          	if(ballList[i].health < 0){
+		   		ballList.splice(i,1)
+		   		i--;
+		   	}
+      	}
+
+	}*/
+    
     // bouncing behavior - if two balls are on top of each other,
     // have them react in a simple way
     function bounce(ballList) {
@@ -242,6 +261,8 @@ window.onload = function() {
                 var dy = bjy - biy;
                 var d = dx*dx+dy*dy;
                 if (d < rad) {
+                	bj.health --;
+                	bi.health --;
                     bj.vX = dy;
                     bj.vY = dx;
                     bi.vX = -dx;
