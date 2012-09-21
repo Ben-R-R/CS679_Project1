@@ -46,6 +46,9 @@ window.onload = function() {
     var mousex = 0;					// mouse x-coordinate
     var mousey = 0;					// mouse y-coordinate
     
+    var originX = 0;
+    var originY = 0;
+    
     // create a prototype ball
     // this is a slightly weird way to make an object, but it's very
     // javascripty
@@ -71,15 +74,16 @@ window.onload = function() {
         draw : function() {
         	theContext.strokeStyle = ballstroke;
         	theContext.fillStyle = this.ballcolor;
-        	
+        	var _X = this.x + originX;
+        	var _Y = this.y + originY;
         	if(this.team == 1) {
         		theta = Math.PI/4;
         		phi = Math.atan2(this.vY,this.vX);
         		theContext.beginPath();
-        			theContext.moveTo(this.x,this.y);
-        			theContext.lineTo(this.x-this.radius*Math.cos(phi+theta),this.y-this.radius*Math.sin(phi+theta));
-        			theContext.lineTo(this.x+this.radius*Math.cos(phi),this.y+this.radius*Math.sin(phi));
-        			theContext.lineTo(this.x-this.radius*Math.cos(phi-theta),this.y-this.radius*Math.sin(phi-theta));
+        			theContext.moveTo(_X,_Y);
+        			theContext.lineTo(_X-this.radius*Math.cos(phi+theta),_Y-this.radius*Math.sin(phi+theta));
+        			theContext.lineTo(_X+this.radius*Math.cos(phi),_Y+this.radius*Math.sin(phi));
+        			theContext.lineTo(_X-this.radius*Math.cos(phi-theta),_Y-this.radius*Math.sin(phi-theta));
         		theContext.closePath();
         		theContext.stroke();
         		theContext.fill();
@@ -87,17 +91,17 @@ window.onload = function() {
         		theta = Math.PI/4;
         		phi = Math.atan2(this.vY,this.vX);
         		theContext.beginPath();
-        			theContext.arc(this.x,this.y,this.radius,phi-theta,phi+theta,true);
-        			theContext.lineTo(this.x,this.y);
+        			theContext.arc(_X,_Y,this.radius,phi-theta,phi+theta,true);
+        			theContext.lineTo(_X,_Y);
         		theContext.closePath();
         		theContext.stroke();
         		theContext.fill();
         	}
         	else {
         		theContext.beginPath();
-	            	theContext.arc(this.x,this.y,this.radius,0,circ,true); 
-	            	theContext.moveTo(this.x,this.y);
-	            	theContext.lineTo(this.x + 4*this.vX, this.y + 4*this.vY);
+	            	theContext.arc(_X,_Y,this.radius,0,circ,true); 
+	            	theContext.moveTo(_X,_Y);
+	            	theContext.lineTo(_X + 4*this.vX, _Y + 4*this.vY);
 	            theContext.closePath();
 	            
 	            theContext.stroke();
@@ -401,8 +405,8 @@ window.onload = function() {
         allBalls .push( 
 			makeBall
 			(
-				evt.pageX - theCanvas.offsetLeft,
-	        	evt.pageY - theCanvas.offsetTop,
+				 (evt.pageX - theCanvas.offsetLeft) - originX,
+	        	 (evt.pageY - theCanvas.offsetTop) - originY,
 	        	"#008800",
 	        	1
 			)
@@ -421,32 +425,53 @@ window.onload = function() {
     	"health" : 0,
         draw : function() {
         
-        
+            var _X = this.x + originX;
+        	var _Y = this.y + originY;
             
+            
+            
+            v = Math.sqrt(this.vX*this.vX+this.vY*this.vY)/this.speed*2;
+            phi = Math.atan2((mousey) - _Y, (mousex) - _X);
+            
+            theContext.fillStyle = "#0099FF"
+            var tstX = originX;
+            var tstY = originY; 
+            theContext.beginPath();//Test Object
+            	theContext.arc(tstX+this.radius/1.2,tstY+this.radius/1.2,this.radius/3+v,0,circ,true);
+           	theContext.closePath();
+           	theContext.stroke();
+           	theContext.fill();
+           	
+           	theContext.fillStyle = "#9911FF"
+           	tstX = mousex;
+            tstY = mousey; 
+            theContext.beginPath();//Test Object
+            	theContext.arc(tstX+this.radius/1.2,tstY+this.radius/1.2,this.radius/3+v,0,circ,true);
+           	theContext.closePath();
+           	theContext.stroke();
+           	theContext.fill();
+           	
             //Experimenting with making appearance affected by movement
             theContext.strokeStyle = "#0099FF";
             theContext.fillStyle = "#0099FF";
-            
-            v = Math.sqrt(this.vX*this.vX+this.vY*this.vY)/this.speed*2;
-            phi = Math.atan2(mousey - this.y, mousex - this.x);
             theta = Math.PI/8;
             theContext.beginPath();//bottom-right thrust
-            	theContext.arc(this.x+this.radius/1.2,this.y+this.radius/1.2,this.radius/3+v,0,circ,true);
+            	theContext.arc(_X+this.radius/1.2,_Y+this.radius/1.2,this.radius/3+v,0,circ,true);
            	theContext.closePath();
            	theContext.stroke();
            	theContext.fill();
             theContext.beginPath();//top-left thrust
-            	theContext.arc(this.x-this.radius/1.2,this.y-this.radius/1.2,this.radius/3+v,0,circ,true);
+            	theContext.arc(_X-this.radius/1.2,_Y-this.radius/1.2,this.radius/3+v,0,circ,true);
            	theContext.closePath();
            	theContext.stroke();
            	theContext.fill();
             theContext.beginPath();//top-right thrust
-            	theContext.arc(this.x+this.radius/1.2,this.y-this.radius/1.2,this.radius/3+v,0,circ,true);
+            	theContext.arc(_X+this.radius/1.2,_Y-this.radius/1.2,this.radius/3+v,0,circ,true);
            	theContext.closePath();
            	theContext.stroke();
            	theContext.fill();
             theContext.beginPath();//bottom-left thrust
-            	theContext.arc(this.x-this.radius/1.2,this.y+this.radius/1.2,this.radius/3+v,0,circ,true);
+            	theContext.arc(_X-this.radius/1.2,_Y+this.radius/1.2,this.radius/3+v,0,circ,true);
            	theContext.closePath();
            	theContext.stroke();
            	theContext.fill();
@@ -455,41 +480,41 @@ window.onload = function() {
             theContext.fillStyle = ballcolor;
             
             theContext.beginPath();//bottom-right pod
-            	theContext.arc(this.x+this.radius/1.2,this.y+this.radius/1.2,this.radius/3,0,circ,true);
+            	theContext.arc(_X+this.radius/1.2,_Y+this.radius/1.2,this.radius/3,0,circ,true);
            	theContext.closePath();
            	theContext.stroke();
            	theContext.fill();
             theContext.beginPath();//top-left pod
-            	theContext.arc(this.x-this.radius/1.2,this.y-this.radius/1.2,this.radius/3,0,circ,true);
+            	theContext.arc(_X-this.radius/1.2,_Y-this.radius/1.2,this.radius/3,0,circ,true);
            	theContext.closePath();
            	theContext.stroke();
            	theContext.fill();
             theContext.beginPath();//top-right pod
-            	theContext.arc(this.x+this.radius/1.2,this.y-this.radius/1.2,this.radius/3,0,circ,true);
+            	theContext.arc(_X+this.radius/1.2,_Y-this.radius/1.2,this.radius/3,0,circ,true);
            	theContext.closePath();
            	theContext.stroke();
            	theContext.fill();
             theContext.beginPath();//bottom-left pod
-            	theContext.arc(this.x-this.radius/1.2,this.y+this.radius/1.2,this.radius/3,0,circ,true);
+            	theContext.arc(_X-this.radius/1.2,_Y+this.radius/1.2,this.radius/3,0,circ,true);
            	theContext.closePath();
            	theContext.stroke();
            	theContext.fill();
             theContext.beginPath();//Body
-	            theContext.arc(this.x,this.y,this.radius,0,circ,true); 
+	            theContext.arc(_X,_Y,this.radius,0,circ,true); 
             theContext.closePath();
             theContext.stroke();
             theContext.fill();
             theContext.beginPath();//Cannon
-	            theContext.moveTo(this.x,this.y);
-	            theContext.lineTo(this.x+this.radius*Math.cos(phi+theta*2)/2,this.y+this.radius*Math.sin(phi+theta*2)/2);
-	            theContext.lineTo(this.x+this.radius*Math.cos(phi+theta)/1.1,this.y+this.radius*Math.sin(phi+theta)/1.1);
-	            theContext.lineTo(this.x+this.radius*Math.cos(phi-theta)/1.1,this.y+this.radius*Math.sin(phi-theta)/1.1);
-	            theContext.lineTo(this.x+this.radius*Math.cos(phi-theta*2)/2,this.y+this.radius*Math.sin(phi-theta*2)/2);
+	            theContext.moveTo(_X,_Y);
+	            theContext.lineTo(_X+this.radius*Math.cos(phi+theta*2)/2,_Y+this.radius*Math.sin(phi+theta*2)/2);
+	            theContext.lineTo(_X+this.radius*Math.cos(phi+theta)/1.1,_Y+this.radius*Math.sin(phi+theta)/1.1);
+	            theContext.lineTo(_X+this.radius*Math.cos(phi-theta)/1.1,_Y+this.radius*Math.sin(phi-theta)/1.1);
+	            theContext.lineTo(_X+this.radius*Math.cos(phi-theta*2)/2,_Y+this.radius*Math.sin(phi-theta*2)/2);
             theContext.closePath();
             theContext.stroke();
             theContext.fill();
             theContext.beginPath();//Turret
-	            theContext.arc(this.x,this.y,this.radius/2,0,circ,true); 
+	            theContext.arc(_X,_Y,this.radius/2,0,circ,true); 
             theContext.closePath();
             theContext.stroke();
             theContext.fill();
@@ -519,9 +544,49 @@ window.onload = function() {
     var keysDown = {};	//holds all keys currently pressed
     window.addEventListener("keydown", function(e) {keysDown[e.keyCode] = true;}, false);
     window.addEventListener("keyup", function(e) {delete keysDown[e.keyCode];}, false);
+    
+	//theCanvas.addEventListener("mousemove", function(e) {}, false);
+    
+    var mouseDown = false;
+    var dragging = false;
+    var dragOrigX = 0;
+    var dragOrigY = 0;
+    var dragPixX = 0;
+    var dragPixY = 0;
+    var preDragOrigX = 0;
+    var preDragOrigY = 0;
+    
+    theCanvas.addEventListener("mousedown", function(e) {
+    	if(e.ctrlKey && e.button === 0){
+		    dragging = true;
+		    dragOrigX = e.pageX - theCanvas.offsetLeft;
+		    dragOrigY = e.pageY - theCanvas.offsetTop;
+		    
+		    preDragOrigX = originX;
+		    preDragOrigY = originY;
+		    
+		}
+    	
+    }, false);
+    
+    theCanvas.addEventListener("mouseup", function(e) {
+    	if(e.button === 0){
+		    dragging = false;
+		}
+    	
+    }, false);
+    
     theCanvas.addEventListener("mousemove", function(e) {
-    	mousex = e.pageX - theCanvas.offsetLeft;
+    	if(dragging){
+		    dragPixX =  (e.pageX - theCanvas.offsetLeft) - dragOrigX;
+		    dragPixY =  (e.pageY - theCanvas.offsetTop) - dragOrigY;
+		    
+		    originX = preDragOrigX + dragPixX;
+    		originY = preDragOrigY + dragPixY;
+		}
+		mousex = e.pageX - theCanvas.offsetLeft;
     	mousey = e.pageY - theCanvas.offsetTop;
+    	
     }, false);
     
     function receive() {	//translates keystrokes from WASD to velocity changes
