@@ -77,19 +77,6 @@ window.onload = function() {
         }
     }
     
-    // not the most efficient way to remove balls, 
-    /*
-    function removeDeadBalls(ballList) {
-		var emptySpace = 0; 
-		for (var i=0; i<ballList.length; i++) {
-          	if(ballList[i].health < 0){
-		   		ballList.splice(i,1)
-		   		i--;
-		   	}
-      	}
-
-	}*/
-    
     // bouncing behavior - if two balls are on top of each other,
     // have them react in a simple way
     function bounce(ballList) {
@@ -120,19 +107,10 @@ window.onload = function() {
         }
     }
         
-    // Reynold's like alignment
-    // each boid tries to make it's velocity to be similar to its neighbors
-    // recipricol falloff in weight (allignment parameter + d
+    
     // this assumes the velocities will be renormalized
     function align(ballList)
     {
-        var ali = 25; // alignment parameter - between 0 and 1
-    
-        // make temp arrays to store results
-        // this is inefficient, but the goal here is to make it work first
-        //var newVX = new Array(ballList.length);
-        //var newVY = new Array(ballList.length);
-    
         // do the n^2 loop over all pairs, and sum up the contribution of each
         for(var i=ballList.length-1; i>=0; i--) {
             var bi = ballList[i];
@@ -141,102 +119,23 @@ window.onload = function() {
             ballList[i].newVX = 0;
             ballList[i].newVY = 0;
     
+    		bi.beginUpdate();
+    		
             for(var j=ballList.length-1; j>=0; j--) {
             
                 var bj = ballList[j];
-                //if (bj == bi){
-				//	break;
-				//}
+                
 				// compute the distance for falloff
                 var dx = bj.x - bix;
                 var dy = bj.y - biy;
                 var d = Math.sqrt(dx*dx+dy*dy);
-                
-                var dd = Math.pow(d, 1.8);
-                
-                var personalSpace = bi.radius * 10;
-                
-                if(bj.team == bi.team){//Interactions with same team
-                	if(bi.team == 0) {
-                		
-                	} else if(bi.team == 1) {//P-swarm
-				  		if(d < 100){
-							ballList[i].newVX  += (bj.vX / (dd+ali));
-		                	ballList[i].newVY  += (bj.vY / (dd+ali));
-		        		} else {
-					    	ballList[i].newVX  += (dx * .1 ) / (dd);
-	               			ballList[i].newVY  += (dy * .1 ) / (dd);
-						}
-						if(d < personalSpace && d > 0){
-							//d > 0 requirement to prevent dividing by zero at the start.
-							//as same-team balls approach each other, the repulsion goes up exponentially.
-							ballList[i].newVX  -= (dx / d) * 0.02;
-	                		ballList[i].newVY  -= (dy / d) * 0.02; 
-						}  
-                } else if(bi.team == 2) {//Chomper
-						if(d < personalSpace && d > 0){
-							//d > 0 requirement to prevent dividing by zero at the start.
-							//as same-team balls approach each other, the repulsion goes up exponentially.
-							ballList[i].newVX  -= (dx / d) * 0.01;
-	                		ballList[i].newVY  -= (dy / d) * 0.01; 
-						}  
-                } else {//Other
-				  		if(d < 100){
-							ballList[i].newVX  += (bj.vX / (dd+ali));
-		                	ballList[i].newVY  += (bj.vY / (dd+ali));
-		        		} else {
-					    	ballList[i].newVX  += (dx * .1 ) / (dd);
-	               			ballList[i].newVY  += (dx * .1 ) / (dd);
-						}
-						if(d < personalSpace && d > 0){
-							//d > 0 requirement to prevent dividing by zero at the start.
-							//as same-team balls approach each other, the repulsion goes up exponentially.
-							ballList[i].newVX  -= (dx / d) * 0.01;
-	                		ballList[i].newVY  -= (dy / d) * 0.01; 
-						}  
-					}
-				} else {//Interactions with other teams
-					if(bi.team == 0) {
-						
-	             	} else if(bi.team == 1) {//P-swarm
-	             		if(bj.team == 2 && d < 100) {
-				    		ballList[i].newVX  -= ((bix - bj.x) * 1 ) / dd;
-	                		ballList[i].newVY  -= ((biy - bj.y) * 1 ) / dd;
-	             		}
-	             	} else if(bi.team == 2) {//Chompers
-	             		if(bj.team == 1 && d < 200) {
-				    		ballList[i].newVX  += ((bix - bj.x) * .1 ) / dd;
-	                		ballList[i].newVY  += ((biy - bj.y) * .1 ) / dd;
-	             		}
-	             	} else {
-				    	ballList[i].newVX  += ((bix - bj.x) * .01 ) / dd;
-	                	ballList[i].newVY  += ((biy - bj.y) * .01 ) / dd;
-					}
-              	}
+                bi.addInfluence(bj, d, dx ,dy);
             }
         }
-        
-        var cX = theCanvas.width/2
-        var cY = theCanvas.height/2
-        
-        for(var i=ballList.length-1; i>=0; i--) {
-            if(Math.random() * 100 > 99){
-			   	//angleTemp = Math.random()
-			//	ballList[i].vX = 2 - Math.random()*4;
-            //	ballList[i].vY = 2 - Math.random()*4;
-            }
-            if(ballList[i].team == 1) {//P-swarm
-        		ballList[i].vX = ballList[i].newVX + (mousex - ballList[i].x) * .0005; //+ (1 - Math.random()*2) * .03;
-        	    ballList[i].vY = ballList[i].newVY + (mousey - ballList[i].y) * .0005; //+ (1 - Math.random()*2) * .03;
-            } else if(ballList[i].team == 2) {//Chompers
-        		ballList[i].vX = ballList[i].newVX + (Tank.x - ballList[i].x) * .0005; //+ (1 - Math.random()*2) * .03;
-        	    ballList[i].vY = ballList[i].newVY + (Tank.y - ballList[i].y) * .0005; //+ (1 - Math.random()*2) * .03;
-            } else {
-        		// The balls want to be in the center of of the field:
-        		ballList[i].vX = ballList[i].newVX + (cX - ballList[i].x) * .00005; //+ (1 - Math.random()*2) * .03;
-         	    ballList[i].vY = ballList[i].newVY + (cY - ballList[i].y) * .00005; //+ (1 - Math.random()*2) * .03;
-            }
-        } 
+        // need to finish the updated after everyone has finished 
+        for(var i=ballList.length-1; i>=0; i--){
+			ballList[i].finishUpdate();
+		}
     }
     
     //move the balls
@@ -323,15 +222,7 @@ window.onload = function() {
     
     // what to do when things get clicked
     function doClick(){
-        /*allBalls .push( 
-			makeBall
-			(
-				evt.pageX - theCanvas.offsetLeft,
-	        	evt.pageY - theCanvas.offsetTop,
-	        	"#008800",
-	        	1
-			)
-		);*/
+        
 		theta = Math.atan2(mousey - Tank.y,mousex - Tank.x);
 		Empty = function() {};
 		Empty.prototype = aBomb;
@@ -345,12 +236,13 @@ window.onload = function() {
 		bomb.steps = Math.sqrt(dx*dx+dy*dy)/aBomb.speed;
 		Stuff.push(bomb);
     }
-    theCanvas.addEventListener("click",doClick,false);
-    var keysDown = {};	//holds all keys currently pressed
-    window.addEventListener("keydown", function(e) {keysDown[e.keyCode] = true;}, false);
-    window.addEventListener("keyup", function(e) {delete keysDown[e.keyCode];}, false);
     
-	//theCanvas.addEventListener("mousemove", function(e) {}, false);
+    theCanvas.addEventListener("click",doClick,false);
+    
+	var keysDown = {};	//holds all keys currently pressed
+	window.addEventListener("keydown", function(e) {keysDown[e.keyCode] = true;}, false);
+    window.addEventListener("keyup", function(e) {delete keysDown[e.keyCode];}, false);
+   
     
     var mouseDown = false;
     var dragging = false;
@@ -437,11 +329,8 @@ window.onload = function() {
     	var _Y = 0 + originY;
     	
     	theContext.strokeStyle = "#000000";
-    	theContext.fillStyle = "#EEEEEE"; //TODO: color changes as nears destination (gray to red, 555555 to FF0000)
-    	
-			
-    	
-	 	theContext.beginPath();//Cannon
+    	theContext.fillStyle = "#EEEEEE"; 
+	 	theContext.beginPath();
 			theContext.moveTo(_X,_Y);
 			
 			theContext.lineTo(_X             , _Y + fieldSizeY);

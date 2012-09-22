@@ -94,10 +94,10 @@ var aBall = {
 	},
 	
 	addInfluence : function(otherBall, d, dx ,dy) {
-		var personalSpace = bi.radius * 10;
+		var personalSpace = otherBall.radius * 10;
 		var dd = Math.pow(d, 1.8); 
 		
-		if(otherBall.team = this.team){
+		if(otherBall.team === this.team){
 		    if(d < 100){
 				this.newVX  += (otherBall.vX / (dd+ali));
 	        	this.newVY  += (otherBall.vY / (dd+ali));
@@ -167,6 +167,8 @@ function drawP_Swarmer(){
 	theContext.fill();	
 }
 
+// - - - - - - - - - - A D D   I N F L U E N C E   P - S W A R M E R
+
 function addInfluenceP_Swarmer(otherBall, d, dx ,dy){
 	
 	var personalSpace = this.radius * 10;
@@ -186,7 +188,7 @@ function addInfluenceP_Swarmer(otherBall, d, dx ,dy){
 			this.newVX  -= (dx / d) * 0.02;
     		this.newVY  -= (dy / d) * 0.02; 
 		}
-	} else if(bj.team == 2 && d < 100) {
+	} else if(otherBall.team === chomperTeam && d < 100) {
 		this.newVX  -= ((this.x - otherBall.x) * 1 ) / dd;
 		this.newVY  -= ((this.y - otherBall.y) * 1 ) / dd;
 	} 
@@ -244,8 +246,8 @@ function addInfluenceChomper(otherBall, d, dx ,dy){
 			//d > 0 requirement to prevent dividing by zero at the start.
 			//as same-team balls approach each other, 
 			// the repulsion goes up exponentially.
-			ballList[i].newVX  -= (dx / d) * 0.01;
-    		ballList[i].newVY  -= (dy / d) * 0.01; 
+			this.newVX  -= (dx / d) * 0.01;
+    		this.newVY  -= (dy / d) * 0.01; 
 		} 
 	} else if (otherBall.team === p_swarmTeam && d < 200 ){
 	    this.newVX  += ((this.x - otherBall.x) * .1 ) / dd;
@@ -292,7 +294,7 @@ function addInfluenceMosquito(otherBall, d, dx ,dy){
 	var personalSpace = bi.radius * 10;
 	var dd = Math.pow(d, 1.8); 
 	
-	if(otherBall.team = this.team){
+	if(otherBall.team === this.team){
 	    if(d < 100){
 			this.newVX  += (otherBall.vX / (dd+ali));
         	this.newVY  += (otherBall.vY / (dd+ali));
@@ -336,24 +338,37 @@ function makeBall(x,y,color,team) {
     ball.y = y;
     ball.ballcolor = color;
     ball.team = team;
-    if(team == 1) { //P-swarmers
+    
+    if(team === p_swarmTeam) { //P-swarmers
     	ball.radius = 5.0;
     	ball.speed = 6.0;
     	ball.health = 50;
     	ball.draw = drawP_Swarmer;
-    }
-    else if(team == 2) { //Chompers
+    	ball.finishUpdate = finishUpdateP_Swarmer;
+    	ball.addInfluence = addInfluenceP_Swarmer;
+    	
+    } else if(team === chomperTeam) { //Chompers
     	ball.radius = 10.0;
     	ball.speed = 2.0;
-    	ball.health = 1000;
+    	ball.health = 500;
 		ball.draw = drawChomper;
 		ball.mouthAngle = Math.random() * 2 * Math.PI ;
-    }
-    else { //Miscellaneous
+		ball.finishUpdate = finishUpdateChomper;
+    	ball.addInfluence = addInfluenceChomper;
+    	
+    }  else if(team === mosquitoTeam){
+        ball.radius = 5.0;
+    	ball.speed = 4.0;
+    	ball.health = 100;
+		ball.draw = drawMosquito;
+		ball.finishUpdate = finishUpdateMosquito;
+    	ball.addInfluence = addInfluenceMosquito;
+    	
+	} else { //Miscellaneous
     	ball.radius = 5.0;
     	ball.speed = 4.0;
     	ball.health = 1000; 
-		ball.draw = drawMosquito;
+		//ball.draw = drawMosquito;
     }
     return ball;
 }
