@@ -122,6 +122,22 @@ window.onload = function () {
                         this.state = "flee";
                     }
                 }
+                if (this.state == "split") {
+                    var x = this.frame % 10;
+                    if(x <= 5){
+                        this.y = this.y + 3;
+
+                    } else {
+                        this.y = this.y -3;
+                    }
+                    this.frame++;
+                    if(this.frame > 150){
+                        b = makeBall(this.x + 10, this.y + 10, "#FCD116", 5);
+                        allBalls.push(b);
+                     this.state = "pursue";
+                     this.bloodLevel = 0;
+                    }
+                }
                 switch (this.bloodLevel) {
                     case 0:
                         theContext.fillStyle = "#FFCC00";
@@ -411,9 +427,18 @@ window.onload = function () {
                             ballList[i].newVX = -(Tank.x - bi.x);
                             ballList[i].newVY = -(Tank.y - bi.y);
                             if ((Math.abs(Tank.x - bi.x) > 400) || (Math.abs(Tank.y - bi.y) > 400)) {
-                                bi.state = "pursue";
-                                ballList[i].newVX = Tank.x - bi.x;
-                                ballList[i].newVY = Tank.y - bi.y;
+                                if (bi.bloodLevel >= 3) {
+                                    bi.state = "split";
+                                    ballList[i].newVX = 0;
+                                    ballList[i].newVY = 0;
+                                    ballList[i].vX = 0;
+                                    ballList[i].vY = 0;
+                                }
+                                else {
+                                    bi.state = "pursue";
+                                    ballList[i].newVX = Tank.x - bi.x;
+                                    ballList[i].newVY = Tank.y - bi.y;
+                                }
                             }
                         }
                         else if (bi.state == "attack" || (Math.abs(Tank.x - bi.x) < 50) && (Math.abs(Tank.y - bi.y) < 50)) {
