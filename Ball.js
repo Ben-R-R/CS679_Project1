@@ -86,7 +86,7 @@ var aBall = {
     },
     
     collide: function(otherBall){
-	
+		otherBall.health--;
 	},
 	
 	beginUpdate: function() {
@@ -322,6 +322,29 @@ function finishUpdateMosquito(){
     this.vY = this.newVY + (fieldSizeY/2 - this.y) * .00005;
 }
 
+//=============================================================================
+//=============================================================================
+
+var p_swarmDamageMap = {};
+	p_swarmDamageMap[p_swarmTeam] = 0;
+	p_swarmDamageMap[chomperTeam] = 5;
+	p_swarmDamageMap[mosquitoTeam] = 1;
+	
+var chomperDamageMap = {};
+	chomperDamageMap[p_swarmTeam] = 5;
+	chomperDamageMap[chomperTeam] = 0;
+	chomperDamageMap[mosquitoTeam] = 0;
+	
+var mosquitoDamageMap = {};
+	mosquitoDamageMap[p_swarmTeam] = 1;
+	mosquitoDamageMap[chomperTeam] = 0;
+	mosquitoDamageMap[mosquitoTeam] = 0;
+
+function genericDamage(otherObject){
+	otherObject.health -= this.damageMap[otherObject.team];
+	console.log(this.damageMap);
+}
+
 /*==============================================
                   _        ____        _ _ 
   _ __ ___   __ _| | _____| __ )  __ _| | |
@@ -346,6 +369,9 @@ function makeBall(x,y,color,team) {
     	ball.draw = drawP_Swarmer;
     	ball.finishUpdate = finishUpdateP_Swarmer;
     	ball.addInfluence = addInfluenceP_Swarmer;
+    	ball.damageMap = p_swarmDamageMap;
+    	ball.collide = genericDamage;
+    	ball.team = p_swarmTeam;
     	
     } else if(team === chomperTeam) { //Chompers
     	ball.radius = 10.0;
@@ -355,6 +381,9 @@ function makeBall(x,y,color,team) {
 		ball.mouthAngle = Math.random() * 2 * Math.PI ;
 		ball.finishUpdate = finishUpdateChomper;
     	ball.addInfluence = addInfluenceChomper;
+    	ball.damageMap = chomperDamageMap;
+    	ball.collide = genericDamage;
+    	ball.team = chomperTeam
     	
     }  else if(team === mosquitoTeam){
         ball.radius = 5.0;
@@ -363,6 +392,9 @@ function makeBall(x,y,color,team) {
 		ball.draw = drawMosquito;
 		ball.finishUpdate = finishUpdateMosquito;
     	ball.addInfluence = addInfluenceMosquito;
+    	ball.damageMap = mosquitoDamageMap;
+    	ball.collide = genericDamage;
+    	ball.team = mosquitoTeam
     	
 	} else { //Miscellaneous
     	ball.radius = 5.0;

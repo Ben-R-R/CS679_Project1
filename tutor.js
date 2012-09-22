@@ -41,11 +41,7 @@ window.onload = function() {
 	 theCanvas = document.getElementById("mycanvas");
 	 theContext = theCanvas.getContext("2d");
 
-    
-    
-    // make an array of balls
-    theBlues = [];
-    theReds = [];
+
     
     allBalls = [];
     
@@ -58,16 +54,6 @@ window.onload = function() {
         allBalls.push(b)
     }
     
-    //for (var i=0; i<40; i++) {
-    //    b = makeBall( 50+Math.random()*500, 50+Math.random()*300 , "#0000FF");
-    //    theBlues.push(b)
-    //}
-    
-    //for (var i=0; i < 40; i++){
-	//	b = makeBall( 50+Math.random()*500, 50+Math.random()*300,"#FF0000" );
-    //    theReds.push(b)
-	//}
-
     // this function will do the drawing
     function drawBalls(ballList) {
         
@@ -96,8 +82,8 @@ window.onload = function() {
                 var dy = bjy - biy;
                 var d = dx*dx+dy*dy;
                 if (d < rad && (bj.team != bi.team)) {
-                	bj.health --;
-                	bi.health --;
+                	bj.collide(bi);// health --;
+                	bi.collide(bj);
                     bj.vX = dy;
                     bj.vY = dx;
                     bi.vX = -dx;
