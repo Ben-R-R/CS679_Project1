@@ -46,11 +46,11 @@ window.onload = function() {
     allBalls = [];
     
     for (var i=0; i<20; i++) {
-        b = makeBall( 50+Math.random()*500, 50+Math.random()*300 , "#0000FF", 2);
+        b = makeBall( 50+Math.random()*500, 50+Math.random()*300 , "#0000FF", chomperTeam);
         allBalls.push(b)
-        b = makeBall( 50+Math.random()*500, 50+Math.random()*300 , "#FF0000", 3);
+        b = makeBall( 50+Math.random()*500, 50+Math.random()*300 , "#FF0000", mosquitoTeam);
         allBalls.push(b)
-        b = makeBall( 50+Math.random()*500, 50+Math.random()*300 , "#FF00FF", 4);
+        b = makeBall( 50+Math.random()*500, 50+Math.random()*300 , "#FF00FF", 0);
         allBalls.push(b)
     }
     
@@ -82,12 +82,12 @@ window.onload = function() {
                 var dy = bjy - biy;
                 var d = dx*dx+dy*dy;
                 if (d < rad && (bj.team != bi.team)) {
-                	bj.collide(bi);// health --;
-                	bi.collide(bj);
-                    bj.vX = dy;
-                    bj.vY = dx;
-                    bi.vX = -dx;
-                    bi.vY = -dy;
+                	bj.collide(bi, -dy, -dx);
+                	bi.collide(bj, dy, dx);
+                    //bj.vX = dy;
+                    //bj.vY = dx;
+                    //bi.vX = -dx;
+                    //bi.vY = -dy;
                 }
             }
         }
@@ -132,6 +132,7 @@ window.onload = function() {
            ballList[i].norm();
            ballList[i].move();
            if(ballList[i].health < 0) {
+           		//console.log(ballList[i].team);
 	        	ballList[i].remove = true;
 	        	allBalls.sort(cull);
 	        	allBalls.pop();
@@ -225,8 +226,22 @@ window.onload = function() {
     
     theCanvas.addEventListener("click",doClick,false);
     
+    
+    function firstKeyHit(key){
+	    if(key === 90 ){
+	    //console.log(key)
+			allBalls.push( makeBall(Tank.x,Tank.y, "#008800", shieldTeam ) );
+		}
+	}
+    
 	var keysDown = {};	//holds all keys currently pressed
-	window.addEventListener("keydown", function(e) {keysDown[e.keyCode] = true;}, false);
+	window.addEventListener("keydown", function(e) {
+	    if(!(e.keyCode in keysDown)){
+		    firstKeyHit(e.keyCode);
+		}
+		keysDown[e.keyCode] = true;
+		
+	}, false);
     window.addEventListener("keyup", function(e) {delete keysDown[e.keyCode];}, false);
    
     

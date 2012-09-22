@@ -85,8 +85,11 @@ var aBall = {
         
     },
     
-    collide: function(otherBall){
+    
+    collide: function(otherBall, dx, dy){ //dx, dy is a vector from you to the other ball
 		otherBall.health--;
+		this.vX = -dx;
+		this.vY = -dy;
 	},
 	
 	beginUpdate: function() {
@@ -291,7 +294,7 @@ function drawMosquito(){
 
 function addInfluenceMosquito(otherBall, d, dx ,dy){
 	
-	var personalSpace = bi.radius * 10;
+	var personalSpace = this.radius * 10;
 	var dd = Math.pow(d, 1.8); 
 	
 	if(otherBall.team === this.team){
@@ -300,7 +303,7 @@ function addInfluenceMosquito(otherBall, d, dx ,dy){
         	this.newVY  += (otherBall.vY / (dd+ali));
 		} else {
 	    	this.newVX  += (dx * .1 ) / (dd);
-   			this.newVY  += (dx * .1 ) / (dd);
+   			this.newVY  += (dy * .1 ) / (dd);
 		}
 		if(d < personalSpace && d > 0){
 			//d > 0 requirement to prevent dividing by zero at the start.
@@ -321,28 +324,93 @@ function finishUpdateMosquito(){
 	this.vX = this.newVX + (fieldSizeX/2 - this.x) * .00005;
     this.vY = this.newVY + (fieldSizeY/2 - this.y) * .00005;
 }
+/*
+
+*/
+var shieldTeam = 3;
+
+function drawShield(){
+	
+	theContext.strokeStyle = "#00FFFF";
+	
+	theContext.lineWidth = 4;
+	
+	var _X = this.x + originX;
+	var _Y = this.y + originY;
+	//console.log(_X + " , " + _Y);
+	theContext.beginPath();
+    	theContext.arc(_X,_Y,this.radius,0,circ); 
+    
+    //theContext.closePath();
+    
+    theContext.stroke();
+
+    theContext.lineWidth = 1; // reset linewidth so we don't mess up the other
+    						  // drawing functions 
+}
+
+function addInfluenceShield(otherBall, d, dx ,dy){
+	
+	var personalSpace = this.radius * 10;
+	//var dd = Math.pow(d, 1.8); 
+	if(d < .01){
+		d = .01;
+	}
+	if(otherBall.team === this.team){
+		if(d < personalSpace && d > 0){
+			//d > 0 requirement to prevent dividing by zero at the start.
+			//as same-team balls approach each other, 
+			// the repulsion goes up exponentially.
+			this.newVX  -= (dx / d) * 0.01;
+    		this.newVY  -= (dy / d) * 0.01; 
+		} 
+		 
+	     
+	
+	} else {
+	    
+		// Currently no interactions with other teams 
+	
+	}
+}
+
+function finishUpdateShield(){
+	// atracted to the tank
+	this.vX = this.newVX + (Tank.x - this.x) * .0005;
+    this.vY = this.newVY + (Tank.y - this.y) * .0005;
+}
+
+function shieldCollide(otherObject, dx, dy){
+
+}
 
 //=============================================================================
 //=============================================================================
 
 var p_swarmDamageMap = {};
-	p_swarmDamageMap[p_swarmTeam] = 0;
 	p_swarmDamageMap[chomperTeam] = 5;
 	p_swarmDamageMap[mosquitoTeam] = 1;
+	p_swarmDamageMap[shieldTeam] = 0.1;
 	
 var chomperDamageMap = {};
 	chomperDamageMap[p_swarmTeam] = 5;
-	chomperDamageMap[chomperTeam] = 0;
-	chomperDamageMap[mosquitoTeam] = 0;
+	chomperDamageMap[shieldTeam] = 5;
+	
 	
 var mosquitoDamageMap = {};
 	mosquitoDamageMap[p_swarmTeam] = 1;
-	mosquitoDamageMap[chomperTeam] = 0;
-	mosquitoDamageMap[mosquitoTeam] = 0;
+	mosquitoDamageMap[shieldTeam] = 1;
 
-function genericDamage(otherObject){
-	otherObject.health -= this.damageMap[otherObject.team];
-	console.log(this.damageMap);
+var shieldDamageMap = {}; // shield does no damage to anyone
+
+function genericDamage(otherObject, dx, dy){ //dx, dy is a vector from you to the other ball
+	if(otherObject.team in this.damageMap){
+		otherObject.health -= this.damageMap[otherObject.team];
+	}
+	this.vX = -dx;
+	this.vY = -dy;
+	
+	
 }
 
 /*==============================================
@@ -395,6 +463,17 @@ function makeBall(x,y,color,team) {
     	ball.damageMap = mosquitoDamageMap;
     	ball.collide = genericDamage;
     	ball.team = mosquitoTeam
+    	
+	} else if(team === shieldTeam){
+        ball.radius = 40.0;
+    	ball.speed = 1.0;
+    	ball.health = 5000;
+		ball.draw = drawShield;
+		ball.finishUpdate = finishUpdateShield;
+    	ball.addInfluence = addInfluenceShield;
+    	ball.damageMap = shieldDamageMap;
+    	ball.collide = shieldCollide;
+    	ball.team = shieldTeam;
     	
 	} else { //Miscellaneous
     	ball.radius = 5.0;
