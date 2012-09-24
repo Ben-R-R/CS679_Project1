@@ -324,9 +324,14 @@ function finishUpdateMosquito(){
 	this.vX = this.newVX + (fieldSizeX/2 - this.x) * .00005;
     this.vY = this.newVY + (fieldSizeY/2 - this.y) * .00005;
 }
-/*
-
-*/
+/*======================================
+  ____  _     _      _     _ 
+ / ___|| |__ (_) ___| | __| |
+ \___ \| '_ \| |/ _ \ |/ _` |
+  ___) | | | | |  __/ | (_| |
+ |____/|_| |_|_|\___|_|\__,_|
+                             
+======================================*/
 var shieldTeam = 3;
 
 function drawShield(){
@@ -466,7 +471,7 @@ function makeBall(x,y,color,team) {
     	
 	} else if(team === shieldTeam){
         ball.radius = 40.0;
-    	ball.speed = 1.0;
+    	ball.speed = 6.0;
     	ball.health = 5000;
 		ball.draw = drawShield;
 		ball.finishUpdate = finishUpdateShield;
