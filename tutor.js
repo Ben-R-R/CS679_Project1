@@ -109,6 +109,9 @@ window.onload = function () {
             }
             else if (this.team == 5) {
                 if (this.state == "attack") {
+                    if (this.frame == 0) {
+                        Tank.health--;
+                    }
                     theContext.fillStyle = "#FF0000";
                     theContext.beginPath();
                     theContext.moveTo(_X, _Y);
@@ -124,40 +127,42 @@ window.onload = function () {
                 }
                 if (this.state == "split") {
                     var x = this.frame % 10;
-                    if(x <= 5){
+                    if (x <= 5) {
                         this.y = this.y + 3;
-
+                        theContext.fillStyle = "#FFCC00";
                     } else {
-                        this.y = this.y -3;
+                        theContext.fillStyle = "#FF9900";
+                        this.y = this.y - 3;
                     }
                     this.frame++;
-                    if(this.frame > 150){
+                    if (this.frame > 150) {
                         b = makeBall(this.x + 10, this.y + 10, "#FCD116", 5);
                         allBalls.push(b);
-                     this.state = "pursue";
-                     this.bloodLevel = 0;
+                        this.state = "pursue";
+                        this.bloodLevel = 0;
                     }
-                }
-                switch (this.bloodLevel) {
-                    case 0:
-                        theContext.fillStyle = "#FFCC00";
-                        this.ballcolor = "#FFCC00";
-                        break;
+                } else {
+                    switch (this.bloodLevel) {
+                        case 0:
+                            theContext.fillStyle = "#FFCC00";
+                            this.ballcolor = "#FFCC00";
+                            break;
 
-                    case 1:
-                        theContext.fillStyle = "#FF9900";
-                        this.ballcolor = "#FF9900";
-                        break;
+                        case 1:
+                            theContext.fillStyle = "#FF9900";
+                            this.ballcolor = "#FF9900";
+                            break;
 
-                    case 2:
-                        theContext.fillStyle = "#FF6600";
-                        this.ballcolor = "#FF6600";
-                        break;
-                    case 3:
-                        theContext.fillStyle = "#FF3300";
-                        this.ballcolor = "#FF3300";
-                        break;
+                        case 2:
+                            theContext.fillStyle = "#FF6600";
+                            this.ballcolor = "#FF6600";
+                            break;
+                        case 3:
+                            theContext.fillStyle = "#FF3300";
+                            this.ballcolor = "#FF3300";
+                            break;
 
+                    } 
                 }
 
                 theContext.beginPath();
