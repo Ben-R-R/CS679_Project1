@@ -293,12 +293,76 @@ function drawMosquito(){
 	var _X = this.x + originX;
 	var _Y = this.y + originY;
 	
-	theContext.beginPath();
-    	theContext.arc(_X,_Y,this.radius,0,circ,true); 
-    	theContext.moveTo(_X,_Y);
-    	theContext.lineTo(_X + 4*this.vX, _Y + 4*this.vY);
+	if (this.state == "attack") {
+        if (this.frame == 0) {
+            Tank.health--;
+        }
+        theContext.fillStyle = "#FF0000";
+        theContext.beginPath();
+        theContext.moveTo(_X, _Y);
+        theContext.lineTo(Tank.x + originX, Tank.y + originY);
+        theContext.closePath();
+        theContext.stroke();
+        this.frame++;
+        if (this.frame > 10) {
+            this.bloodLevel++;
+            this.frame = 0;
+            this.state = "flee";
+        }
+    } else {
+     	theContext.beginPath();
+	    theContext.moveTo(_X, _Y);
+    	theContext.lineTo(_X + 4 * this.vX, _Y + 4 * this.vY);
+    	theContext.closePath();
+    	theContext.closePath();
+        theContext.stroke();
+	}
+    if (this.state == "split") {
+        var x = this.frame % 10;
+        if (x <= 5) {
+            this.y = this.y + 3;
+            theContext.fillStyle = "#FFCC00";
+        } else {
+            theContext.fillStyle = "#FF9900";
+            this.y = this.y - 3;
+        }
+        this.frame++;
+        if (this.frame > 150) {
+            b = makeBall(this.x + 10, this.y + 10, "#FCD116", mosquitoTeam);
+            allBalls.push(b);
+            this.state = "pursue";
+            this.bloodLevel = 0;
+        }
+    } else {
+        switch (this.bloodLevel) {
+            case 0:
+                theContext.fillStyle = "#FFCC00";
+                this.ballcolor = "#FFCC00";
+                break;
+
+            case 1:
+                theContext.fillStyle = "#FF9900";
+                this.ballcolor = "#FF9900";
+                break;
+
+            case 2:
+                theContext.fillStyle = "#FF6600";
+                this.ballcolor = "#FF6600";
+                break;
+            case 3:
+                theContext.fillStyle = "#FF3300";
+                this.ballcolor = "#FF3300";
+                break;
+
+        } 
+    }
+
+    theContext.beginPath();
+    theContext.arc(_X, _Y, this.radius, 0, circ, true);
+    //theContext.moveTo(_X, _Y);
+    //theContext.lineTo(_X + 4 * this.vX, _Y + 4 * this.vY);
     theContext.closePath();
-    
+
     theContext.stroke();
     theContext.fill();
 }
@@ -307,35 +371,49 @@ function drawMosquito(){
 
 function addInfluenceMosquito(otherBall, d, dx ,dy){
 	
-	var personalSpace = this.radius * 10;
-	var dd = Math.pow(d, 1.8); 
+	//var personalSpace = this.radius * 10;
+	//var dd = Math.pow(d, 1.8); 
 	
-	if(otherBall.team === this.team){
-	    if(d < 100){
-			this.newVX  += (otherBall.vX / (dd+ali));
-        	this.newVY  += (otherBall.vY / (dd+ali));
-		} else {
-	    	this.newVX  += (dx * .1 ) / (dd);
-   			this.newVY  += (dy * .1 ) / (dd);
-		}
-		if(d < personalSpace && d > 0){
-			//d > 0 requirement to prevent dividing by zero at the start.
-			//as same-team balls approach each other, the repulsion goes up exponentially.
-			this.newVX  -= (dx / d) * 0.01;
-    		this.newVY  -= (dy / d) * 0.01; 
-		} 
 	
-	} else {
-	    
-		// Currently no interactions with other teams 
-	
-	}
 }
 
 function finishUpdateMosquito(){
-	// currently atracted to the center of the field 
-	this.vX = this.newVX + (fieldSizeX/2 - this.x) * .00005;
-    this.vY = this.newVY + (fieldSizeY/2 - this.y) * .00005;
+	 //   if (d < personalSpace && d > 0) {
+    //d > 0 requirement to prevent dividing by zero at the start.
+    //as same-team balls approach each other, the repulsion goes up exponentially.
+    if (this.state == "flee") {
+       this.newVX = -(Tank.x - this.x);
+       this.newVY = -(Tank.y - this.y);
+        if ((Math.abs(Tank.x - this.x) > 400) || (Math.abs(Tank.y - this.y) > 400)) {
+            if (this.bloodLevel >= 3) {
+                this.state = "split";
+               this.newVX = 0;
+               this.newVY = 0;
+               this.vX = 0;
+               this.vY = 0;
+            }
+            else {
+               this.state = "pursue";
+               this.newVX = Tank.x - this.x;
+               this.newVY = Tank.y - this.y;
+            }
+        }
+    }
+    else if (this.state == "attack" || (Math.abs(Tank.x - this.x) < 50) && (Math.abs(Tank.y - this.y) < 50)) {
+        this.state = "attack";
+       this.newVX = 0;
+       this.newVY = 0;
+       this.vX = Tank.vX;
+       this.vY = Tank.vY;
+    }
+    else if (this.state == "pursue") {
+       this.state = "pursue";
+       this.newVX = Tank.x - this.x;
+       this.newVY = Tank.y - this.y;
+    }
+    
+	this.vX = this.newVX;
+    this.vY = this.newVY;
 }
 /*======================================
   ____  _     _      _     _ 
@@ -472,15 +550,17 @@ function makeBall(x,y,color,team) {
     	ball.team = chomperTeam
     	
     }  else if(team === mosquitoTeam){
-        ball.radius = 5.0;
-    	ball.speed = 4.0;
-    	ball.health = 100;
+        ball.radius = 10.0;
+        ball.speed = 4.0;
+        ball.health = 100
 		ball.draw = drawMosquito;
+		ball.bloodLevel = 0;
 		ball.finishUpdate = finishUpdateMosquito;
     	ball.addInfluence = addInfluenceMosquito;
     	ball.damageMap = mosquitoDamageMap;
     	ball.collide = genericDamage;
-    	ball.team = mosquitoTeam
+    	ball.team = mosquitoTeam;
+    	ball.state = "pursue";
     	
 	} else if(team === shieldTeam){
         ball.radius = 100.0;
