@@ -170,6 +170,19 @@ function drawP_Swarmer(){
 	theContext.fill();	
 }
 
+function collideP_Swarm(otherBall, dx, dy){ //dx, dy is a vector from you to the other ball
+	if(otherBall.team !== shieldTeam){
+		otherBall.health--;
+		this.vX = -dx;
+		this.vY = -dy;
+	}
+	if(otherBall.team in this.damageMap){
+		otherBall.health -= this.damageMap[otherBall.team];
+	}
+	
+}
+
+
 // - - - - - - - - - - A D D   I N F L U E N C E   P - S W A R M E R
 
 function addInfluenceP_Swarmer(otherBall, d, dx ,dy){
@@ -395,7 +408,7 @@ function shieldCollide(otherObject, dx, dy){
 var p_swarmDamageMap = {};
 	p_swarmDamageMap[chomperTeam] = 5;
 	p_swarmDamageMap[mosquitoTeam] = 1;
-	p_swarmDamageMap[shieldTeam] = 0.1;
+	//p_swarmDamageMap[shieldTeam] = 0.1;
 	
 var chomperDamageMap = {};
 	chomperDamageMap[p_swarmTeam] = 5;
@@ -443,7 +456,7 @@ function makeBall(x,y,color,team) {
     	ball.finishUpdate = finishUpdateP_Swarmer;
     	ball.addInfluence = addInfluenceP_Swarmer;
     	ball.damageMap = p_swarmDamageMap;
-    	ball.collide = genericDamage;
+    	ball.collide = collideP_Swarm;
     	ball.team = p_swarmTeam;
     	
     } else if(team === chomperTeam) { //Chompers
@@ -470,7 +483,7 @@ function makeBall(x,y,color,team) {
     	ball.team = mosquitoTeam
     	
 	} else if(team === shieldTeam){
-        ball.radius = 40.0;
+        ball.radius = 100.0;
     	ball.speed = 6.0;
     	ball.health = 5000;
 		ball.draw = drawShield;
