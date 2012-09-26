@@ -322,11 +322,11 @@ window.onload = function() {
     		else if (Tank.vY > 0) {Tank.vY -= Tank.accel;}
     		else {Tank.vY += Tank.accel;}
     	}
-    	
+    	if (32 in keysDown) {Tank.beamOn = true;} else {Tank.beamOn = false;}
     	
     }
     
-    function drawField(){
+    function drawField() {
     	var _X = 0 + originX;
     	var _Y = 0 + originY;
     	
@@ -342,6 +342,24 @@ window.onload = function() {
 		theContext.closePath();
 	    theContext.stroke();
         theContext.fill();
+	}
+	
+	function tankDamage(ballList) {	//This function calculates all damage the tank takes and receives
+		var chomperDamage = 1;	//Damage dealt by chompers
+		var mosquitoDamage = 1;	//Damage dealt by mosquitoes
+		var chomperBeam = 1;	//Damage dealt to chompers by beam
+		var mosquitoBeam = 1;	//Damage dealt to mosquitoes by beam
+		for(var i = 0; i < ballList.length; i++) {
+			if(ballist[i].team !== p_swarmteam) {
+				dt = Math.sqrt(ballist[i].x*ballist[i].x+ballist[i].y+ballist[i].y);	//distance from ball to tank
+				if(ballist[i].team == chomperTeam && dt <= Tank.radius + ballist[i].radius) {	//Chomper damage check
+					Tank.health -= chomperDamage;
+				} else if(ballist[i].team == mosquitoTeam) {
+					//TODO: Mosquito health drain code
+				}
+				//TODO: Beam damage code
+			}
+		}
 	}
 
     // what we need to do is define a function that updates the position

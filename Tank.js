@@ -1,23 +1,27 @@
 /// TANK
 
  var Tank = {	//The player avatar, can be controlled with keyboard
-	"x" : 100,
-	"y" : 100,
+	"x" : 500,
+	"y" : 500,
 	"speed" : 5, //maximum speed in any cardinal direction (diagonal is faster 'cause why not)
 	"accel" : 0.5, //acceleration for smoother movement
 	"radius" : 25, //radius of tank
+	"beaml" : 200,	//length of beam outward from tank center
+	"beamsx" : 500, //x coordinate of beam start
+	"beamsy" : 500, //y coordinate of beam start
+	"beamex" : 550,	//x coordinate of beam end
+	"beamey" : 550,	//y coordinate of beam end
 	"vX" : 0, //current x velocity
 	"vY" : 0, //current y velocity 
 	"health" : 200,
+	"heading" : 0,	//angle of facing
+	"beamOn" : false,	//if the beam is turned on
     draw : function() {
     
         var _X = this.x + originX;
     	var _Y = this.y + originY;
         
-        
-        
         v = Math.sqrt(this.vX*this.vX+this.vY*this.vY)/this.speed*2;
-        phi = Math.atan2((mousey) - this.y, (mousex) - this.x);
         
         theContext.fillStyle = "#0099FF"
         var tstX = 0 + originX;
@@ -92,10 +96,10 @@
         theContext.fill();
         theContext.beginPath();//Cannon
             theContext.moveTo(_X,_Y);
-            theContext.lineTo(_X+this.radius*Math.cos(phi+theta*2)/2,_Y+this.radius*Math.sin(phi+theta*2)/2);
-            theContext.lineTo(_X+this.radius*Math.cos(phi+theta)/1.1,_Y+this.radius*Math.sin(phi+theta)/1.1);
-            theContext.lineTo(_X+this.radius*Math.cos(phi-theta)/1.1,_Y+this.radius*Math.sin(phi-theta)/1.1);
-            theContext.lineTo(_X+this.radius*Math.cos(phi-theta*2)/2,_Y+this.radius*Math.sin(phi-theta*2)/2);
+            theContext.lineTo(_X+this.radius*Math.cos(this.heading+theta*2)/2,_Y+this.radius*Math.sin(this.heading+theta*2)/2);
+            theContext.lineTo(_X+this.radius*Math.cos(this.heading+theta)/1.1,_Y+this.radius*Math.sin(this.heading+theta)/1.1);
+            theContext.lineTo(_X+this.radius*Math.cos(this.heading-theta)/1.1,_Y+this.radius*Math.sin(this.heading-theta)/1.1);
+            theContext.lineTo(_X+this.radius*Math.cos(this.heading-theta*2)/2,_Y+this.radius*Math.sin(this.heading-theta*2)/2);
         theContext.closePath();
         theContext.stroke();
         theContext.fill();
@@ -104,10 +108,24 @@
         theContext.closePath();
         theContext.stroke();
         theContext.fill();
+        
+        if(this.beamOn) {
+        	theContext.beginPath();//Beam
+        		theContext.moveTo(_X+this.radius*Math.cos(this.heading),_Y+this.radius*Math.sin(this.heading));
+        		theContext.lineTo(_X+this.beaml*Math.cos(this.heading),_Y+this.beaml*Math.sin(this.heading));
+        	theContext.closePath();
+        	theContext.stroke();
+        	theContext.fill();
+        }
     },
     move : function() {
         this.x += this.vX;
         this.y += this.vY;
+        this.heading = Math.atan2((mousey) - this.y, (mousex) - this.x);
+        this.beamsx = this.x + this.radius*Math.cos(this.heading);
+        this.beamsy = this.y + this.radius*Math.sin(this.heading);
+        this.beamex = this.x + this.beaml*Math.cos(this.heading);
+        this.beamey = this.y + this.beaml*Math.cos(this.heading);
         if (this.x > fieldSizeX) {
         	this.x = 0;
         	//this.vY = -this.vY;
@@ -158,6 +176,5 @@
 			originY	= -this.y + 100;
 			
 		}
-		
     }
 }

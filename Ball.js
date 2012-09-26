@@ -191,13 +191,17 @@ function collideP_Swarm(otherBall, dx, dy){ //dx, dy is a vector from you to the
 
 function addInfluenceP_Swarmer(otherBall, d, dx ,dy){
 	
-	var personalSpace = this.radius * 10;
+	if (otherBall === this){
+		return;
+	}
+	
+	var personalSpace = this.radius * 5;
 	var dd = Math.pow(d, 1.8); 
 	
 	if(otherBall.team === this.team){
 		if(d < 100){
-			this.newVX  += (otherBall.vX / (dd+ali));
-        	this.newVY  += (otherBall.vY / (dd+ali));
+			this.newVX  += (otherBall.vX) * 1/dd ;
+        	this.newVY  += (otherBall.vY) * 1/dd ;
 		} else {
 	    	this.newVX  += (dx * .1 ) / (dd);
    			this.newVY  += (dy * .1 ) / (dd);
@@ -205,8 +209,8 @@ function addInfluenceP_Swarmer(otherBall, d, dx ,dy){
 		if(d < personalSpace && d > 0){
 			//d > 0 requirement to prevent dividing by zero at the start.
 			//as same-team balls approach each other, the repulsion goes up exponentially.
-			this.newVX  -= (dx / d) * 0.02;
-    		this.newVY  -= (dy / d) * 0.02; 
+			this.newVX  -= (dx / dd) * 0.04;
+    		this.newVY  -= (dy / dd) * 0.04; 
 		}
 	} else if(otherBall.team === chomperTeam && d < 100) {
 		this.newVX  -= ((this.x - otherBall.x) * 1 ) / dd;
