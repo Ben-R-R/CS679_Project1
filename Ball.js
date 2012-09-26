@@ -371,8 +371,18 @@ function drawMosquito(){
 
 function addInfluenceMosquito(otherBall, d, dx ,dy){
 	
-	//var personalSpace = this.radius * 10;
-	//var dd = Math.pow(d, 1.8); 
+	var personalSpace = this.radius * 10;
+	var dd = Math.pow(d, 1.8); 
+	
+	if(otherBall.team === this.team){
+		if(d < personalSpace && d > 0){
+			//d > 0 requirement to prevent dividing by zero at the start.
+			//as same-team balls approach each other, 
+			// the repulsion goes up exponentially.
+			this.newVX  -= (dx / d) * 0.01;
+    		this.newVY  -= (dy / d) * 0.01; 
+		} 
+	}
 	
 	
 }
@@ -382,8 +392,8 @@ function finishUpdateMosquito(){
     //d > 0 requirement to prevent dividing by zero at the start.
     //as same-team balls approach each other, the repulsion goes up exponentially.
     if (this.state == "flee") {
-       this.newVX = -(Tank.x - this.x);
-       this.newVY = -(Tank.y - this.y);
+       this.newVX += -(Tank.x - this.x) * .01;
+       this.newVY += -(Tank.y - this.y) * .01;
         if ((Math.abs(Tank.x - this.x) > 400) || (Math.abs(Tank.y - this.y) > 400)) {
             if (this.bloodLevel >= 3) {
                 this.state = "split";
@@ -394,22 +404,22 @@ function finishUpdateMosquito(){
             }
             else {
                this.state = "pursue";
-               this.newVX = Tank.x - this.x;
-               this.newVY = Tank.y - this.y;
+               this.newVX += Tank.x - this.x;
+               this.newVY += Tank.y - this.y;
             }
         }
     }
     else if (this.state == "attack" || (Math.abs(Tank.x - this.x) < 50) && (Math.abs(Tank.y - this.y) < 50)) {
         this.state = "attack";
-       this.newVX = 0;
-       this.newVY = 0;
-       this.vX = Tank.vX;
-       this.vY = Tank.vY;
+       this.newVX += Tank.vX * 10;
+       this.newVY += Tank.vY * 10;
+       //this.vX = Tank.vX;
+       //this.vY = Tank.vY;
     }
     else if (this.state == "pursue") {
        this.state = "pursue";
-       this.newVX = Tank.x - this.x;
-       this.newVY = Tank.y - this.y;
+       this.newVX += (Tank.x - this.x) * 0.0005;
+       this.newVY += (Tank.y - this.y) * 0.0005;
     }
     
 	this.vX = this.newVX;
