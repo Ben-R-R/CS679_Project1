@@ -231,7 +231,8 @@ window.onload = function() {
     function firstKeyHit(key){
 	    if(key === 90 ){
 	    //console.log(key)
-			allBalls.push( makeBall(Tank.x,Tank.y, "#008800", shieldTeam ) );
+			//allBalls.push( makeBall(Tank.x,Tank.y, "#008800", shieldTeam ) );
+			UserData.useItem();
 		}
 	}
     
