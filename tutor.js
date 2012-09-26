@@ -133,6 +133,7 @@ window.onload = function() {
            ballList[i].move();
            if(ballList[i].health < 0) {
            		//console.log(ballList[i].team);
+           		ballList[i].onDeath();
 	        	ballList[i].remove = true;
 	        	allBalls.sort(cull);
 	        	allBalls.pop();
@@ -364,8 +365,10 @@ window.onload = function() {
         drawBalls(allBalls );     //show balls
         
         drawBalls(Stuff);
-       
+        UserData.drawHUD();
+        
         reqFrame(drawLoop);		//set up another iteration of loop
+        
     }
     drawLoop();
 }

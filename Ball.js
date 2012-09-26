@@ -46,6 +46,10 @@ var aBall = {
         theContext.fill();
         
     },
+    
+    onDeath : function() {
+		UserData.score += 10;
+	},
 
     // make 'em "bounce" when they go over the edge
     // not anymore, now they wrap over the edge.
@@ -490,6 +494,10 @@ function shieldCollide(otherObject, dx, dy){
 
 }
 
+function nothing(){
+
+}
+
 //=============================================================================
 //=============================================================================
 
@@ -546,6 +554,7 @@ function makeBall(x,y,color,team) {
     	ball.damageMap = p_swarmDamageMap;
     	ball.collide = collideP_Swarm;
     	ball.team = p_swarmTeam;
+    	ball.onDeath = nothing;
     	
     } else if(team === chomperTeam) { //Chompers
     	ball.radius = 10.0;
@@ -582,6 +591,7 @@ function makeBall(x,y,color,team) {
     	ball.damageMap = shieldDamageMap;
     	ball.collide = shieldCollide;
     	ball.team = shieldTeam;
+    	ball.onDeath = nothing;
     	
 	} else { //Miscellaneous
     	ball.radius = 5.0;
