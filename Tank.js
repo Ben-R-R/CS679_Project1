@@ -14,6 +14,9 @@
 	"vX" : 0, //current x velocity
 	"vY" : 0, //current y velocity 
 	"health" : 200,
+	"maxHealth" : 200,
+	"energy" : 0,	//energy of beam
+	"maxEnergy" : 500,	//maximum beam energy
 	"heading" : 0,	//angle of facing
 	"beamOn" : false,	//if the beam is turned on
     draw : function() {
@@ -122,10 +125,19 @@
         this.x += this.vX;
         this.y += this.vY;
         this.heading = Math.atan2((mousey) - this.y, (mousex) - this.x);
-        this.beamsx = this.x + this.radius*Math.cos(this.heading);
-        this.beamsy = this.y + this.radius*Math.sin(this.heading);
-        this.beamex = this.x + this.beaml*Math.cos(this.heading);
-        this.beamey = this.y + this.beaml*Math.cos(this.heading);
+        if(this.beamOn) {
+        	if(this.energy >= 5) {
+        		this.beamsx = this.x + this.radius*Math.cos(this.heading);
+        		this.beamsy = this.y + this.radius*Math.sin(this.heading);
+        		this.beamex = this.x + this.beaml*Math.cos(this.heading);
+        		this.beamey = this.y + this.beaml*Math.cos(this.heading);
+        		this.energy -= 2;	//energy consumption rate
+        	} else {this.energy = 0; this.beamOn = false;}
+        } else {
+        	this.energy += 1;	//energy recharge rate
+        	if(this.energy > this.maxEnergy) {this.energy = this.maxEnergy;}
+        	}
+        
         if (this.x > fieldSizeX) {
         	this.x = 0;
         	//this.vY = -this.vY;
