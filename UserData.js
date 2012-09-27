@@ -89,7 +89,7 @@ var BombItem = {
 		
 		theContext.fillStyle = "#FFFFFF";
 	    theContext.beginPath();
-	    	theContext.arc(x+8 , y+8 , 5 , 0 , circ); 
+	    	theContext.arc(x+7 , y+7 , 3 , 0 , circ); 
 	    theContext.closePath();
 	    theContext.fill();
 	
