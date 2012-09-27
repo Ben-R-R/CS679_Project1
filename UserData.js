@@ -1,12 +1,45 @@
 // UserData Document
 
 var UserData = {
-	drawHUD: function(){
+	drawHUD: function(health){
 		//theContext.font="20px Georgia";
 		theContext.fillStyle = "#000000";
 		theContext.font="20px Arial";
-		theContext.fillText(this.score,10,20);	
+		theContext.fillText(this.score, 10, 20);
+		
+		theContext.fillStyle = "#0099FF";
+		theContext.fillRect = (500, 500, 50, 50);
+
+		theContext.strokeStyle = "#FF0000";
+		theContext.fillStyle = "#FF0000";
 	
+        
+    	theContext.beginPath();
+    	var startHealthBarX = 580;
+		theContext.moveTo(startHealthBarX, 10);
+
+		theContext.lineTo(startHealthBarX, 20);
+		theContext.lineTo(startHealthBarX + 200, 20);
+		theContext.lineTo(startHealthBarX + 200, 10);
+		theContext.closePath();
+		theContext.stroke();
+		theContext.fill();
+
+		theContext.fillStyle = "#33FF00";
+
+
+		theContext.beginPath();
+		theContext.moveTo(startHealthBarX, 12);
+
+		theContext.lineTo(startHealthBarX, 18);
+		//theContext.lineTo(startHealthBarX, 10);
+		theContext.lineTo(startHealthBarX + health, 18);
+		theContext.lineTo(startHealthBarX + health, 12);
+		theContext.closePath();
+		theContext.stroke();
+		theContext.fill();
+
+
 		var i_Loc = 20;
 		for (var key in this.items) {
 			if (this.items.hasOwnProperty(key)) {
