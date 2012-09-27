@@ -384,7 +384,7 @@ window.onload = function() {
         drawBalls(allBalls );     //show balls
         
         drawBalls(Stuff);
-        UserData.drawHUD();
+        UserData.drawHUD(Tank.health);
         
         reqFrame(drawLoop);		//set up another iteration of loop
         

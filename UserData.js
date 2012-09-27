@@ -1,12 +1,45 @@
 // UserData Document
 
 var UserData = {
-	drawHUD: function(){
+	drawHUD: function(health){
 		//theContext.font="20px Georgia";
 		theContext.fillStyle = "#000000";
 		theContext.font="20px Arial";
-		theContext.fillText(this.score,10,20);	
+		theContext.fillText(this.score, 10, 20);
+		
+		theContext.fillStyle = "#0099FF";
+		theContext.fillRect = (500, 500, 50, 50);
+
+		theContext.strokeStyle = "#FF0000";
+		theContext.fillStyle = "#FF0000";
 	
+        
+    	theContext.beginPath();
+    	var startHealthBarX = 580;
+		theContext.moveTo(startHealthBarX, 10);
+
+		theContext.lineTo(startHealthBarX, 20);
+		theContext.lineTo(startHealthBarX + 200, 20);
+		theContext.lineTo(startHealthBarX + 200, 10);
+		theContext.closePath();
+		theContext.stroke();
+		theContext.fill();
+
+		theContext.fillStyle = "#33FF00";
+
+
+		theContext.beginPath();
+		theContext.moveTo(startHealthBarX, 12);
+
+		theContext.lineTo(startHealthBarX, 18);
+		//theContext.lineTo(startHealthBarX, 10);
+		theContext.lineTo(startHealthBarX + health, 18);
+		theContext.lineTo(startHealthBarX + health, 12);
+		theContext.closePath();
+		theContext.stroke();
+		theContext.fill();
+
+
 		var i_Loc = 20;
 		for (var key in this.items) {
 			if (this.items.hasOwnProperty(key)) {
@@ -21,7 +54,7 @@ var UserData = {
 				i_Loc += 35 + textWidth	;
 			}
 		}
-
+		Gauges.draw(20,theCanvas.height - 60);
 			
 		
 	},
@@ -45,6 +78,45 @@ var UserData = {
 
 };
 
+var Gauges = {
+	"height" : 10,	//height of each gauge
+	"width" : 200,	//width of each gauge
+	draw : function(x,y) {
+		theContext.strokeStyle = ballstroke;	//black outline
+		theContext.fillStyle = "#FFFFFF";	//white empty gauge
+		theContext.beginPath();//health gauge
+			theContext.moveTo(x, y);
+			theContext.lineTo(x, y + this.height);
+			theContext.lineTo(x + this.width, y + this.height);
+			theContext.lineTo(x + this.width, y);
+		theContext.closePath();
+		theContext.fill();
+		theContext.beginPath();//energy gauge
+			theContext.moveTo(x, y + this.height);
+			theContext.lineTo(x, y + this.height * 2);
+			theContext.lineTo(x + this.width, y + this.height * 2);
+			theContext.lineTo(x + this.width, y + this.height);
+		theContext.closePath();
+		theContext.fill();
+		theContext.fillStyle = "#FF0000";
+		theContext.beginPath();//health gauge
+			theContext.moveTo(x, y);
+			theContext.lineTo(x, y + this.height);
+			theContext.lineTo(x + this.width * Tank.health / Tank.maxHealth, y + this.height);
+			theContext.lineTo(x + this.width * Tank.health / Tank.maxHealth, y);
+		theContext.closePath();
+		theContext.fill();
+		theContext.fillStyle = "#0000FF";
+		theContext.beginPath();//energy gauge
+			theContext.moveTo(x, y + this.height);
+			theContext.lineTo(x, y + this.height * 2);
+			theContext.lineTo(x + this.width * Tank.energy / Tank.maxEnergy, y + this.height * 2);
+			theContext.lineTo(x + this.width * Tank.energy / Tank.maxEnergy, y + this.height);
+		theContext.closePath();
+		theContext.fill();
+	}
+}
+
 var ShieldItem = {
 	name : "Shields",
 	draw : function(x,y){
@@ -63,8 +135,9 @@ var ShieldItem = {
 	quantity : 3,
 	
 	activate : function(){
+		for(var i = 0; i < 7; i++) {	//because spirograph shields are awesome.
 		allBalls.push( makeBall(Tank.x,Tank.y, "#008800", shieldTeam ) );
-		
+		}
 	}
 	
 };
