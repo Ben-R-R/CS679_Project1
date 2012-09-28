@@ -275,6 +275,8 @@ window.onload = function () {
     function restart() {
         gameStarted = true;
         gameOver = false;
+        mosquitoSpawnRate = 5000;
+        chomperSpawnRate = 1000;
         spawnStart();
         Tank.reset();
         UserData.reset();
