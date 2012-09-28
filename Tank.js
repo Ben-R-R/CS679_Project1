@@ -190,3 +190,35 @@
 		}
     }
 }
+
+//Code for pickups.
+var aPickup = {
+	"x" : 0,	//x position
+	"y" : 0,	//y position
+	"type" : 0,	//what kind of pickup is it?
+	"pulse" : 1,	//thickness of borders
+	"uppulse" : true,	//used in animation
+	"timeleft" : 500,	//counts down to pickup natural despawn
+	"flicker" : 0,	//used in last counts of spawn
+	"radius" : 25,	//radius of pickup
+	"remove" : false,	//flags for removal
+	draw : function() {
+		
+	},
+	move : function() {
+		
+	},
+	pickup : function() {
+		
+	}
+}
+
+function dropPickup(x,y,type) {//drops a pickup at the specified x and y of the specified type.
+	Empty = function() {};
+	Empty.prototype = aPickup;
+	pickup = new Empty();
+	pickup.x = x;
+	pickup.y = y;
+	pickup.type = type;
+	Stuff.push(pickup);
+}

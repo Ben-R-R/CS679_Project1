@@ -164,6 +164,7 @@ window.onload = function() {
     var aBomb = {	//Prototype for bombs shot by Tank, goes in straight line to destination then explodes into a group of P-swarmers
     	"x" : 0,
     	"y" : 0,
+    	"type" : 0,	//used to differentiate from pickups
     	"speed" : 10,	//speed of bombs (constant)
     	"vX" : 0,
     	"vY" : 0,
@@ -346,21 +347,29 @@ window.onload = function() {
         theContext.fill();
 	}
 	
-	function tankDamage(ballList) {	//This function calculates all damage the tank takes and receives
+	function tankDamage(balls) {	//This function calculates all damage the tank takes and receives
 		var chomperDamage = 1;	//Damage dealt by chompers
-		var mosquitoDamage = 1;	//Damage dealt by mosquitoes
 		var chomperBeam = 1;	//Damage dealt to chompers by beam
 		var mosquitoBeam = 1;	//Damage dealt to mosquitoes by beam
-		for(var i = 0; i < ballList.length; i++) {
-			if(ballist[i].team !== p_swarmteam) {
-				dt = Math.sqrt(ballist[i].x*ballist[i].x+ballist[i].y+ballist[i].y);	//distance from ball to tank
-				if(ballist[i].team == chomperTeam && dt <= Tank.radius + ballist[i].radius) {	//Chomper damage check
+		var dx = 0;
+		var dy = 0;
+		var d = 0;
+		for(var i = 0; i < balls.length; i++) {
+			if(balls[i].team !== p_swarmTeam) {
+				dx = balls[i].x - Tank.x;
+				dy = balls[i].y - Tank.y;
+				d = Math.sqrt(dx*dx+dy*dy);	//distance from ball to tank
+				if(balls[i].team == chomperTeam && d <= Tank.radius + balls[i].radius) {	//Chomper damage check
 					Tank.health -= chomperDamage;
-				} else if(ballist[i].team == mosquitoTeam) {
-					//TODO: Mosquito health drain code
 				}
 				//TODO: Beam damage code
 			}
+		}
+	}
+	
+	function tankEffects(stuffList) {	//this function evaluates effect of tank interacting with non-ball objects, such as pickups
+		for(var i = 0; i < stuffList.length; i++) {
+			//TODO: put pickup code in here
 		}
 	}
 
@@ -383,11 +392,15 @@ window.onload = function() {
         
         runEvents(1000/60);
         
-        moveBalls(allBalls );     //calculate new positions of balls
+        moveBalls(allBalls);     //calculate new positions of balls
         
         moveStuff();		//calculate new positions/qualities of other objects
         
         Tank.move();		//calculate new position of tank
+        
+        tankDamage(allBalls);	//calculates damage
+        
+        tankEffects(Stuff);	//checks pickups etc
       
 	    // clear the window
         theContext.clearRect(0, 0, theCanvas.width, theCanvas.height);
