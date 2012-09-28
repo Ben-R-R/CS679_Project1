@@ -393,6 +393,7 @@ window.onload = function () {
 
     function tankDamage(balls) {	//This function calculates all damage the tank takes and receives
         var chomperDamage = 1; //Damage dealt by chompers
+        var lurkerDamage = 3; //Damage dealt by Lurkers
         var chomperBeam = 1; //Damage dealt to chompers by beam
         var mosquitoBeam = 1; //Damage dealt to mosquitoes by beam
         var dx = 0;
@@ -406,6 +407,10 @@ window.onload = function () {
                 if (balls[i].team == chomperTeam && d <= Tank.radius + balls[i].radius) {	//Chomper damage check
                     Tank.health -= chomperDamage;
                 }
+                if (balls[i].team == lurkerTeam && d <= Tank.radius + balls[i].radius) {	//Chomper damage check
+                    Tank.health -= lurkerDamage;
+                }
+                
                 //TODO: Beam damage code
             }
         }
