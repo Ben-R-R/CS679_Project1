@@ -499,7 +499,7 @@ window.onload = function () {
         return chomperSpawnRate;
     }
     
-    var mosquiderSpawnEvent = function () {
+    var mosquitoSpawnEvent = function () {
 
         allBalls.push(makeBall(50 + Math.random() * (fieldSizeX - 100), 50 + Math.random() * (fieldSizeY - 100), "#0000FF", mosquitoTeam));
         
@@ -522,7 +522,7 @@ window.onload = function () {
 
     addEvent(chomperSpawnEvent, 1000);
     addEvent(PRegenEvent, 10);
-
+	addEvent(mosquitoSpawnEvent, 10);
 
 
     // what we need to do is define a function that updates the position

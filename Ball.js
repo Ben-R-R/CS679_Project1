@@ -51,6 +51,8 @@ var aBall = {
 		UserData.score += 10;
 		lootDrop(this.x, this.y);	//drop a pickup (maybe)
 		largeExplosion(this.x,this.y);
+		
+		addTextParticle(this.x,this.y, "+ 10");
 	},
 
     // make 'em "bounce" when they go over the edge
@@ -516,6 +518,26 @@ function addInfluenceLurker(otherBall, d, dx ,dy){
 
 }
 
+function lurkerSpawnEvent(){
+	allBalls.push(makeBall(50 + Math.random() * (fieldSizeX - 100), 50 + Math.random() * (fieldSizeY - 100), "#0000FF", lurkerTeam));
+	return -1;
+}
+
+function LurkerDeath(){
+	addEvent(lurkerSpawnEvent, Math.random() * 10000 + 20000);
+	UserData.score += 1000;
+	lootDrop(this.x, this.y);	//drop a pickup (maybe)
+	
+	dropPickup(this.x+  Math.random() * 40 - 20, this.y+  Math.random() * 40 - 20,2 );	
+	dropPickup(this.x+  Math.random() * 40 - 20, this.y+  Math.random() * 40 - 20,3);
+	dropPickup(this.x+  Math.random() * 40 - 20, this.y+  Math.random() * 40 - 20,1);
+	
+	largeExplosion(this.x,this.y);
+	addTextParticle(this.x,this.y, "+ 1000");
+}
+
+
+
 function finishUpdateLurker(){
 	
 	var d = Math.sqrt( Math.pow(Tank.x - this.x, 2) + Math.pow(Tank.y - this.y,2)); 
@@ -740,6 +762,7 @@ function makeBall(x,y,color,team) {
     	ball.team = lurkerTeam;
     	ball.state = "lurk";
     	ball.norm = lurkerNorm;
+    	ball.onDeath = LurkerDeath;
     	
 	}else { //Miscellaneous
     	ball.radius = 5.0;
