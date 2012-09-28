@@ -154,7 +154,6 @@ function addEvent(eventFunc, runIn){
 }
 
 var totalTime = 0;
-
 function runEvents(frameTime){
 	totalTime += frameTime;
 	
