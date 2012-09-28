@@ -1,217 +1,227 @@
 /// TANK
 
- var Tank = {	//The player avatar, can be controlled with keyboard
-	"x" : 500,
-	"y" : 500,
-	"speed" : 5, //maximum speed in any cardinal direction (diagonal is faster 'cause why not)
-	"accel" : 0.5, //acceleration for smoother movement
-	"radius" : 25, //radius of tank
-	"beaml" : 200,	//length of beam outward from tank center
-	"beamsx" : 500, //x coordinate of beam start
-	"beamsy" : 500, //y coordinate of beam start
-	"beamex" : 550,	//x coordinate of beam end
-	"beamey" : 550,	//y coordinate of beam end
-	"vX" : 0, //current x velocity
-	"vY" : 0, //current y velocity 
-	"health" : 200,
-	"maxHealth" : 200,
-	"energy" : 0,	//energy of beam
-	"maxEnergy" : 500,	//maximum beam energy
-	"heading" : 0,	//angle of facing
-	"beamOn": false, //if the beam is turned on
+var Tank = {	//The player avatar, can be controlled with keyboard
+    "x": 500,
+    "y": 500,
+    "speed": 5, //maximum speed in any cardinal direction (diagonal is faster 'cause why not)
+    "accel": 0.5, //acceleration for smoother movement
+    "radius": 25, //radius of tank
+    "beaml": 200, //length of beam outward from tank center
+    "beamsx": 500, //x coordinate of beam start
+    "beamsy": 500, //y coordinate of beam start
+    "beamex": 550, //x coordinate of beam end
+    "beamey": 550, //y coordinate of beam end
+    "vX": 0, //current x velocity
+    "vY": 0, //current y velocity 
+    "health": 200,
+    "maxHealth": 200,
+    "energy": 0, //energy of beam
+    "maxEnergy": 500, //maximum beam energy
+    "heading": 0, //angle of facing
+    "beamOn": false, //if the beam is turned on
 
-	reset: function () {
-	 this.x  = 500;
-	 this.y = 500;
-	 this.speed = 5; //maximum speed in any cardinal direction (diagonal is faster 'cause why not)
-	 this.accel = 0.5; //acceleration for smoother movement
-	 this.radius = 25; //radius of tank
-	 this.beaml = 200; //length of beam outward from tank center
-	 this.beamsx = 500; //x coordinate of beam start
-	 this.beamsy = 500; //y coordinate of beam start
-	 this.beamex = 550; //x coordinate of beam end
-	 this.beamey = 550; //y coordinate of beam end
-	 this.vX = 0; //current x velocity
-	 this.vY = 0; //current y velocity 
-	 this.health = 200;
-	 this.maxHealth = 200;
-	 this.energy = 0; //energy of beam
-	 this.maxEnergy = 500; //maximum beam energy
-	 this.heading = 0; //angle of facing
-	 this.beamOn = false; //if the beam is turned on
+    reset: function () {
+        this.x = 500;
+        this.y = 500;
+        this.speed = 5; //maximum speed in any cardinal direction (diagonal is faster 'cause why not)
+        this.accel = 0.5; //acceleration for smoother movement
+        this.radius = 25; //radius of tank
+        this.beaml = 200; //length of beam outward from tank center
+        this.beamsx = 500; //x coordinate of beam start
+        this.beamsy = 500; //y coordinate of beam start
+        this.beamex = 550; //x coordinate of beam end
+        this.beamey = 550; //y coordinate of beam end
+        this.vX = 0; //current x velocity
+        this.vY = 0; //current y velocity 
+        this.health = 200;
+        this.maxHealth = 200;
+        this.energy = 0; //energy of beam
+        this.maxEnergy = 500; //maximum beam energy
+        this.heading = 0; //angle of facing
+        this.beamOn = false; //if the beam is turned on
 
 
-	},
+    },
 
-    draw : function() {
-    
+    draw: function () {
+
         var _X = this.x + originX;
-    	var _Y = this.y + originY;
-        
-        v = Math.sqrt(this.vX*this.vX+this.vY*this.vY)/this.speed*2;
-        
+        var _Y = this.y + originY;
+
+        v = Math.sqrt(this.vX * this.vX + this.vY * this.vY) / this.speed * 2;
+
         theContext.fillStyle = "#0099FF"
         var tstX = 0 + originX;
-        var tstY = 0 + originY; 
-        theContext.beginPath();//Test Object
-        	theContext.arc(tstX+this.radius/1.2,tstY+this.radius/1.2,this.radius/3+v,0,circ,true);
-       	theContext.closePath();
-       	theContext.stroke();
-       	theContext.fill();
-       	
-       	theContext.fillStyle = "#9911FF"
-       	tstX = mousex + originX;
-        tstY = mousey + originY; 
-        theContext.beginPath();//Test Object
-        	theContext.arc(tstX+this.radius/1.2,tstY+this.radius/1.2,this.radius/3+v,0,circ,true);
-       	theContext.closePath();
-       	theContext.stroke();
-       	theContext.fill();
-       	
+        var tstY = 0 + originY;
+        theContext.beginPath(); //Test Object
+        theContext.arc(tstX + this.radius / 1.2, tstY + this.radius / 1.2, this.radius / 3 + v, 0, circ, true);
+        theContext.closePath();
+        theContext.stroke();
+        theContext.fill();
+
+        theContext.fillStyle = "#9911FF"
+        tstX = mousex + originX;
+        tstY = mousey + originY;
+        theContext.beginPath(); //Test Object
+        theContext.arc(tstX + this.radius / 1.2, tstY + this.radius / 1.2, this.radius / 3 + v, 0, circ, true);
+        theContext.closePath();
+        theContext.stroke();
+        theContext.fill();
+
         //Experimenting with making appearance affected by movement
         theContext.strokeStyle = "#0099FF";
         theContext.fillStyle = "#0099FF";
-        theta = Math.PI/8;
-        theContext.beginPath();//bottom-right thrust
-        	theContext.arc(_X+this.radius/1.2,_Y+this.radius/1.2,this.radius/3+v,0,circ,true);
-       	theContext.closePath();
-       	theContext.stroke();
-       	theContext.fill();
-        theContext.beginPath();//top-left thrust
-        	theContext.arc(_X-this.radius/1.2,_Y-this.radius/1.2,this.radius/3+v,0,circ,true);
-       	theContext.closePath();
-       	theContext.stroke();
-       	theContext.fill();
-        theContext.beginPath();//top-right thrust
-        	theContext.arc(_X+this.radius/1.2,_Y-this.radius/1.2,this.radius/3+v,0,circ,true);
-       	theContext.closePath();
-       	theContext.stroke();
-       	theContext.fill();
-        theContext.beginPath();//bottom-left thrust
-        	theContext.arc(_X-this.radius/1.2,_Y+this.radius/1.2,this.radius/3+v,0,circ,true);
-       	theContext.closePath();
-       	theContext.stroke();
-       	theContext.fill();
-       		
+        theta = Math.PI / 8;
+        theContext.beginPath(); //bottom-right thrust
+        theContext.arc(_X + this.radius / 1.2, _Y + this.radius / 1.2, this.radius / 3 + v, 0, circ, true);
+        theContext.closePath();
+        theContext.stroke();
+        theContext.fill();
+        theContext.beginPath(); //top-left thrust
+        theContext.arc(_X - this.radius / 1.2, _Y - this.radius / 1.2, this.radius / 3 + v, 0, circ, true);
+        theContext.closePath();
+        theContext.stroke();
+        theContext.fill();
+        theContext.beginPath(); //top-right thrust
+        theContext.arc(_X + this.radius / 1.2, _Y - this.radius / 1.2, this.radius / 3 + v, 0, circ, true);
+        theContext.closePath();
+        theContext.stroke();
+        theContext.fill();
+        theContext.beginPath(); //bottom-left thrust
+        theContext.arc(_X - this.radius / 1.2, _Y + this.radius / 1.2, this.radius / 3 + v, 0, circ, true);
+        theContext.closePath();
+        theContext.stroke();
+        theContext.fill();
+
         theContext.strokeStyle = ballstroke;
         theContext.fillStyle = ballcolor;
-        
-        theContext.beginPath();//bottom-right pod
-        	theContext.arc(_X+this.radius/1.2,_Y+this.radius/1.2,this.radius/3,0,circ,true);
-       	theContext.closePath();
-       	theContext.stroke();
-       	theContext.fill();
-        theContext.beginPath();//top-left pod
-        	theContext.arc(_X-this.radius/1.2,_Y-this.radius/1.2,this.radius/3,0,circ,true);
-       	theContext.closePath();
-       	theContext.stroke();
-       	theContext.fill();
-        theContext.beginPath();//top-right pod
-        	theContext.arc(_X+this.radius/1.2,_Y-this.radius/1.2,this.radius/3,0,circ,true);
-       	theContext.closePath();
-       	theContext.stroke();
-       	theContext.fill();
-        theContext.beginPath();//bottom-left pod
-        	theContext.arc(_X-this.radius/1.2,_Y+this.radius/1.2,this.radius/3,0,circ,true);
-       	theContext.closePath();
-       	theContext.stroke();
-       	theContext.fill();
-        theContext.beginPath();//Body
-            theContext.arc(_X,_Y,this.radius,0,circ,true); 
+
+        theContext.beginPath(); //bottom-right pod
+        theContext.arc(_X + this.radius / 1.2, _Y + this.radius / 1.2, this.radius / 3, 0, circ, true);
         theContext.closePath();
         theContext.stroke();
         theContext.fill();
-        theContext.beginPath();//Cannon
-            theContext.moveTo(_X,_Y);
-            theContext.lineTo(_X+this.radius*Math.cos(this.heading+theta*2)/2,_Y+this.radius*Math.sin(this.heading+theta*2)/2);
-            theContext.lineTo(_X+this.radius*Math.cos(this.heading+theta)/1.1,_Y+this.radius*Math.sin(this.heading+theta)/1.1);
-            theContext.lineTo(_X+this.radius*Math.cos(this.heading-theta)/1.1,_Y+this.radius*Math.sin(this.heading-theta)/1.1);
-            theContext.lineTo(_X+this.radius*Math.cos(this.heading-theta*2)/2,_Y+this.radius*Math.sin(this.heading-theta*2)/2);
+        theContext.beginPath(); //top-left pod
+        theContext.arc(_X - this.radius / 1.2, _Y - this.radius / 1.2, this.radius / 3, 0, circ, true);
         theContext.closePath();
         theContext.stroke();
         theContext.fill();
-        theContext.beginPath();//Turret
-            theContext.arc(_X,_Y,this.radius/2,0,circ,true); 
+        theContext.beginPath(); //top-right pod
+        theContext.arc(_X + this.radius / 1.2, _Y - this.radius / 1.2, this.radius / 3, 0, circ, true);
         theContext.closePath();
         theContext.stroke();
         theContext.fill();
-        
-        if(this.beamOn) {
-        	theContext.beginPath();//Beam
-        		theContext.moveTo(_X+this.radius*Math.cos(this.heading),_Y+this.radius*Math.sin(this.heading));
-        		theContext.lineTo(_X+this.beaml*Math.cos(this.heading),_Y+this.beaml*Math.sin(this.heading));
-        	theContext.closePath();
-        	theContext.stroke();
-        	theContext.fill();
+        theContext.beginPath(); //bottom-left pod
+        theContext.arc(_X - this.radius / 1.2, _Y + this.radius / 1.2, this.radius / 3, 0, circ, true);
+        theContext.closePath();
+        theContext.stroke();
+        theContext.fill();
+        theContext.beginPath(); //Body
+        theContext.arc(_X, _Y, this.radius, 0, circ, true);
+        theContext.closePath();
+        theContext.stroke();
+        theContext.fill();
+        theContext.beginPath(); //Cannon
+        theContext.moveTo(_X, _Y);
+        theContext.lineTo(_X + this.radius * Math.cos(this.heading + theta * 2) / 2, _Y + this.radius * Math.sin(this.heading + theta * 2) / 2);
+        theContext.lineTo(_X + this.radius * Math.cos(this.heading + theta) / 1.1, _Y + this.radius * Math.sin(this.heading + theta) / 1.1);
+        theContext.lineTo(_X + this.radius * Math.cos(this.heading - theta) / 1.1, _Y + this.radius * Math.sin(this.heading - theta) / 1.1);
+        theContext.lineTo(_X + this.radius * Math.cos(this.heading - theta * 2) / 2, _Y + this.radius * Math.sin(this.heading - theta * 2) / 2);
+        theContext.closePath();
+        theContext.stroke();
+        theContext.fill();
+        theContext.beginPath(); //Turret
+        theContext.arc(_X, _Y, this.radius / 2, 0, circ, true);
+        theContext.closePath();
+        theContext.stroke();
+        theContext.fill();
+
+
+        if (this.beamOn) {
+
+            theContext.lineWidth = 10;
+            theContext.strokeStyle = "#7F00FF";
+            theContext.fillStyle = "#7F00FF";
+            theContext.beginPath(); //Beam
+            theContext.moveTo(_X + this.radius * Math.cos(this.heading), _Y + this.radius * Math.sin(this.heading));
+            theContext.lineTo(_X + this.beaml * Math.cos(this.heading), _Y + this.beaml * Math.sin(this.heading));
+
+            
+            theContext.closePath();
+            theContext.stroke();
+            theContext.fill();
+            theContext.lineWidth = 1;
+            theContext.strokeStyle = "#0099FF";
+            theContext.fillStyle = "#0099FF";
         }
     },
-    move : function() {
+    move: function () {
         this.x += this.vX;
         this.y += this.vY;
         this.heading = Math.atan2((mousey) - this.y, (mousex) - this.x);
-        if(this.beamOn) {
-        	if(this.energy >= 5) {
-        		this.beamsx = this.x + this.radius*Math.cos(this.heading);
-        		this.beamsy = this.y + this.radius*Math.sin(this.heading);
-        		this.beamex = this.x + this.beaml*Math.cos(this.heading);
-        		this.beamey = this.y + this.beaml*Math.cos(this.heading);
-        		this.energy -= 2;	//energy consumption rate
-        	} else {this.energy = 0; this.beamOn = false;}
+        if (this.beamOn) {
+            if (this.energy >= 5) {
+                this.beamsx = this.x + this.radius * Math.cos(this.heading);
+                this.beamsy = this.y + this.radius * Math.sin(this.heading);
+                this.beamex = this.x + this.beaml * Math.cos(this.heading);
+                this.beamey = this.y + this.beaml * Math.cos(this.heading);
+                this.energy -= 2; //energy consumption rate
+            } else { this.energy = 0; this.beamOn = false; }
         } else {
-        	this.energy += 1;	//energy recharge rate
-        	if(this.energy > this.maxEnergy) {this.energy = this.maxEnergy;}
-        	}
-        
+            this.energy += 1; //energy recharge rate
+            if (this.energy > this.maxEnergy) { this.energy = this.maxEnergy; }
+        }
+
         if (this.x > fieldSizeX) {
-        	this.x = fieldSizeX;
-        	this.vX = -this.vX;
+            this.x = fieldSizeX;
+            this.vX = -this.vX;
         }
         if (this.y > fieldSizeY) {
-        	this.y = fieldSizeY;
-        	this.vY = -this.vY;
+            this.y = fieldSizeY;
+            this.vY = -this.vY;
         }
         if (this.x < 0) {
-        	this.x = 0;
-        	this.vX = -this.vX;
+            this.x = 0;
+            this.vX = -this.vX;
         }
         if (this.y < 0) {
-        	this.y = 0;
-        	this.vY = -this.vY;
+            this.y = 0;
+            this.vY = -this.vY;
         }
         var _X = this.x + originX;
         var _Y = this.y + originY;
-        
-        if ( (_X > theCanvas.width - 100) && this.vX > 0.0001){
-			originX	-= this.vX;
-			
-		} else if ( (_X < 0 + 100)  && this.vX < -0.0001){
-			originX	-= this.vX;
-			
-		} 
-		
-		if ( (_X < 0) ){
-			originX	= -this.x + 100;
-			
-		} else if ( (_X > theCanvas.width) ){
-			originX	= -this.x + 100;
-			
-		}
-		
-		if ( (_Y > theCanvas.height - 100) && this.vY > 0.0001){
-			originY	-= this.vY;
-			
-		} else if ( (_Y < 0 + 100) && this.vY < -0.0001){
-			originY	-= this.vY;
-			
-		} 
-		
-		if ( (_Y < 0) ){
-			originY	= -this.y + 100;
-			
-		} else if ( (_Y > theCanvas.height) ){
-			originY	= -this.y + 100;
-			
-		}
+
+        if ((_X > theCanvas.width - 100) && this.vX > 0.0001) {
+            originX -= this.vX;
+
+        } else if ((_X < 0 + 100) && this.vX < -0.0001) {
+            originX -= this.vX;
+
+        }
+
+        if ((_X < 0)) {
+            originX = -this.x + 100;
+
+        } else if ((_X > theCanvas.width)) {
+            originX = -this.x + 100;
+
+        }
+
+        if ((_Y > theCanvas.height - 100) && this.vY > 0.0001) {
+            originY -= this.vY;
+
+        } else if ((_Y < 0 + 100) && this.vY < -0.0001) {
+            originY -= this.vY;
+
+        }
+
+        if ((_Y < 0)) {
+            originY = -this.y + 100;
+
+        } else if ((_Y > theCanvas.height)) {
+            originY = -this.y + 100;
+
+        }
     }
 }
 
