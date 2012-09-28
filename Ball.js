@@ -50,6 +50,7 @@ var aBall = {
     onDeath : function() {
 		UserData.score += 10;
 		lootDrop(this.x, this.y);	//drop a pickup (maybe)
+		largeExplosion(this.x,this.y);
 	},
 
     // make 'em "bounce" when they go over the edge
@@ -728,7 +729,7 @@ function makeBall(x,y,color,team) {
 	} else if(team === lurkerTeam){
         ball.radius = 30.0;
         ball.speed = 0.1;
-        ball.health = 200;
+        ball.health = 1500;
         ball.a = 0;
 		ball.draw = drawLurker;
 		ball.bloodLevel = 0;

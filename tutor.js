@@ -456,7 +456,8 @@ window.onload = function () {
                 
         		
         		if(collision){
-        			balls[i].health -= 10;	
+        			balls[i].health -= 10;
+					smallExplosion( balls[i].x , balls[i].y )	
 				}
                 
             }
@@ -529,6 +530,9 @@ window.onload = function () {
             drawBalls(allBalls);     //show balls
 
             drawBalls(Stuff);
+            
+            drawParticles();
+            
             if (Tank.health <= 0) {
                 gameStarted = false;
                 gameOver = true;

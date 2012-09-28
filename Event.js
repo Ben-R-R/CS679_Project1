@@ -88,6 +88,12 @@ function List(){
 		this.tail.prev = newNode;		    
 	}
 	
+	this.pushFront = function(data){
+		var newNode = new ListNode(data, this.head, this.head.next);
+		this.head.next.prev = newNode;
+		this.head.next = newNode;		    
+	}
+	
 	this.popFront = function(){
 	    var retNode = this.head.next;
 	    if (retNode === this.tail){
