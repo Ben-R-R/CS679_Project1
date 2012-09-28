@@ -115,11 +115,14 @@ var Tank = {	//The player avatar, can be controlled with keyboard
         theContext.fill();
         theContext.beginPath(); //Cannon
         theContext.moveTo(_X, _Y);
-        theContext.lineTo(_X + this.radius * Math.cos(this.heading + theta * 2) / 2, _Y + this.radius * Math.sin(this.heading + theta * 2) / 2);
+        
+		theContext.lineTo(_X + this.radius * Math.cos(this.heading + theta * 2) / 2, _Y + this.radius * Math.sin(this.heading + theta * 2) / 2);
         theContext.lineTo(_X + this.radius * Math.cos(this.heading + theta) / 1.1, _Y + this.radius * Math.sin(this.heading + theta) / 1.1);
         theContext.lineTo(_X + this.radius * Math.cos(this.heading - theta) / 1.1, _Y + this.radius * Math.sin(this.heading - theta) / 1.1);
         theContext.lineTo(_X + this.radius * Math.cos(this.heading - theta * 2) / 2, _Y + this.radius * Math.sin(this.heading - theta * 2) / 2);
-        theContext.closePath();
+        
+		
+		theContext.closePath();
         theContext.stroke();
         theContext.fill();
         theContext.beginPath(); //Turret
@@ -132,7 +135,7 @@ var Tank = {	//The player avatar, can be controlled with keyboard
 
 
         if (this.beamOn) {
-        	theContext.lineWidth = 10 * this.beamOn;
+        	theContext.lineWidth = 10; //* this.beamOn;
             theContext.strokeStyle = "#AF55FF";
             theContext.fillStyle = "#AF55FF";
             theContext.beginPath(); //Beam
@@ -142,7 +145,17 @@ var Tank = {	//The player avatar, can be controlled with keyboard
             
             theContext.closePath();
             theContext.stroke();
-            theContext.fill();
+            //theContext.fill();
+            theContext.strokeStyle = "#FFFFFF";
+            theContext.lineWidth = 7;
+            theContext.moveTo(_X + this.radius * Math.cos(this.heading), _Y + this.radius * Math.sin(this.heading));
+            theContext.lineTo(_X + this.beaml * Math.cos(this.heading), _Y + this.beaml * Math.sin(this.heading));
+
+            
+            theContext.closePath();
+            theContext.stroke();
+            //theContext.fill();
+            
             theContext.lineWidth = 1;
             theContext.strokeStyle = "#0099FF";
             theContext.fillStyle = "#0099FF";
