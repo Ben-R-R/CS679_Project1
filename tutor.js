@@ -224,12 +224,13 @@ window.onload = function () {
                 this.progress++;
             } else {
                 this.remove = true; //Flags, sorts and removes from list
-                for (var i = 0; i < this.yield; i++) {//Spawns swarmers per bomb yield
+                largeExplosion(this.x,this.y)
+				for (var i = 0; i < this.yield; i++) {//Spawns swarmers per bomb yield
                     swarmCount++;
                     allBalls.push(
     					makeBall(
-    						this.x + this.radius * Math.cos(i * circ / this.yield) / 2,
-    						this.y + this.radius * Math.sin(i * circ / this.yield) / 2,
+    						this.x + Math.random() * 50 - 25,
+    						this.y + Math.random() * 50 - 25,
     						"#008800",
     						1
     					)

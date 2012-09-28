@@ -50,14 +50,6 @@ var Tank = {	//The player avatar, can be controlled with keyboard
 
         v = Math.sqrt(this.vX * this.vX + this.vY * this.vY) / this.speed * 2;
 
-        theContext.fillStyle = "#0099FF"
-        var tstX = 0 + originX;
-        var tstY = 0 + originY;
-        theContext.beginPath(); //Test Object
-        theContext.arc(tstX , tstY , this.radius / 3 , 0, circ, true);
-        theContext.closePath();
-        theContext.stroke();
-        theContext.fill();
 
         theContext.fillStyle = "#9911FF"
         tstX = mousex + originX;
