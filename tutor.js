@@ -159,8 +159,8 @@ window.onload = function () {
             ballList[i].move();
             if (ballList[i].health < 0) {
                 //console.log(ballList[i].team);
-                if(ballList[i].team == p_swarmTeam) {swarmCount--;}
-                else {ballList[i].onDeath();}
+                if (ballList[i].team == p_swarmTeam) { swarmCount--; }
+                else { ballList[i].onDeath(); }
                 ballList[i].remove = true;
                 allBalls.sort(cull);
                 allBalls.pop();
@@ -225,7 +225,7 @@ window.onload = function () {
             } else {
                 this.remove = true; //Flags, sorts and removes from list
                 for (var i = 0; i < this.yield; i++) {//Spawns swarmers per bomb yield
-                	swarmCount++;
+                    swarmCount++;
                     allBalls.push(
     					makeBall(
     						this.x + this.radius * Math.cos(i * circ / this.yield) / 2,
@@ -243,22 +243,22 @@ window.onload = function () {
     // what to do when things get clicked
     function doClick() {
 
-		if(UserData.items[1].quantity > 0){
-			theta = Math.atan2(mousey - Tank.y, mousex - Tank.x);
-		    Empty = function () { };
-		    Empty.prototype = aBomb;
-		    bomb = new Empty();
-		    bomb.x = Tank.x + Tank.radius * Math.cos(theta);
-		    bomb.y = Tank.y + Tank.radius * Math.sin(theta);
-		    bomb.vX = aBomb.speed * Math.cos(theta);
-		    bomb.vY = aBomb.speed * Math.sin(theta);
-		    dx = mousex - bomb.x;
-		    dy = mousey - bomb.y;
-		    bomb.steps = Math.sqrt(dx * dx + dy * dy) / aBomb.speed;
-		    Stuff.push(bomb);
-		    UserData.items[1].quantity -= 1;
-		}
-        
+        if (UserData.items[1].quantity > 0) {
+            theta = Math.atan2(mousey - Tank.y, mousex - Tank.x);
+            Empty = function () { };
+            Empty.prototype = aBomb;
+            bomb = new Empty();
+            bomb.x = Tank.x + Tank.radius * Math.cos(theta);
+            bomb.y = Tank.y + Tank.radius * Math.sin(theta);
+            bomb.vX = aBomb.speed * Math.cos(theta);
+            bomb.vY = aBomb.speed * Math.sin(theta);
+            dx = mousex - bomb.x;
+            dy = mousey - bomb.y;
+            bomb.steps = Math.sqrt(dx * dx + dy * dy) / aBomb.speed;
+            Stuff.push(bomb);
+            UserData.items[1].quantity -= 1;
+        }
+
     }
 
     theCanvas.addEventListener("click", doClick, false);
@@ -275,6 +275,8 @@ window.onload = function () {
     function restart() {
         gameStarted = true;
         gameOver = false;
+        mosquitoSpawnRate = 5000;
+        chomperSpawnRate = 1000;
         spawnStart();
         Tank.reset();
         UserData.reset();
@@ -403,32 +405,32 @@ window.onload = function () {
         var lurkerDamage = 3; //Damage dealt by Lurkers
         var chomperBeam = 1; //Damage dealt to chompers by beam
         var mosquitoBeam = 1; //Damage dealt to mosquitoes by beam
-        
+
         var beamR = 5; // Beam radius
         var beamL = (Tank.beaml + Tank.radius); // beam length, define in like this because it makes the math easyer, and is only a little wrong. 
         var dx = 0;
         var dy = 0;
         var d = 0;
-        
+
         var uBX = Math.cos(Tank.heading); // unit vector pointing along the Beam's line of action
         var uBY = Math.sin(Tank.heading);
-        
+
         var uPX = uBY; 					  // unit vector purpendicular to the beam. 
         var uPY = -uBX;
-        
+
         var vBX = beamL * uBX;     // vector of the beam
-		var vBY = beamL * uBY; 
-		
-	    var bRad = 0 // ball radius 
-        
+        var vBY = beamL * uBY;
+
+        var bRad = 0 // ball radius 
+
         var collision = false;
-        
+
         var projBeam = 0; // projection along the beam
-        
+
         for (var i = 0; i < balls.length; i++) {
-            if (balls[i].team !== p_swarmTeam && balls[i].team !== shieldTeam ) {
-                 dx = balls[i].x - Tank.x;
-                 dy = balls[i].y - Tank.y;
+            if (balls[i].team !== p_swarmTeam && balls[i].team !== shieldTeam) {
+                dx = balls[i].x - Tank.x;
+                dy = balls[i].y - Tank.y;
                 d = Math.sqrt(dx * dx + dy * dy); //distance from ball to tank
                 if (balls[i].team == chomperTeam && d <= Tank.radius + balls[i].radius) {	//Chomper damage check
                     Tank.health -= chomperDamage;
@@ -436,34 +438,34 @@ window.onload = function () {
                 if (balls[i].team == lurkerTeam && d <= Tank.radius + balls[i].radius) {	//Chomper damage check
                     Tank.health -= lurkerDamage;
                 }
-                
+
                 bRad = balls[i].radius;
                 collision = false;
-                
+
                 // short curcuit balls that are way away:
-                if(Tank.beamOn && d < beamL + bRad + beamR){
-                
-                	// make sure they are close to the line
-					if (Math.abs(dx * uPX + dy * uPY) < (beamR + bRad) ){
-						
-						// are they out back?
-						projBeam = dx * uBX + dy * uBY;
-						if(projBeam < 0){
-							if(d > (bRad + beamR)){
-								collision = true;	
-							}
-						} else {
-						   collision = true;
-						}
-					}
-				}
-                
-        		
-        		if(collision){
-        			balls[i].health -= 10;
-					smallExplosion( balls[i].x , balls[i].y )	
-				}
-                
+                if (Tank.beamOn && d < beamL + bRad + beamR) {
+
+                    // make sure they are close to the line
+                    if (Math.abs(dx * uPX + dy * uPY) < (beamR + bRad)) {
+
+                        // are they out back?
+                        projBeam = dx * uBX + dy * uBY;
+                        if (projBeam < 0) {
+                            if (d > (bRad + beamR)) {
+                                collision = true;
+                            }
+                        } else {
+                            collision = true;
+                        }
+                    }
+                }
+
+
+                if (collision) {
+                    balls[i].health -= 10;
+                    smallExplosion(balls[i].x, balls[i].y)
+                }
+
             }
         }
     }
@@ -488,39 +490,40 @@ window.onload = function () {
 
     var chomperSpawnEvent = function () {
 
-        allBalls.push(makeBall(50 + Math.random() * 500, 50 + Math.random() * 300, "#0000FF", chomperTeam));
-        
+        allBalls.push(makeBall(50 + Math.random() * (fieldSizeX - 100), 50 + Math.random() * (fieldSizeY - 100), "#0000FF", chomperTeam));
+
         chomperSpawnRate -= 1;
-        
-        if(chomperSpawnRate < 500){
-			chomperSpawnRate = 500
-		}
-        
+
+        if (chomperSpawnRate < 500) {
+            chomperSpawnRate = 500
+        }
+
         return chomperSpawnRate;
     }
-    
+
     var mosquitoSpawnEvent = function () {
 
         allBalls.push(makeBall(50 + Math.random() * (fieldSizeX - 100), 50 + Math.random() * (fieldSizeY - 100), "#0000FF", mosquitoTeam));
-        
+
         mosquitoSpawnRate -= 1;
-        
-        if(mosquitoSpawnRate < 500){
-			mosquitoSpawnRate = 500
-		}
-        
+
+        if (mosquitoSpawnRate < 500) {
+            mosquitoSpawnRate = 500
+        }
+
         return mosquitoSpawnRate;
     }
-    
+
     var PRegenEvent = function () {
-    	if(swarmCount < 50) {
-    		allBalls.push(makeBall(Tank.x, Tank.y, "#008800", p_swarmTeam));
-    		swarmCount++;
-    	}
-    	return 10;
+        if (swarmCount < 50) {
+            allBalls.push(makeBall(Tank.x, Tank.y, "#008800", p_swarmTeam));
+            swarmCount++;
+        }
+        return 10;
     }
 
-    addEvent(chomperSpawnEvent, 1000);
+    addEvent(chomperSpawnEvent, chomperSpawnRate);
+    addEvent(mosquiderSpawnEvent, mosquitoSpawnRate);
     addEvent(PRegenEvent, 10);
 	addEvent(mosquitoSpawnEvent, 10);
 
@@ -554,9 +557,9 @@ window.onload = function () {
             drawBalls(allBalls);     //show balls
 
             drawBalls(Stuff);
-            
+
             drawParticles();
-            
+
             if (Tank.health <= 0) {
                 gameStarted = false;
                 gameOver = true;
@@ -615,11 +618,108 @@ window.onload = function () {
         theContext.font = "30px Arial";
         theContext.fillText("Laser Beam:                   Space", 100, 380);
 
+        theContext.font = "40px Arial";
+        theContext.fillText("Enemies: ", 100, 450);
+
+        theContext.font = "30px Arial";
+        theContext.fillText("Chomper", 100, 490);
+
+        theContext.strokeStyle = ballstroke;
+        theContext.fillStyle = "#0000FF";
+        var _X = 250;
+        var _Y = 482;
+        var radius = 10;
+        var mouthAngle = 0.4;
+
+        if (mouthAngle > 2 * Math.PI) {
+            mouthAngle = 0;
+        }
+
+        var theta = Math.PI / 8 * (Math.sin(mouthAngle) + 1);
+
+        var phi = Math.atan2(1, 1);
+        theContext.beginPath();
+        theContext.arc(_X, _Y, radius, phi - theta, phi + theta, true);
+        theContext.lineTo(_X, _Y);
+        theContext.closePath();
+        theContext.stroke();
+        theContext.fill();
+
+
+        theContext.fillStyle = "#000000";
+        theContext.font = "30px Arial";
+        theContext.fillText("Mosquito", 100, 530);
+
+        _X = 250;
+        _Y = 520;
+        theContext.fillStyle = "#FFCC00";
+        theContext.beginPath();
+        theContext.moveTo(_X, _Y);
+        theContext.lineTo(_X + 1 * 10, _Y + 4 * 1.5);
+        theContext.closePath();
+        theContext.closePath();
+        theContext.stroke();
+
+        theContext.beginPath();
+        theContext.arc(_X, _Y, 5, 0, circ, true);
+        //theContext.moveTo(_X, _Y);
+        //theContext.lineTo(_X + 4 * this.vX, _Y + 4 * this.vY);
+        theContext.closePath();
+
+        theContext.stroke();
+        theContext.fill();
+
+        theContext.strokeStyle = "#000000";
+        theContext.fillStyle = "#000000";
+        theContext.font = "30px Arial";
+        theContext.fillText("Lurker", 100, 570);
+
+
+        _X = 250;
+        _Y = 565;
+        radius = 30;
+        theContext.strokeStyle = "#000000";
+        theContext.fillStyle = "#330066";
+
+        theContext.beginPath();
+        theContext.arc(_X, _Y, radius, circ / 2, circ / 2 + circ / 6, false);
+        theContext.arc(_X - radius, _Y, radius, circ / 2 + 2 * circ / 6, circ, false);
+
+        theContext.arc(_X + radius, _Y, radius, circ / 2, circ / 2 + circ / 6, false);
+        theContext.arc(_X, _Y, radius, circ / 2 + 2 * circ / 6, circ, false);
+
+        theContext.arc(_X + radius / 2, _Y, radius / 2, 0, circ / 2, true);
+        theContext.arc(_X - radius / 2, _Y, radius / 2, 0, circ / 2, true);
+
+        theContext.fill();
+
+        theContext.moveTo(_X, _Y)
+        theContext.lineTo(_X, _Y + radius / 3)
+
+        var r6 = radius / 6
+        var r2 = radius / 2
+
+        for (var i = 2; i < 6; i++) {
+
+            var __Y1 = Math.sqrt(Math.pow(r2, 2) - Math.pow(r2 - i * r6, 2))
+
+            var __Y2 = Math.sqrt(Math.pow(radius, 2) - Math.pow(i * r6, 2))
+
+            theContext.moveTo(_X - i * r6, _Y - __Y1)
+            theContext.lineTo(_X - i * r6 + r2 / 2 * Math.sin(0), _Y + __Y2)
+
+            theContext.moveTo(_X + i * r6, _Y - __Y1)
+            theContext.lineTo(_X + i * r6 - r2 / 2 * Math.sin(0), _Y + __Y2)
+        }
+
+
+
+        theContext.stroke();
 
 
         theContext.fillStyle = "rgba(255, 0, 0, " + alpha + ")"
         theContext.font = "50px Arial";
-        theContext.fillText("Press space to begin.", 100, 450);
+        theContext.fillText("Press space to begin.", 150, 650);
 
         alpha += alphaModifier;
         if (alpha < 0 || alpha > 1.0) {
