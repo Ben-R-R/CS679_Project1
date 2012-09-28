@@ -19,7 +19,8 @@
 // window (so it gets run when the window is done loading), rather 
 // than as a function of the canvas.
 window.onload = function() {
-    // I am putting my "Application object" inside this function
+    
+	// I am putting my "Application object" inside this function
     // which might be a little bit inelegant, but it works
     
     // figure out what the "requestAnimationFrame" function is called
@@ -363,12 +364,24 @@ window.onload = function() {
 		}
 	}
 
+	var spawnEvent = function(){
+		//
+		console.log("Spawning");
+        allBalls.push(makeBall( 50+Math.random()*500, 50+Math.random()*300 , "#0000FF", chomperTeam));	
+	    return 1000;
+	}
+
+    addEvent(spawnEvent, 1000);
+
+
     // what we need to do is define a function that updates the position
     // draws, then schedules another iteration in the future
     // WARNING: this is the simplest, but not the best, way to do this
     function drawLoop() {
          
         receive();		//evaluate effect of current keystrokes
+        
+        runEvents(5);
         
         moveBalls(allBalls );     //calculate new positions of balls
         
