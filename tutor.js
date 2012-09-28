@@ -365,14 +365,14 @@ window.onload = function() {
 	}
 
 	var spawnEvent = function(){
-		//
-		console.log("Spawning");
+		
         allBalls.push(makeBall( 50+Math.random()*500, 50+Math.random()*300 , "#0000FF", chomperTeam));	
 	    return 1000;
 	}
 
     addEvent(spawnEvent, 1000);
 
+	
 
     // what we need to do is define a function that updates the position
     // draws, then schedules another iteration in the future
@@ -381,7 +381,7 @@ window.onload = function() {
          
         receive();		//evaluate effect of current keystrokes
         
-        runEvents(5);
+        runEvents(1000/60);
         
         moveBalls(allBalls );     //calculate new positions of balls
         

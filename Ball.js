@@ -525,8 +525,15 @@ function genericDamage(otherObject, dx, dy){ //dx, dy is a vector from you to th
 	if(otherObject.team in this.damageMap){
 		otherObject.health -= this.damageMap[otherObject.team];
 	}
-	this.vX = -dx;
-	this.vY = -dy;
+	
+	if(otherObject.team === shieldTeam){
+	    this.vX = -(Tank.x - this.x);
+		this.vY = -(Tank.y - this.y)
+	} else {
+		this.vX = -dx;
+		this.vY = -dy;
+	}
+	
 	
 	
 }
