@@ -82,20 +82,13 @@ var Gauges = {
 	"height" : 10,	//height of each gauge
 	"width" : 200,	//width of each gauge
 	draw : function(x,y) {
-		theContext.strokeStyle = ballstroke;	//black outline
-		theContext.fillStyle = "#FFFFFF";	//white empty gauge
-		theContext.beginPath();//health gauge
+		theContext.strokeStyle = ballstroke;	//black outline isn't working
+		theContext.fillStyle = "#000000";	//white empty gauge
+		theContext.beginPath();//back of gauge
 			theContext.moveTo(x, y);
-			theContext.lineTo(x, y + this.height);
-			theContext.lineTo(x + this.width, y + this.height);
-			theContext.lineTo(x + this.width, y);
-		theContext.closePath();
-		theContext.fill();
-		theContext.beginPath();//energy gauge
-			theContext.moveTo(x, y + this.height);
 			theContext.lineTo(x, y + this.height * 2);
 			theContext.lineTo(x + this.width, y + this.height * 2);
-			theContext.lineTo(x + this.width, y + this.height);
+			theContext.lineTo(x + this.width, y);
 		theContext.closePath();
 		theContext.fill();
 		theContext.fillStyle = "#FF0000";
@@ -106,7 +99,7 @@ var Gauges = {
 			theContext.lineTo(x + this.width * Tank.health / Tank.maxHealth, y);
 		theContext.closePath();
 		theContext.fill();
-		theContext.fillStyle = "#0000FF";
+		theContext.fillStyle = "#00AAFF";
 		theContext.beginPath();//energy gauge
 			theContext.moveTo(x, y + this.height);
 			theContext.lineTo(x, y + this.height * 2);
