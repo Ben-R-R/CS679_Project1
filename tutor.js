@@ -647,25 +647,24 @@ window.onload = function () {
         theContext.fillText("Fire Bee Bomb:              Left Click Mouse", 100, 300);
 
         theContext.font = "30px Arial";
-        theContext.fillText("Guide bees:                    Mouse cursor", 100, 340);
+        theContext.fillText("Guide Bees:                   Mouse cursor", 100, 340);
 
         theContext.font = "30px Arial";
-        theContext.fillText("Laser Beam:                   Space", 100, 380);
-
+        theContext.fillText("Laser Beam:                  Space", 100, 380);
 
         theContext.font = "30px Arial";
-        theContext.fillText("Laser Beam:                   Space", 100, 380);
+        theContext.fillText("Shield:                            Z", 100, 420);
 
         theContext.font = "40px Arial";
-        theContext.fillText("Enemies: ", 100, 450);
+        theContext.fillText("Enemies: ", 100, 490);
 
         theContext.font = "30px Arial";
-        theContext.fillText("Chomper", 100, 490);
+        theContext.fillText("Chomper", 100, 530);
 
         theContext.strokeStyle = ballstroke;
         theContext.fillStyle = "#0000FF";
         var _X = 250;
-        var _Y = 482;
+        var _Y = 562;
         var radius = 10;
         var mouthAngle = 0.4;
 
@@ -686,7 +685,7 @@ window.onload = function () {
 
         theContext.fillStyle = "#000000";
         theContext.font = "30px Arial";
-        theContext.fillText("Mosquito", 100, 530);
+        theContext.fillText("Mosquito", 100, 570);
 
         _X = 250;
         _Y = 520;
@@ -710,11 +709,11 @@ window.onload = function () {
         theContext.strokeStyle = "#000000";
         theContext.fillStyle = "#000000";
         theContext.font = "30px Arial";
-        theContext.fillText("Lurker", 100, 570);
+        theContext.fillText("Lurker", 100, 610);
 
 
         _X = 250;
-        _Y = 565;
+        _Y = 610;
         radius = 30;
         theContext.strokeStyle = "#000000";
         theContext.fillStyle = "#330066";
@@ -757,7 +756,7 @@ window.onload = function () {
 
         theContext.fillStyle = "rgba(255, 0, 0, " + alpha + ")"
         theContext.font = "50px Arial";
-        theContext.fillText("Press space to begin.", 150, 650);
+        theContext.fillText("Press space to begin.", 150, 692);
 
         alpha += alphaModifier;
         if (alpha < 0 || alpha > 1.0) {

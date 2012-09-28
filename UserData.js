@@ -25,14 +25,14 @@ var UserData = {
 
                 var textWidth = theContext.measureText("" + item.quantity).width;
 
-                item.draw(i_Loc + textWidth + 5, theCanvas.height - 30);
+                item.draw(i_Loc + textWidth + 5, theCanvas.height - 60);
                 theContext.fillStyle = "#000000";
 
-                theContext.fillText(this.items[key].quantity, i_Loc, theCanvas.height - 13);
+                theContext.fillText(this.items[key].quantity, i_Loc, theCanvas.height - 42);
                 i_Loc += 35 + textWidth;
             }
         }
-        Gauges.draw(20, theCanvas.height - 60);
+        Gauges.draw(20, theCanvas.height - 30);
 
 
     },
