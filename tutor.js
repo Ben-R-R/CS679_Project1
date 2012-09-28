@@ -758,6 +758,14 @@ window.onload = function () {
         theContext.font = "50px Arial";
         theContext.fillText("Press space to begin.", 150, 692);
 
+        theContext.strokeStyle = "#000000";
+        theContext.fillStyle = "#000000";
+
+        theContext.font = "25px Arial";
+        theContext.fillText("Benjamin Reddersen, Paul Bolanowski, and James Vanderheiden", 30, 750);
+
+
+
         alpha += alphaModifier;
         if (alpha < 0 || alpha > 1.0) {
             alphaModifier = -alphaModifier;
