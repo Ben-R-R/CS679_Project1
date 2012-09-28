@@ -53,6 +53,13 @@ window.onload = function() {
         allBalls.push(b)
         b = makeBall( 50+Math.random()*500, 50+Math.random()*300 , "#FF00FF", 0);
         allBalls.push(b)
+        if(i % 19 == 0){
+		   	//b = makeBall( 50 + Math.random() * (fieldSizeX - 100), 50+Math.random() * (fieldSizeY - 100) , "#FF00FF", lurkerTeam);
+        	b = makeBall( 800, 800 , "#FF00FF", lurkerTeam);
+        	
+			allBalls.push(b)
+		}
+        
     }
     
     // this function will do the drawing
