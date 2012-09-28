@@ -177,7 +177,7 @@ function drawP_Swarmer(){
 
 function collideP_Swarm(otherBall, dx, dy){ //dx, dy is a vector from you to the other ball
 	if(otherBall.team !== shieldTeam){
-		otherBall.health--;
+		//otherBall.health--;
 		this.vX = -dx;
 		this.vY = -dy;
 	}
@@ -216,6 +216,12 @@ function addInfluenceP_Swarmer(otherBall, d, dx ,dy){
 	} else if(otherBall.team === chomperTeam && d < 100) {
 		this.newVX  -= (((this.x - otherBall.x) * 1 ) / dd) * 100;
 		this.newVY  -= (((this.y - otherBall.y) * 1 ) / dd) * 100;
+		
+		
+		
+	} else if(otherBall.team === lurkerTeam && d < 300) {
+		this.newVX += (((this.x - otherBall.x) * 1 ) / dd) * 1000;
+		this.newVY  += (((this.y - otherBall.y) * 1 ) / dd) * 1000;
 		
 		
 		
@@ -437,6 +443,108 @@ function finishUpdateMosquito(){
 	this.vX = this.newVX;
     this.vY = this.newVY;
 }
+
+/*=======================================
+  _               _                 
+ | |   _   _ _ __| | _____ _ __ ___ 
+ | |  | | | | '__| |/ / _ \ '__/ __|
+ | |__| |_| | |  |   <  __/ |  \__ \
+ |_____\__,_|_|  |_|\_\___|_|  |___/
+                                    
+========================================*/                                
+
+var lurkerTeam = 4;
+
+function drawLurker(){
+	var _X = this.x + originX;
+	var _Y = this.y + originY;
+	
+	theContext.strokeStyle = "#000000";
+	theContext.fillStyle = "#330066";
+	
+	theContext.beginPath();
+    	theContext.arc(_X, _Y, this.radius, circ/2 , circ/2 + circ/6  ,false ); 
+		theContext.arc(_X- this.radius, _Y, this.radius, circ/2 + 2 * circ/6 ,circ  ,false ); 
+		
+		theContext.arc(_X + this.radius, _Y, this.radius, circ/2 , circ/2 + circ/6  ,false ); 
+		theContext.arc(_X, _Y, this.radius, circ/2 + 2 * circ/6 ,circ  ,false );
+		
+		theContext.arc(_X + this.radius / 2, _Y, this.radius / 2, 0 ,circ/2 ,true );  
+		theContext.arc(_X - this.radius / 2, _Y, this.radius / 2, 0 ,circ/2 ,true ); 
+	
+	theContext.fill();
+	
+	    theContext.moveTo(_X, _Y)
+	    theContext.lineTo(_X , _Y + this.radius /3)
+	    
+	    var r6 =  this.radius /6
+	    var r2 =  this.radius /2
+	    
+		for (var i = 2; i < 6; i ++){
+			
+			var __Y1 = Math.sqrt(Math.pow(r2, 2) - Math.pow( r2 - i * r6 , 2))
+		
+			var __Y2 = Math.sqrt(Math.pow(this.radius, 2) - Math.pow( i * r6 , 2))
+		
+			theContext.moveTo(_X - i * r6, _Y - __Y1 ) 
+		    theContext.lineTo(_X - i * r6, _Y + __Y2)
+		    
+		    theContext.moveTo(_X + i * r6, _Y - __Y1 ) 
+		    theContext.lineTo(_X + i * r6, _Y + __Y2)
+		}
+		
+	
+	
+	theContext.stroke();
+}
+
+function lurkerNorm() {
+    var z = Math.sqrt(this.vX * this.vX + this.vY * this.vY );
+    if (z<.001) {
+        //this.vX = (Math.random() - .5) * this.speed;
+        //this.vY = (Math.random() - .5) * this.speed;
+        //this.norm();
+    } else {
+        z = this.speed / z;
+        this.vX *= z;
+        this.vY *= z;
+    }
+}
+
+function addInfluenceLurker(otherBall, d, dx ,dy){
+	/*
+	var personalSpace = this.radius * 10;
+	//var dd = Math.pow(d, 1.8); 
+	if(d < .01){
+		d = .01;
+	}
+	if(otherBall.team === this.team){
+		if(d < personalSpace && d > 0){
+			//d > 0 requirement to prevent dividing by zero at the start.
+			//as same-team balls approach each other, 
+			// the repulsion goes up exponentially.
+			this.newVX  -= (dx / d) * 0.01;
+    		this.newVY  -= (dy / d) * 0.01; 
+		} 
+		 
+	     
+	
+	} else {
+	    
+		// Currently no interactions with other teams 
+	
+	} */
+}
+
+function finishUpdateLurker(){
+	
+	// atracted to the tank
+	
+	
+	this.vX = 0 ;
+    this.vY = 0 ;
+}
+
 /*======================================
   ____  _     _      _     _ 
  / ___|| |__ (_) ___| | __| |
@@ -522,6 +630,10 @@ var chomperDamageMap = {};
 var mosquitoDamageMap = {};
 	mosquitoDamageMap[p_swarmTeam] = 1;
 	mosquitoDamageMap[shieldTeam] = 1;
+	
+var lurkerDamageMap = {};
+	lurkerDamageMap[p_swarmTeam] = 20;
+	lurkerDamageMap[shieldTeam] = 100;	
 
 var shieldDamageMap = {}; // shield does no damage to anyone
 
@@ -556,6 +668,8 @@ function makeBall(x,y,color,team) {
     ball = new Empty();
     ball.x = x;
     ball.y = y;
+    
+    
     ball.ballcolor = color;
     ball.team = team;
     
@@ -584,7 +698,7 @@ function makeBall(x,y,color,team) {
     	ball.team = chomperTeam
     	
     }  else if(team === mosquitoTeam){
-        ball.radius = 10.0;
+        ball.radius = 6.0;
         ball.speed = 4.0;
         ball.health = 100
 		ball.draw = drawMosquito;
@@ -608,7 +722,21 @@ function makeBall(x,y,color,team) {
     	ball.team = shieldTeam;
     	ball.onDeath = nothing;
     	
-	} else { //Miscellaneous
+	} else if(team === lurkerTeam){
+        ball.radius = 40.0;
+        ball.speed = 0.1;
+        ball.health = 100
+		ball.draw = drawLurker;
+		ball.bloodLevel = 0;
+		ball.finishUpdate = finishUpdateLurker;
+    	ball.addInfluence = addInfluenceLurker;
+    	ball.damageMap = lurkerDamageMap;
+    	ball.collide = genericDamage;
+    	ball.team = lurkerTeam;
+    	ball.state = "pursue";
+    	ball.norm = lurkerNorm;
+    	
+	}else { //Miscellaneous
     	ball.radius = 5.0;
     	ball.speed = 4.0;
     	ball.health = 1000; 
