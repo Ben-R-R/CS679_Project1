@@ -1,86 +1,68 @@
 // UserData Document
 
 var UserData = {
-	drawHUD: function(health){
-		//theContext.font="20px Georgia";
-		theContext.fillStyle = "#000000";
-		theContext.font="20px Arial";
-		theContext.fillText(this.score, 10, 20);
-		
-		theContext.fillStyle = "#0099FF";
-		theContext.fillRect = (500, 500, 50, 50);
+    drawHUD: function (health) {
+        //theContext.font="20px Georgia";
+        theContext.fillStyle = "#000000";
+        theContext.font = "20px Arial";
+        theContext.fillText(this.score, 10, 20);
 
-		theContext.strokeStyle = "#FF0000";
-		theContext.fillStyle = "#FF0000";
-	
-        
-    	theContext.beginPath();
-    	var startHealthBarX = 580;
-		theContext.moveTo(startHealthBarX, 10);
+        theContext.fillStyle = "#0099FF";
+        theContext.fillRect = (500, 500, 50, 50);
 
-		theContext.lineTo(startHealthBarX, 20);
-		theContext.lineTo(startHealthBarX + 200, 20);
-		theContext.lineTo(startHealthBarX + 200, 10);
-		theContext.closePath();
-		theContext.stroke();
-		theContext.fill();
+        theContext.strokeStyle = "#FF0000";
+        theContext.fillStyle = "#FF0000";
 
-		theContext.fillStyle = "#33FF00";
+        theContext.fillStyle = "#000000";
+        theContext.font = "20px Arial";
+        theContext.fillText("High Score: " + this.highScore, 620, 20);
 
 
-		theContext.beginPath();
-		theContext.moveTo(startHealthBarX, 12);
+        var i_Loc = 20;
+        for (var key in this.items) {
+            if (this.items.hasOwnProperty(key)) {
+                var item = this.items[key];
 
-		theContext.lineTo(startHealthBarX, 18);
-		//theContext.lineTo(startHealthBarX, 10);
-		theContext.lineTo(startHealthBarX + health, 18);
-		theContext.lineTo(startHealthBarX + health, 12);
-		theContext.closePath();
-		theContext.stroke();
-		theContext.fill();
+                var textWidth = theContext.measureText("" + item.quantity).width;
+
+                item.draw(i_Loc + textWidth + 5, theCanvas.height - 30);
+                theContext.fillStyle = "#000000";
+
+                theContext.fillText(this.items[key].quantity, i_Loc, theCanvas.height - 13);
+                i_Loc += 35 + textWidth;
+            }
+        }
+        Gauges.draw(20, theCanvas.height - 60);
 
 
-		var i_Loc = 20;
-		for (var key in this.items) {
-			if (this.items.hasOwnProperty(key)) {
-				var item = this.items[key];
-				
-				var textWidth = theContext.measureText("" + item.quantity).width;
-				 
-			   	item.draw(i_Loc + textWidth + 5, theCanvas.height - 30);
-			   	theContext.fillStyle = "#000000";
-				
-				theContext.fillText(this.items[key].quantity, i_Loc ,theCanvas.height - 13);
-				i_Loc += 35 + textWidth	;
-			}
-		}
-		Gauges.draw(20,theCanvas.height - 60);
-			
-		
-	},
-	
-	score: 0,
-	// expected item format: {name, draw(x,y), quantity, activate()}
-	// draw(x,y) should be 20 * 20 pixels. 
-	items: {},
-	
-	selectedItem: 0,
-	
-    reset : function(){
+    },
+
+    score: 0,
+    highScore: 0,
+    // expected item format: {name, draw(x,y), quantity, activate()}
+    // draw(x,y) should be 20 * 20 pixels. 
+    items: {},
+
+    selectedItem: 0,
+
+    reset: function () {
+        if (this.score > this.highScore) {
+            this.highScore = this.score;
+        }
         this.score = 0;
 
     },
 
-	useItem : function(){
-		if(this.items[this.selectedItem].quantity > 0){
-			this.items[this.selectedItem].quantity -= 1;
-			this.items[this.selectedItem].activate();
-		}
-	
-	}
+    useItem: function () {
+        if (this.items[this.selectedItem].quantity > 0) {
+            this.items[this.selectedItem].quantity -= 1;
+            this.items[this.selectedItem].activate();
+        }
 
-   
-	
+    }
+
+
+
 
 
 };
