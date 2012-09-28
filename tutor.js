@@ -660,7 +660,7 @@ window.onload = function () {
         theContext.fillText("Enemies: ", 100, 490);
 
         theContext.font = "30px Arial";
-        theContext.fillText("Chomper", 100, 530);
+        theContext.fillText("Chomper", 100, 570);
 
         theContext.strokeStyle = ballstroke;
         theContext.fillStyle = "#0000FF";
@@ -686,7 +686,7 @@ window.onload = function () {
 
         theContext.fillStyle = "#000000";
         theContext.font = "30px Arial";
-        theContext.fillText("Mosquito", 100, 570);
+        theContext.fillText("Mosquito", 100, 530);
 
         _X = 250;
         _Y = 520;
