@@ -336,7 +336,16 @@ function dropPickup(x,y,t) {//drops a pickup at the specified x and y of the spe
 }
 
 function lootDrop(x,y) {//randomizer for dropped pickups
-	var dropProb = 1/10;	//probability of a killed ball dropping a pickup
+	var probablity = 10;
+	if(UserData.score > 8000){
+	     probablity = 30;
+	} else if(UserData.score > 5000){
+	     probablity = 20;
+	} else if(UserData.score > 2000){
+	     probablity = 15;
+	}
+	
+	var dropProb = 1/probablity;	//probability of a killed ball dropping a pickup
 	var shieldProb = 1/12;	//probability of a pickup being shields
 	var bombProb = 1/20;	//probability of a pickup being bombs
 	if(Math.random() <= dropProb) {

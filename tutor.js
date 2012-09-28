@@ -529,13 +529,42 @@ window.onload = function () {
 		
 		return Math.random() * 30000 + 30 * 1000; // every thirty seconds to a minute
 	}
+	
+	var megaMosquitoEvent = function(){
+		for (var i = 0; i < 20; i ++){
+			allBalls.push(makeBall(50 + Math.random() * (fieldSizeX - 100), 50 + Math.random() * (fieldSizeY - 100), "#0000FF", mosquitoTeam));
+		}
+		
+		return Math.random() * 30000 + 45 * 1000; //
+	}
+	
+	var megaLurkerEvent = function(){
+		
+		for (var i = 0; i < 3; i ++){ // three Lurkers is evil enough
+			var lurkerX = 50 + Math.random() * (fieldSizeX - 100);
+			var lurkerY = 50 + Math.random() * (fieldSizeY - 100);
+			var lurkerD = Math.sqrt(Math.pow(Tank.x - lurkerX, 2) + Math.pow(Tank.y - lurkerY, 2));
+			
+			// create an exclusion zone around the tank so that lurkers don't
+			// spawn on top of you.
+			if ( lurkerD < 400){
+				lurkerX = Tank.x + ((Tank.x - lurkerX) / lurkerD) * 400;
+				lurkerY = Tank.y + ((Tank.y - lurkerY) / lurkerD) * 400;
+				 
+			}
+			
+			allBalls.push(makeBall(lurkerX , lurkerY , "#0000FF", lurkerTeam));
+		}
+		
+		return Math.random() * 30000 +  3 * 60 * 1000; // at least 3 minutes between lurker events 
+	}
 
     addEvent(chomperSpawnEvent, chomperSpawnRate);
     addEvent(mosquitoSpawnEvent, mosquitoSpawnRate);
     addEvent(PRegenEvent, 10);
 	addEvent(megaChomperEvent, 30000);
-
-
+	addEvent(megaMosquitoEvent, 45000);
+	addEvent(megaLurkerEvent, 3 * 60 * 1000); // if you manage to survive for three minutes... mwahahahahaha
     // what we need to do is define a function that updates the position
     // draws, then schedules another iteration in the future
     // WARNING: this is the simplest, but not the best, way to do this
