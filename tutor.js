@@ -618,11 +618,108 @@ window.onload = function () {
         theContext.font = "30px Arial";
         theContext.fillText("Laser Beam:                   Space", 100, 380);
 
+        theContext.font = "40px Arial";
+        theContext.fillText("Enemies: ", 100, 450);
+
+        theContext.font = "30px Arial";
+        theContext.fillText("Chomper", 100, 490);
+
+        theContext.strokeStyle = ballstroke;
+        theContext.fillStyle = "#0000FF";
+        var _X = 250;
+        var _Y = 482;
+        var radius = 10;
+        var mouthAngle = 0.4;
+
+        if (mouthAngle > 2 * Math.PI) {
+            mouthAngle = 0;
+        }
+
+        var theta = Math.PI / 8 * (Math.sin(mouthAngle) + 1);
+
+        var phi = Math.atan2(1, 1);
+        theContext.beginPath();
+        theContext.arc(_X, _Y, radius, phi - theta, phi + theta, true);
+        theContext.lineTo(_X, _Y);
+        theContext.closePath();
+        theContext.stroke();
+        theContext.fill();
+
+
+        theContext.fillStyle = "#000000";
+        theContext.font = "30px Arial";
+        theContext.fillText("Mosquito", 100, 530);
+
+        _X = 250;
+        _Y = 520;
+        theContext.fillStyle = "#FFCC00";
+        theContext.beginPath();
+        theContext.moveTo(_X, _Y);
+        theContext.lineTo(_X + 1 * 10, _Y + 4 * 1.5);
+        theContext.closePath();
+        theContext.closePath();
+        theContext.stroke();
+
+        theContext.beginPath();
+        theContext.arc(_X, _Y, 5, 0, circ, true);
+        //theContext.moveTo(_X, _Y);
+        //theContext.lineTo(_X + 4 * this.vX, _Y + 4 * this.vY);
+        theContext.closePath();
+
+        theContext.stroke();
+        theContext.fill();
+
+        theContext.strokeStyle = "#000000";
+        theContext.fillStyle = "#000000";
+        theContext.font = "30px Arial";
+        theContext.fillText("Lurker", 100, 570);
+
+
+        _X = 250;
+        _Y = 565;
+        radius = 30;
+        theContext.strokeStyle = "#000000";
+        theContext.fillStyle = "#330066";
+
+        theContext.beginPath();
+        theContext.arc(_X, _Y, radius, circ / 2, circ / 2 + circ / 6, false);
+        theContext.arc(_X - radius, _Y, radius, circ / 2 + 2 * circ / 6, circ, false);
+
+        theContext.arc(_X + radius, _Y, radius, circ / 2, circ / 2 + circ / 6, false);
+        theContext.arc(_X, _Y, radius, circ / 2 + 2 * circ / 6, circ, false);
+
+        theContext.arc(_X + radius / 2, _Y, radius / 2, 0, circ / 2, true);
+        theContext.arc(_X - radius / 2, _Y, radius / 2, 0, circ / 2, true);
+
+        theContext.fill();
+
+        theContext.moveTo(_X, _Y)
+        theContext.lineTo(_X, _Y + radius / 3)
+
+        var r6 = radius / 6
+        var r2 = radius / 2
+
+        for (var i = 2; i < 6; i++) {
+
+            var __Y1 = Math.sqrt(Math.pow(r2, 2) - Math.pow(r2 - i * r6, 2))
+
+            var __Y2 = Math.sqrt(Math.pow(radius, 2) - Math.pow(i * r6, 2))
+
+            theContext.moveTo(_X - i * r6, _Y - __Y1)
+            theContext.lineTo(_X - i * r6 + r2 / 2 * Math.sin(0), _Y + __Y2)
+
+            theContext.moveTo(_X + i * r6, _Y - __Y1)
+            theContext.lineTo(_X + i * r6 - r2 / 2 * Math.sin(0), _Y + __Y2)
+        }
+
+
+
+        theContext.stroke();
 
 
         theContext.fillStyle = "rgba(255, 0, 0, " + alpha + ")"
         theContext.font = "50px Arial";
-        theContext.fillText("Press space to begin.", 100, 450);
+        theContext.fillText("Press space to begin.", 150, 650);
 
         alpha += alphaModifier;
         if (alpha < 0 || alpha > 1.0) {
