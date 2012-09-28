@@ -523,9 +523,9 @@ window.onload = function () {
     }
 
     addEvent(chomperSpawnEvent, chomperSpawnRate);
-    addEvent(mosquiderSpawnEvent, mosquitoSpawnRate);
+    addEvent(mosquitoSpawnEvent, mosquitoSpawnRate);
     addEvent(PRegenEvent, 10);
-	addEvent(mosquitoSpawnEvent, 10);
+	//addEvent(mosquitoSpawnEvent, 10);
 
 
     // what we need to do is define a function that updates the position
