@@ -204,8 +204,8 @@ window.onload = function () {
                 this.progress++;
             } else {
                 this.remove = true; //Flags, sorts and removes from list
-                Stuff.sort(cull);
-                Stuff.pop();
+                //Stuff.sort(cull);
+                //Stuff.pop();
                 for (var i = 0; i < this.yield; i++) {//Spawns swarmers per bomb yield
                     allBalls.push(
     					makeBall(
