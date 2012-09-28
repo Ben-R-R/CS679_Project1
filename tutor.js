@@ -493,8 +493,8 @@ window.onload = function () {
 
         chomperSpawnRate -= 1;
 
-        if (chomperSpawnRate < 500) {
-            chomperSpawnRate = 500
+        if (chomperSpawnRate < 300) {
+            chomperSpawnRate = 300
         }
 
         return chomperSpawnRate;
@@ -506,8 +506,8 @@ window.onload = function () {
 
         mosquitoSpawnRate -= 1;
 
-        if (mosquitoSpawnRate < 500) {
-            mosquitoSpawnRate = 500
+        if (mosquitoSpawnRate < 300) {
+            mosquitoSpawnRate = 300
         }
 
         return mosquitoSpawnRate;

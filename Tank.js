@@ -338,9 +338,9 @@ function dropPickup(x,y,t) {//drops a pickup at the specified x and y of the spe
 
 function lootDrop(x,y) {//randomizer for dropped pickups
 	var probablity = 10;
-	if(UserData.score > 8000){
+	if(UserData.score > 6000){
 	     probablity = 30;
-	} else if(UserData.score > 5000){
+	} else if(UserData.score > 4000){
 	     probablity = 20;
 	} else if(UserData.score > 2000){
 	     probablity = 15;
