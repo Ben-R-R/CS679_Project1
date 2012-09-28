@@ -373,12 +373,11 @@ window.onload = function () {
             else { Tank.vY += Tank.accel; }
         }
         if (32 in keysDown) {
-            Tank.beamOn = true;
-            gameStarted = true;
-            if (gameOver) {
-                restart();
-            }
-        } else { Tank.beamOn = false; }
+        	Tank.beamOn = true;
+        	if(!gameOver) {gameStarted = true;}
+        }
+        else { Tank.beamOn = false; }
+        if (82 in keysDown && gameOver) {restart(); gameStarted = true;}
 
     }
 
@@ -552,13 +551,14 @@ window.onload = function () {
             // clear the window
             theContext.clearRect(0, 0, theCanvas.width, theCanvas.height);
             drawField();
+            
             Tank.draw(); //show tank
+
+            drawParticles();
 
             drawBalls(allBalls);     //show balls
 
             drawBalls(Stuff);
-
-            drawParticles();
 
             if (Tank.health <= 0) {
                 gameStarted = false;
@@ -592,7 +592,7 @@ window.onload = function () {
         theContext.fillText("Score: " + UserData.score, 100, 250);
 
         theContext.font = "50px Arial";
-        theContext.fillText("Press Space to restart", 100, 350);
+        theContext.fillText("Press R to restart", 100, 350);
     }
     function displayMenu() {
         theContext.fillStyle = "#000000";

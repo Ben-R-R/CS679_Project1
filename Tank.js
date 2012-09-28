@@ -135,13 +135,14 @@ var Tank = {	//The player avatar, can be controlled with keyboard
         theContext.closePath();
         theContext.stroke();
         theContext.fill();
+        theContext.beginPath();//blank to get rid of particle grey bug
+        theContext.closePath();
 
 
         if (this.beamOn) {
-
-            theContext.lineWidth = 10;
-            theContext.strokeStyle = "#7F00FF";
-            theContext.fillStyle = "#7F00FF";
+        	theContext.lineWidth = 10 * this.beamOn;
+            theContext.strokeStyle = "#AF55FF";
+            theContext.fillStyle = "#AF55FF";
             theContext.beginPath(); //Beam
             theContext.moveTo(_X + this.radius * Math.cos(this.heading), _Y + this.radius * Math.sin(this.heading));
             theContext.lineTo(_X + this.beaml * Math.cos(this.heading), _Y + this.beaml * Math.sin(this.heading));
@@ -243,11 +244,11 @@ var aPickup = {
 			var _Y = this.y + originY;
 			if(this.type == 1) {	//health pickup
 				theContext.strokeStyle = "#FF5555";
-				theContext.fillStyle = "#FF0000";
 				theContext.beginPath();
 					theContext.arc(_X,_Y,this.radius,0,circ,true);
 				theContext.closePath();
 				theContext.stroke();
+				theContext.fillStyle = "#FF0000";
 				theContext.beginPath();
 					theContext.moveTo(_X+this.radius*0.1,_Y+this.radius*0.1);
 					theContext.lineTo(_X+this.radius*0.7,_Y+this.radius*0.1);
@@ -266,11 +267,11 @@ var aPickup = {
 				theContext.fill();
 			} else if(this.type == 2) {	//shield pickup
 				theContext.strokeStyle = "#00CCFF";
-				theContext.fillStyle = "#55DDFF";
 				theContext.beginPath();
 					theContext.arc(_X,_Y,this.radius,0,circ,true);
 				theContext.closePath();
 				theContext.stroke();
+				theContext.fillStyle = "#55DDFF";
 				theContext.beginPath();
 					theContext.arc(_X,_Y,this.radius/2,0,circ,true);
 				theContext.closePath();
@@ -278,11 +279,11 @@ var aPickup = {
 				theContext.fill();
 			} else if(this.type == 3) {	//bomb pickup
 				theContext.strokeStyle = "#555555";
-				theContext.fillStyle = "#000000";
 				theContext.beginPath();
 					theContext.arc(_X,_Y,this.radius,0,circ,true);
 				theContext.closePath();
 				theContext.stroke();
+				theContext.fillStyle = "#000000";
 				theContext.beginPath();
 					theContext.arc(_X,_Y,this.radius/2,0,circ,true);
 				theContext.closePath();
