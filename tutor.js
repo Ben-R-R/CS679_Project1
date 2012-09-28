@@ -162,6 +162,11 @@ window.onload = function () {
     function moveStuff() {//simple method, just goes through misc objects and runs move commands
         for (var i = 0; i < Stuff.length; i++) {
             Stuff[i].move();
+    		if(Stuff[i].remove)
+    		{
+    			Stuff.sort(cull);
+    			Stuff.pop();
+    		}
         }
     }
 
@@ -185,7 +190,7 @@ window.onload = function () {
             var _Y = this.y + originY;
 
             theContext.strokeStyle = ballstroke;
-            theContext.fillStyle = "#555555"; //TODO: color changes as nears destination (gray to red, 555555 to FF0000)
+    		theContext.fillStyle = "#555555";
             theContext.beginPath();
             theContext.arc(_X, _Y, this.radius, 0, circ, true);
             theContext.closePath();
@@ -212,7 +217,8 @@ window.onload = function () {
     				);
                 }
             }
-        }
+    	},
+    	acquire : function() {}
     }
 
     // what to do when things get clicked
@@ -375,9 +381,21 @@ window.onload = function () {
         }
     }
 
-    function tankEffects(stuffList) {	//this function evaluates effect of tank interacting with non-ball objects, such as pickups
-        for (var i = 0; i < stuffList.length; i++) {
-            //TODO: put pickup code in here
+	function tankEffects(sList) {	//this function evaluates effect of tank interacting with non-ball objects, such as pickups
+		var dx = 0;
+		var dy = 0;
+		var d = 0;
+		for(var i = 0; i < sList.length; i++) {
+			dx = sList[i].x - Tank.x;
+			dy = sList[i].y - Tank.y;
+			d = Math.sqrt(dx*dx+dy*dy);
+			if(d <= Tank.radius + sList[i].radius) {
+				sList[i].acquire();
+				if(sList[i].remove) {
+					Stuff.sort(cull);
+					Stuff.pop();
+				}
+			}
         }
     }
 
@@ -428,6 +446,7 @@ window.onload = function () {
         reqFrame(drawLoop); 	//set up another iteration of loop
 
     }
+    
     drawLoop();
 
     function displayMenu() {

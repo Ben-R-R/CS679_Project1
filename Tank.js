@@ -195,30 +195,124 @@
 var aPickup = {
 	"x" : 0,	//x position
 	"y" : 0,	//y position
-	"type" : 0,	//what kind of pickup is it?
+	"type" : 0,	//what kind of pickup is it? 1 for health, 2 for shields, 3 for bombs
 	"pulse" : 1,	//thickness of borders
-	"uppulse" : true,	//used in animation
+	"pulsign" : 0.2,	//used in animation
 	"timeleft" : 500,	//counts down to pickup natural despawn
 	"flicker" : 0,	//used in last counts of spawn
-	"radius" : 25,	//radius of pickup
+	"radius" : 15,	//radius of pickup
 	"remove" : false,	//flags for removal
 	draw : function() {
-		
+		if(this.flicker <= 5) {
+			theContext.lineWidth = this.pulse;
+			var _X = this.x + originX;
+			var _Y = this.y + originY;
+			if(this.type == 1) {	//health pickup
+				theContext.strokeStyle = "#FF5555";
+				theContext.fillStyle = "#FF0000";
+				theContext.beginPath();
+					theContext.arc(_X,_Y,this.radius,0,circ,true);
+				theContext.closePath();
+				theContext.stroke();
+				theContext.beginPath();
+					theContext.moveTo(_X+this.radius*0.1,_Y+this.radius*0.1);
+					theContext.lineTo(_X+this.radius*0.7,_Y+this.radius*0.1);
+					theContext.lineTo(_X+this.radius*0.7,_Y-this.radius*0.1);
+					theContext.lineTo(_X+this.radius*0.1,_Y-this.radius*0.1);
+					theContext.lineTo(_X+this.radius*0.1,_Y-this.radius*0.7);
+					theContext.lineTo(_X-this.radius*0.1,_Y-this.radius*0.7);
+					theContext.lineTo(_X-this.radius*0.1,_Y-this.radius*0.1);
+					theContext.lineTo(_X-this.radius*0.7,_Y-this.radius*0.1);
+					theContext.lineTo(_X-this.radius*0.7,_Y+this.radius*0.1);
+					theContext.lineTo(_X-this.radius*0.1,_Y+this.radius*0.1);
+					theContext.lineTo(_X-this.radius*0.1,_Y+this.radius*0.7);
+					theContext.lineTo(_X+this.radius*0.1,_Y+this.radius*0.7);
+				theContext.closePath();
+				theContext.stroke();
+				theContext.fill();
+			} else if(this.type == 2) {	//shield pickup
+				theContext.strokeStyle = "#00CCFF";
+				theContext.fillStyle = "#55DDFF";
+				theContext.beginPath();
+					theContext.arc(_X,_Y,this.radius,0,circ,true);
+				theContext.closePath();
+				theContext.stroke();
+				theContext.beginPath();
+					theContext.arc(_X,_Y,this.radius/2,0,circ,true);
+				theContext.closePath();
+				theContext.stroke();
+				theContext.fill();
+			} else if(this.type == 3) {	//bomb pickup
+				theContext.strokeStyle = "#555555";
+				theContext.fillStyle = "#000000";
+				theContext.beginPath();
+					theContext.arc(_X,_Y,this.radius,0,circ,true);
+				theContext.closePath();
+				theContext.stroke();
+				theContext.beginPath();
+					theContext.arc(_X,_Y,this.radius/2,0,circ,true);
+				theContext.closePath();
+				theContext.stroke();
+				theContext.fill();
+				theContext.fillStyle = "#FFFFFF";
+				theContext.beginPath();
+					theContext.arc(_X-this.radius/5,_Y-this.radius/5,this.radius/8,0,circ,true);
+				theContext.closePath();
+				theContext.stroke();
+				theContext.fill();
+				theContext.beginPath();
+					theContext.arc(_X-this.radius/2,_Y-this.radius/2,this.radius/2,0,-circ/8,true);
+				theContext.stroke();
+			}
+			theContext.lineWidth = 1;
+		}
 	},
 	move : function() {
-		
+		this.pulse += this.pulsign;
+		this.timeleft--;
+		if(this.pulse <= 1 || this.pulse >= 3) {this.pulsign = this.pulsign * -1;}
+		if(this.flicker <= 10 && this.timeleft <= 100) {this.flicker++;} else {this.flicker = 0;}
+		if(this.timeleft <= 0) {
+    		this.remove = true;
+		}
 	},
-	pickup : function() {
-		
+	acquire : function() {
+		if(this.type == 1) {
+			Tank.health += 20;
+			if(Tank.health > Tank.maxHealth) {Tank.health = Tank.maxHealth;}
+		}
+		else if(this.type == 2) {
+			ShieldItem.quantity++;
+		}
+		else if(this.type == 3) {
+			BombItem.quantity++;
+		}
+		this.remove = true;
 	}
 }
 
-function dropPickup(x,y,type) {//drops a pickup at the specified x and y of the specified type.
+function dropPickup(x,y,t) {//drops a pickup at the specified x and y of the specified type.
 	Empty = function() {};
 	Empty.prototype = aPickup;
 	pickup = new Empty();
 	pickup.x = x;
 	pickup.y = y;
-	pickup.type = type;
+	pickup.type = t;
 	Stuff.push(pickup);
+}
+
+function lootDrop(x,y) {//randomizer for dropped pickups
+	var dropProb = 1/5;	//probability of a killed ball dropping a pickup
+	var shieldProb = 1/12;	//probability of a pickup being shields
+	var bombProb = 1/20;	//probability of a pickup being bombs
+	if(Math.random() <= dropProb) {
+		var prob = Math.random();
+		if(prob <= shieldProb) {
+			dropPickup(x,y,2);
+		} else if(prob <= shieldProb + bombProb) {
+			dropPickup(x,y,3);
+		} else {
+			dropPickup(x,y,1);
+		}
+	}
 }
