@@ -44,6 +44,7 @@ window.onload = function () {
 
     var alpha = 1.0;
     var alphaModifier = -0.01;
+    var swarmCount = 0;
     allBalls = [];
     var gameOver = false;
     var gameStarted = false;
@@ -158,7 +159,8 @@ window.onload = function () {
             ballList[i].move();
             if (ballList[i].health < 0) {
                 //console.log(ballList[i].team);
-                ballList[i].onDeath();
+                if(ballList[i].team == p_swarmTeam) {swarmCount--;}
+                else {ballList[i].onDeath();}
                 ballList[i].remove = true;
                 allBalls.sort(cull);
                 allBalls.pop();
@@ -223,6 +225,7 @@ window.onload = function () {
             } else {
                 this.remove = true; //Flags, sorts and removes from list
                 for (var i = 0; i < this.yield; i++) {//Spawns swarmers per bomb yield
+                	swarmCount++;
                     allBalls.push(
     					makeBall(
     						this.x + this.radius * Math.cos(i * circ / this.yield) / 2,
@@ -439,8 +442,17 @@ window.onload = function () {
         allBalls.push(makeBall(50 + Math.random() * 500, 50 + Math.random() * 300, "#0000FF", chomperTeam));
         return 1000;
     }
+    
+    var PRegenEvent = function () {
+    	if(swarmCount < 50) {
+    		allBalls.push(makeBall(Tank.x, Tank.y, "#008800", p_swarmTeam));
+    		swarmCount++;
+    	}
+    	return 10;
+    }
 
     addEvent(spawnEvent, 1000);
+    addEvent(PRegenEvent, 10);
 
 
 
