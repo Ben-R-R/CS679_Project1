@@ -522,10 +522,18 @@ window.onload = function () {
         return 10;
     }
 
+	var megaChomperEvent = function(){
+		for (var i = 0; i < 20; i ++){
+			allBalls.push(makeBall(50 + Math.random() * (fieldSizeX - 100), 50 + Math.random() * (fieldSizeY - 100), "#0000FF", chomperTeam));
+		}
+		
+		return Math.random() * 30000 + 30 * 1000; // every thirty seconds to a minute
+	}
+
     addEvent(chomperSpawnEvent, chomperSpawnRate);
     addEvent(mosquitoSpawnEvent, mosquitoSpawnRate);
     addEvent(PRegenEvent, 10);
-	//addEvent(mosquitoSpawnEvent, 10);
+	addEvent(megaChomperEvent, 30000);
 
 
     // what we need to do is define a function that updates the position
