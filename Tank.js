@@ -163,20 +163,20 @@
         	}
         
         if (this.x > fieldSizeX) {
-        	this.x = 0;
-        	//this.vY = -this.vY;
+        	this.x = fieldSizeX;
+        	this.vX = -this.vX;
         }
         if (this.y > fieldSizeY) {
-        	this.y = 0;
-        	//this.vX = -this.vX;
+        	this.y = fieldSizeY;
+        	this.vY = -this.vY;
         }
         if (this.x < 0) {
-        	this.x = fieldSizeX;
-        	//this.vY = -this.vY;
+        	this.x = 0;
+        	this.vX = -this.vX;
         }
         if (this.y < 0) {
-        	this.y = fieldSizeY;
-        	//this.vX = -this.vX;
+        	this.y = 0;
+        	this.vY = -this.vY;
         }
         var _X = this.x + originX;
         var _Y = this.y + originY;

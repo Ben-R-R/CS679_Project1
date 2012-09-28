@@ -60,28 +60,28 @@ var aBall = {
         this.x += this.vX;
         this.y += this.vY;
         if (this.x > fieldSizeX) {
-        	this.x = 0;//*/ theCanvas.width; this.vX = -1;
+        	this.x = fieldSizeX; this.vX = -this.vX;
         	/*this.vY = -this.vY;
             if (this.vX > 0) {
                 this.vX = -this.vX;
             }  */
         }
         if (this.y > fieldSizeY) {
-        	this.y = 0;//*/ theCanvas.height; this.vY = -1;
+        	this.y = fieldSizeY; this.vY = -this.vY;
         	/*this.vX = -this.vX;
             if (this.vY > 0) {
                 this.vY = -this.vY;
             } */
         }
         if (this.x < 0) {
-        	this.x = fieldSizeX;//*/ 0; this.vX = 1;
+        	this.x = 0; this.vX = -this.vX;
         	/*this.vY = -this.vY;
             if (this.vX < 0) {
                 this.vX = -this.vX;
             }  */
         }
         if (this.y < 0) {
-        	this.y = fieldSizeY;//*/ 0; this.vY = 1;
+        	this.y = 0; this.vY = -this.vY;
         	/*this.vX = -this.vX;
             if (this.vY < 0) {
                 this.vY = -this.vY;
