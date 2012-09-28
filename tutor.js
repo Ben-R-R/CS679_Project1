@@ -401,13 +401,13 @@ window.onload = function () {
         var mosquitoBeam = 1; //Damage dealt to mosquitoes by beam
         
         var beamR = 5; // Beam radius
-        var beamL = (tank.beaml + tank.radius); // beam length, define in like this because it makes the math easyer, and is only a little wrong. 
+        var beamL = (Tank.beaml + Tank.radius); // beam length, define in like this because it makes the math easyer, and is only a little wrong. 
         var dx = 0;
         var dy = 0;
         var d = 0;
         
         var uBX = Math.cos(Tank.heading); // unit vector pointing along the Beam's line of action
-        var uBY = Math.sin(this.heading);
+        var uBY = Math.sin(Tank.heading);
         
         var uPX = uBY; 					  // unit vector purpendicular to the beam. 
         var uPY = -uBX;
@@ -419,8 +419,10 @@ window.onload = function () {
         
         var collision = false;
         
+        var projBeam = 0; // projection along the beam
+        
         for (var i = 0; i < balls.length; i++) {
-            if (balls[i].team !== p_swarmTeam) {
+            if (balls[i].team !== p_swarmTeam && balls[i].team !== shieldTeam ) {
                  dx = balls[i].x - Tank.x;
                  dy = balls[i].y - Tank.y;
                 d = Math.sqrt(dx * dx + dy * dy); //distance from ball to tank
@@ -435,19 +437,28 @@ window.onload = function () {
                 collision = false;
                 
                 // short curcuit balls that are way away:
-                if(d < beamL + bRad + beamR){
+                if(Tank.beamOn && d < beamL + bRad + beamR){
+                
                 	// make sure they are close to the line
 					if (Math.abs(dx * uPX + dy * uPY) < (beamR + bRad) ){
+						
 						// are they out back?
-						if((dx * uBX + dy * uBY) < 0){
-							if(d > bRad + beamR)
+						projBeam = dx * uBX + dy * uBY;
+						if(projBeam < 0){
+							if(d > (bRad + beamR)){
+								collision = true;	
+							}
+						} else {
+						   collision = true;
 						}
 					}
 				}
                 
+        		
+        		if(collision){
+        			balls[i].health -= 10;	
+				}
                 
-                
-                //TODO: Beam damage code
             }
         }
     }
