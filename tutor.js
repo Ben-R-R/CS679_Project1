@@ -634,7 +634,7 @@ window.onload = function () {
     function displayMenu() {
         theContext.fillStyle = "#000000";
         theContext.font = "80px Arial";
-        theContext.fillText("The Beekeeper", 100, 100);
+        theContext.fillText("Hover Tank", 100, 100);
 
         theContext.font = "40px Arial";
         theContext.fillText("Controls: ", 100, 200);
@@ -643,10 +643,10 @@ window.onload = function () {
         theContext.fillText("Control your tank:          WASD or Arrow Keys", 100, 260);
 
         theContext.font = "30px Arial";
-        theContext.fillText("Fire Bee Bomb:              Left Click Mouse", 100, 300);
+        theContext.fillText("Fire Swarm Bomb:         Left Click Mouse", 100, 300);
 
         theContext.font = "30px Arial";
-        theContext.fillText("Guide Bees:                   Mouse cursor", 100, 340);
+        theContext.fillText("Guide Swarm:                Mouse cursor", 100, 340);
 
         theContext.font = "30px Arial";
         theContext.fillText("Laser Beam:                  Space", 100, 380);
