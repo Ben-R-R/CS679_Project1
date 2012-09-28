@@ -14,6 +14,8 @@ var originY = 0;
 var fieldSizeX = 2000;
 var fieldSizeY = 2000;
 
+var chomperSpawnRate = 1000;
+
 // default alignment parameter
 var ali = 25;
 

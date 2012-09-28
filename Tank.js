@@ -54,7 +54,7 @@ var Tank = {	//The player avatar, can be controlled with keyboard
         var tstX = 0 + originX;
         var tstY = 0 + originY;
         theContext.beginPath(); //Test Object
-        theContext.arc(tstX + this.radius / 1.2, tstY + this.radius / 1.2, this.radius / 3 + v, 0, circ, true);
+        theContext.arc(tstX , tstY , this.radius / 3 , 0, circ, true);
         theContext.closePath();
         theContext.stroke();
         theContext.fill();
@@ -63,7 +63,7 @@ var Tank = {	//The player avatar, can be controlled with keyboard
         tstX = mousex + originX;
         tstY = mousey + originY;
         theContext.beginPath(); //Test Object
-        theContext.arc(tstX + this.radius / 1.2, tstY + this.radius / 1.2, this.radius / 3 + v, 0, circ, true);
+        theContext.arc(tstX , tstY , this.radius / 3 , 0, circ, true);
         theContext.closePath();
         theContext.stroke();
         theContext.fill();

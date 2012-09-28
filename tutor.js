@@ -489,7 +489,14 @@ window.onload = function () {
     var chomperSpawnEvent = function () {
 
         allBalls.push(makeBall(50 + Math.random() * 500, 50 + Math.random() * 300, "#0000FF", chomperTeam));
-        return 1000;
+        
+        chomperSpawnRate -= 1;
+        
+        if(chomperSpawnRate < 500){
+			chomperSpawnRate = 500
+		}
+        
+        return chomperSpawnRate;
     }
     
     var PRegenEvent = function () {
