@@ -499,6 +499,19 @@ window.onload = function () {
         return chomperSpawnRate;
     }
     
+    var mosquiderSpawnEvent = function () {
+
+        allBalls.push(makeBall(50 + Math.random() * (fieldSizeX - 100), 50 + Math.random() * (fieldSizeY - 100), "#0000FF", mosquitoTeam));
+        
+        mosquitoSpawnRate -= 1;
+        
+        if(mosquitoSpawnRate < 500){
+			mosquitoSpawnRate = 500
+		}
+        
+        return mosquitoSpawnRate;
+    }
+    
     var PRegenEvent = function () {
     	if(swarmCount < 50) {
     		allBalls.push(makeBall(Tank.x, Tank.y, "#008800", p_swarmTeam));
