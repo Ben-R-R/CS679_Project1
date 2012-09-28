@@ -486,10 +486,10 @@ function drawLurker(){
 			var __Y2 = Math.sqrt(Math.pow(this.radius, 2) - Math.pow( i * r6 , 2))
 		
 			theContext.moveTo(_X - i * r6, _Y - __Y1 ) 
-		    theContext.lineTo(_X - i * r6, _Y + __Y2)
+		    theContext.lineTo(_X - i * r6 + r2/2 * Math.sin(this.a), _Y + __Y2)
 		    
 		    theContext.moveTo(_X + i * r6, _Y - __Y1 ) 
-		    theContext.lineTo(_X + i * r6, _Y + __Y2)
+		    theContext.lineTo(_X + i * r6 - r2/2 * Math.sin(this.a), _Y + __Y2)
 		}
 		
 	
@@ -511,37 +511,33 @@ function lurkerNorm() {
 }
 
 function addInfluenceLurker(otherBall, d, dx ,dy){
-	/*
-	var personalSpace = this.radius * 10;
-	//var dd = Math.pow(d, 1.8); 
-	if(d < .01){
-		d = .01;
-	}
-	if(otherBall.team === this.team){
-		if(d < personalSpace && d > 0){
-			//d > 0 requirement to prevent dividing by zero at the start.
-			//as same-team balls approach each other, 
-			// the repulsion goes up exponentially.
-			this.newVX  -= (dx / d) * 0.01;
-    		this.newVY  -= (dy / d) * 0.01; 
-		} 
-		 
-	     
-	
-	} else {
-	    
-		// Currently no interactions with other teams 
-	
-	} */
+
 }
 
 function finishUpdateLurker(){
 	
+	var d = Math.sqrt( Math.pow(Tank.x - this.x, 2) + Math.pow(Tank.y - this.y,2)); 
+	
 	// atracted to the tank
+	if(d < 300){
+		this.a += 0.1
+		
+		if(this.a > circ){
+			this.a = this.a - circ;
+		}
+		
+		
+	    this.speed = 8 * Math.sin(this.a) + 4
+	    this.vX = Tank.x - this.x;
+	    this.vY = Tank.y - this.y;
+	} else {
+		this.a = 0;
+		this.speed = 0.01
+	    this.vX = 0 ;
+    	this.vY = 0 ;
+	}
 	
 	
-	this.vX = 0 ;
-    this.vY = 0 ;
 }
 
 /*======================================
@@ -632,7 +628,7 @@ var mosquitoDamageMap = {};
 	
 var lurkerDamageMap = {};
 	lurkerDamageMap[p_swarmTeam] = 20;
-	lurkerDamageMap[shieldTeam] = 100;	
+	lurkerDamageMap[shieldTeam] = 1001;	
 
 var shieldDamageMap = {}; // shield does no damage to anyone
 
@@ -650,6 +646,13 @@ function genericDamage(otherObject, dx, dy){ //dx, dy is a vector from you to th
 	}
 	
 	
+	
+}
+
+function lurkerCollide(otherObject, dx, dy){
+   if(otherObject.team in this.damageMap){
+		otherObject.health -= this.damageMap[otherObject.team];
+	}
 	
 }
 
@@ -699,7 +702,7 @@ function makeBall(x,y,color,team) {
     }  else if(team === mosquitoTeam){
         ball.radius = 6.0;
         ball.speed = 4.0;
-        ball.health = 100
+        ball.health = 100;
 		ball.draw = drawMosquito;
 		ball.bloodLevel = 0;
 		ball.finishUpdate = finishUpdateMosquito;
@@ -722,17 +725,18 @@ function makeBall(x,y,color,team) {
     	ball.onDeath = nothing;
     	
 	} else if(team === lurkerTeam){
-        ball.radius = 40.0;
+        ball.radius = 30.0;
         ball.speed = 0.1;
-        ball.health = 100
+        ball.health = 200;
+        ball.a = 0;
 		ball.draw = drawLurker;
 		ball.bloodLevel = 0;
 		ball.finishUpdate = finishUpdateLurker;
     	ball.addInfluence = addInfluenceLurker;
     	ball.damageMap = lurkerDamageMap;
-    	ball.collide = genericDamage;
+    	ball.collide = lurkerCollide;
     	ball.team = lurkerTeam;
-    	ball.state = "pursue";
+    	ball.state = "lurk";
     	ball.norm = lurkerNorm;
     	
 	}else { //Miscellaneous

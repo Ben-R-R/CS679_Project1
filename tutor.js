@@ -46,7 +46,7 @@ window.onload = function () {
     var alphaModifier = -0.01;
     allBalls = [];
     var gameStarted = false;
-    for (var i = 0; i < 20; i++) {
+    for (var i = 0; i < 3; i++) {
         b = makeBall(50 + Math.random() * 500, 50 + Math.random() * 300, "#0000FF", chomperTeam);
         allBalls.push(b)
         b = makeBall(50 + Math.random() * 500, 50 + Math.random() * 300, "#FF0000", mosquitoTeam);
@@ -55,13 +55,12 @@ window.onload = function () {
         allBalls.push(b)
         if(i % 19 == 0){
 		   	//b = makeBall( 50 + Math.random() * (fieldSizeX - 100), 50+Math.random() * (fieldSizeY - 100) , "#FF00FF", lurkerTeam);
-        	b = makeBall( 800, 800 , "#FF00FF", lurkerTeam);
         	
-			allBalls.push(b)
 		}
         
     }
-
+        	
+	allBalls.push(makeBall( fieldSizeX / 2,  fieldSizeY / 2 , "#FF00FF", lurkerTeam))
     // this function will do the drawing
     function drawBalls(ballList) {
 
