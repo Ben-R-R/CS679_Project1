@@ -739,7 +739,7 @@ function makeBall(x,y,color,team) {
 	} else if(team === shieldTeam){
         ball.radius = 100.0;
     	ball.speed = 6.0;
-    	ball.health = 5000;
+    	ball.health = 2500;
 		ball.draw = drawShield;
 		ball.finishUpdate = finishUpdateShield;
     	ball.addInfluence = addInfluenceShield;
