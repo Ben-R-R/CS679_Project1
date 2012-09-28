@@ -623,6 +623,10 @@ function finishUpdateShield(){
 	// atracted to the tank
 	this.vX = this.newVX + (Tank.x - this.x) * .0005;
     this.vY = this.newVY + (Tank.y - this.y) * .0005;
+    
+    if( Math.sqrt(Math.pow(Tank.x - this.x,2) + Math.pow(Tank.y - this.y,2)) > this.radius * 1.1){
+		this.health = -1;
+	}
 }
 
 function shieldCollide(otherObject, dx, dy){
