@@ -159,8 +159,8 @@ window.onload = function () {
             ballList[i].move();
             if (ballList[i].health < 0) {
                 //console.log(ballList[i].team);
-                if(ballList[i].team == p_swarmTeam) {swarmCount--;}
-                else {ballList[i].onDeath();}
+                if (ballList[i].team == p_swarmTeam) { swarmCount--; }
+                else { ballList[i].onDeath(); }
                 ballList[i].remove = true;
                 allBalls.sort(cull);
                 allBalls.pop();
@@ -225,7 +225,7 @@ window.onload = function () {
             } else {
                 this.remove = true; //Flags, sorts and removes from list
                 for (var i = 0; i < this.yield; i++) {//Spawns swarmers per bomb yield
-                	swarmCount++;
+                    swarmCount++;
                     allBalls.push(
     					makeBall(
     						this.x + this.radius * Math.cos(i * circ / this.yield) / 2,
@@ -243,22 +243,22 @@ window.onload = function () {
     // what to do when things get clicked
     function doClick() {
 
-		if(UserData.items[1].quantity > 0){
-			theta = Math.atan2(mousey - Tank.y, mousex - Tank.x);
-		    Empty = function () { };
-		    Empty.prototype = aBomb;
-		    bomb = new Empty();
-		    bomb.x = Tank.x + Tank.radius * Math.cos(theta);
-		    bomb.y = Tank.y + Tank.radius * Math.sin(theta);
-		    bomb.vX = aBomb.speed * Math.cos(theta);
-		    bomb.vY = aBomb.speed * Math.sin(theta);
-		    dx = mousex - bomb.x;
-		    dy = mousey - bomb.y;
-		    bomb.steps = Math.sqrt(dx * dx + dy * dy) / aBomb.speed;
-		    Stuff.push(bomb);
-		    UserData.items[1].quantity -= 1;
-		}
-        
+        if (UserData.items[1].quantity > 0) {
+            theta = Math.atan2(mousey - Tank.y, mousex - Tank.x);
+            Empty = function () { };
+            Empty.prototype = aBomb;
+            bomb = new Empty();
+            bomb.x = Tank.x + Tank.radius * Math.cos(theta);
+            bomb.y = Tank.y + Tank.radius * Math.sin(theta);
+            bomb.vX = aBomb.speed * Math.cos(theta);
+            bomb.vY = aBomb.speed * Math.sin(theta);
+            dx = mousex - bomb.x;
+            dy = mousey - bomb.y;
+            bomb.steps = Math.sqrt(dx * dx + dy * dy) / aBomb.speed;
+            Stuff.push(bomb);
+            UserData.items[1].quantity -= 1;
+        }
+
     }
 
     theCanvas.addEventListener("click", doClick, false);
@@ -403,32 +403,32 @@ window.onload = function () {
         var lurkerDamage = 3; //Damage dealt by Lurkers
         var chomperBeam = 1; //Damage dealt to chompers by beam
         var mosquitoBeam = 1; //Damage dealt to mosquitoes by beam
-        
+
         var beamR = 5; // Beam radius
         var beamL = (Tank.beaml + Tank.radius); // beam length, define in like this because it makes the math easyer, and is only a little wrong. 
         var dx = 0;
         var dy = 0;
         var d = 0;
-        
+
         var uBX = Math.cos(Tank.heading); // unit vector pointing along the Beam's line of action
         var uBY = Math.sin(Tank.heading);
-        
+
         var uPX = uBY; 					  // unit vector purpendicular to the beam. 
         var uPY = -uBX;
-        
+
         var vBX = beamL * uBX;     // vector of the beam
-		var vBY = beamL * uBY; 
-		
-	    var bRad = 0 // ball radius 
-        
+        var vBY = beamL * uBY;
+
+        var bRad = 0 // ball radius 
+
         var collision = false;
-        
+
         var projBeam = 0; // projection along the beam
-        
+
         for (var i = 0; i < balls.length; i++) {
-            if (balls[i].team !== p_swarmTeam && balls[i].team !== shieldTeam ) {
-                 dx = balls[i].x - Tank.x;
-                 dy = balls[i].y - Tank.y;
+            if (balls[i].team !== p_swarmTeam && balls[i].team !== shieldTeam) {
+                dx = balls[i].x - Tank.x;
+                dy = balls[i].y - Tank.y;
                 d = Math.sqrt(dx * dx + dy * dy); //distance from ball to tank
                 if (balls[i].team == chomperTeam && d <= Tank.radius + balls[i].radius) {	//Chomper damage check
                     Tank.health -= chomperDamage;
@@ -436,34 +436,34 @@ window.onload = function () {
                 if (balls[i].team == lurkerTeam && d <= Tank.radius + balls[i].radius) {	//Chomper damage check
                     Tank.health -= lurkerDamage;
                 }
-                
+
                 bRad = balls[i].radius;
                 collision = false;
-                
+
                 // short curcuit balls that are way away:
-                if(Tank.beamOn && d < beamL + bRad + beamR){
-                
-                	// make sure they are close to the line
-					if (Math.abs(dx * uPX + dy * uPY) < (beamR + bRad) ){
-						
-						// are they out back?
-						projBeam = dx * uBX + dy * uBY;
-						if(projBeam < 0){
-							if(d > (bRad + beamR)){
-								collision = true;	
-							}
-						} else {
-						   collision = true;
-						}
-					}
-				}
-                
-        		
-        		if(collision){
-        			balls[i].health -= 10;
-					smallExplosion( balls[i].x , balls[i].y )	
-				}
-                
+                if (Tank.beamOn && d < beamL + bRad + beamR) {
+
+                    // make sure they are close to the line
+                    if (Math.abs(dx * uPX + dy * uPY) < (beamR + bRad)) {
+
+                        // are they out back?
+                        projBeam = dx * uBX + dy * uBY;
+                        if (projBeam < 0) {
+                            if (d > (bRad + beamR)) {
+                                collision = true;
+                            }
+                        } else {
+                            collision = true;
+                        }
+                    }
+                }
+
+
+                if (collision) {
+                    balls[i].health -= 10;
+                    smallExplosion(balls[i].x, balls[i].y)
+                }
+
             }
         }
     }
@@ -488,39 +488,40 @@ window.onload = function () {
 
     var chomperSpawnEvent = function () {
 
-        allBalls.push(makeBall(50 + Math.random() * 500, 50 + Math.random() * 300, "#0000FF", chomperTeam));
-        
+        allBalls.push(makeBall(50 + Math.random() * (fieldSizeX - 100), 50 + Math.random() * (fieldSizeY - 100), "#0000FF", chomperTeam));
+
         chomperSpawnRate -= 1;
-        
-        if(chomperSpawnRate < 500){
-			chomperSpawnRate = 500
-		}
-        
+
+        if (chomperSpawnRate < 500) {
+            chomperSpawnRate = 500
+        }
+
         return chomperSpawnRate;
     }
-    
+
     var mosquiderSpawnEvent = function () {
 
         allBalls.push(makeBall(50 + Math.random() * (fieldSizeX - 100), 50 + Math.random() * (fieldSizeY - 100), "#0000FF", mosquitoTeam));
-        
+
         mosquitoSpawnRate -= 1;
-        
-        if(mosquitoSpawnRate < 500){
-			mosquitoSpawnRate = 500
-		}
-        
+
+        if (mosquitoSpawnRate < 500) {
+            mosquitoSpawnRate = 500
+        }
+
         return mosquitoSpawnRate;
     }
-    
+
     var PRegenEvent = function () {
-    	if(swarmCount < 50) {
-    		allBalls.push(makeBall(Tank.x, Tank.y, "#008800", p_swarmTeam));
-    		swarmCount++;
-    	}
-    	return 10;
+        if (swarmCount < 50) {
+            allBalls.push(makeBall(Tank.x, Tank.y, "#008800", p_swarmTeam));
+            swarmCount++;
+        }
+        return 10;
     }
 
-    addEvent(chomperSpawnEvent, 1000);
+    addEvent(chomperSpawnEvent, chomperSpawnRate);
+    addEvent(mosquiderSpawnEvent, mosquitoSpawnRate);
     addEvent(PRegenEvent, 10);
 
 
@@ -554,9 +555,9 @@ window.onload = function () {
             drawBalls(allBalls);     //show balls
 
             drawBalls(Stuff);
-            
+
             drawParticles();
-            
+
             if (Tank.health <= 0) {
                 gameStarted = false;
                 gameOver = true;
