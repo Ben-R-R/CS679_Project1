@@ -204,8 +204,6 @@ window.onload = function () {
                 this.progress++;
             } else {
                 this.remove = true; //Flags, sorts and removes from list
-                Stuff.sort(cull);
-                Stuff.pop();
                 for (var i = 0; i < this.yield; i++) {//Spawns swarmers per bomb yield
                     allBalls.push(
     					makeBall(
@@ -279,9 +277,6 @@ window.onload = function () {
             preDragOrigY = originY;
 
         }
-        if (e.button == 0) {
-            gameStarted = true;
-        }
 
     }, false);
 
@@ -339,7 +334,7 @@ window.onload = function () {
             else if (Tank.vY > 0) { Tank.vY -= Tank.accel; }
             else { Tank.vY += Tank.accel; }
         }
-        if (32 in keysDown) { Tank.beamOn = true; } else { Tank.beamOn = false; }
+        if (32 in keysDown) { Tank.beamOn = true; gameStarted = true;} else { Tank.beamOn = false; }
 
     }
 
@@ -477,7 +472,7 @@ window.onload = function () {
 
         theContext.fillStyle = "rgba(255, 0, 0, " + alpha + ")"
         theContext.font = "50px Arial";
-        theContext.fillText("Click anywhere to begin", 100, 450);
+        theContext.fillText("Press space to begin.", 100, 450);
 
         alpha += alphaModifier;
         if (alpha < 0 || alpha > 1.0) {

@@ -49,7 +49,7 @@ var aBall = {
     
     onDeath : function() {
 		UserData.score += 10;
-		//lootDrop(this.x, this.y);	//drop a pickup (maybe)
+		lootDrop(this.x, this.y);	//drop a pickup (maybe)
 	},
 
     // make 'em "bounce" when they go over the edge
