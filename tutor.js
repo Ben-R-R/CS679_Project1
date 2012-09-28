@@ -201,7 +201,7 @@ window.onload = function () {
         "radius": 10,
         "progress": 0, //how many steps taken so far
         "steps": 0, //Number of steps until target is reached
-        "yield": 10, //Number of swarmers carried
+        "yield": 40, //Number of swarmers carried
         "remove": false, //flips to true when the object should be removed
 
         draw: function () {
@@ -243,18 +243,22 @@ window.onload = function () {
     // what to do when things get clicked
     function doClick() {
 
-        theta = Math.atan2(mousey - Tank.y, mousex - Tank.x);
-        Empty = function () { };
-        Empty.prototype = aBomb;
-        bomb = new Empty();
-        bomb.x = Tank.x + Tank.radius * Math.cos(theta);
-        bomb.y = Tank.y + Tank.radius * Math.sin(theta);
-        bomb.vX = aBomb.speed * Math.cos(theta);
-        bomb.vY = aBomb.speed * Math.sin(theta);
-        dx = mousex - bomb.x;
-        dy = mousey - bomb.y;
-        bomb.steps = Math.sqrt(dx * dx + dy * dy) / aBomb.speed;
-        Stuff.push(bomb);
+		if(UserData.items[1].quantity > 0){
+			theta = Math.atan2(mousey - Tank.y, mousex - Tank.x);
+		    Empty = function () { };
+		    Empty.prototype = aBomb;
+		    bomb = new Empty();
+		    bomb.x = Tank.x + Tank.radius * Math.cos(theta);
+		    bomb.y = Tank.y + Tank.radius * Math.sin(theta);
+		    bomb.vX = aBomb.speed * Math.cos(theta);
+		    bomb.vY = aBomb.speed * Math.sin(theta);
+		    dx = mousex - bomb.x;
+		    dy = mousey - bomb.y;
+		    bomb.steps = Math.sqrt(dx * dx + dy * dy) / aBomb.speed;
+		    Stuff.push(bomb);
+		    UserData.items[1].quantity -= 1;
+		}
+        
     }
 
     theCanvas.addEventListener("click", doClick, false);
@@ -482,7 +486,7 @@ window.onload = function () {
         }
     }
 
-    var spawnEvent = function () {
+    var chomperSpawnEvent = function () {
 
         allBalls.push(makeBall(50 + Math.random() * 500, 50 + Math.random() * 300, "#0000FF", chomperTeam));
         return 1000;
@@ -496,7 +500,7 @@ window.onload = function () {
     	return 10;
     }
 
-    addEvent(spawnEvent, 1000);
+    addEvent(chomperSpawnEvent, 1000);
     addEvent(PRegenEvent, 10);
 
 
@@ -537,6 +541,9 @@ window.onload = function () {
                 gameStarted = false;
                 gameOver = true;
                 Tank.health = 0;
+                swarmCount = 0;
+                Tank.x = 400;
+                Tank.y = 400;
             }
             UserData.drawHUD(Tank.health);
 

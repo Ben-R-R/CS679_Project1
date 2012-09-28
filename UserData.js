@@ -59,9 +59,15 @@ var UserData = {
             this.items[this.selectedItem].activate();
         }
 
+    },
+
+	useItemNum: function (num) {
+        if (this.items[num].quantity > 0) {
+            this.items[num].quantity -= 1;
+            this.items[num].activate();
+        }
+
     }
-
-
 
 
 
