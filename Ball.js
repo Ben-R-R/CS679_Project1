@@ -213,8 +213,11 @@ function addInfluenceP_Swarmer(otherBall, d, dx ,dy){
     		this.newVY  -= (dy / dd) * 0.04; 
 		}
 	} else if(otherBall.team === chomperTeam && d < 100) {
-		this.newVX  -= ((this.x - otherBall.x) * 1 ) / dd;
-		this.newVY  -= ((this.y - otherBall.y) * 1 ) / dd;
+		this.newVX  -= (((this.x - otherBall.x) * 1 ) / dd) * 100;
+		this.newVY  -= (((this.y - otherBall.y) * 1 ) / dd) * 100;
+		
+		
+		
 	} 
 }
 
