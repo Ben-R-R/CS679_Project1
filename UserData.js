@@ -66,6 +66,11 @@ var UserData = {
 	
 	selectedItem: 0,
 	
+    reset : function(){
+        this.score = 0;
+
+    },
+
 	useItem : function(){
 		if(this.items[this.selectedItem].quantity > 0){
 			this.items[this.selectedItem].quantity -= 1;
@@ -73,6 +78,8 @@ var UserData = {
 		}
 	
 	}
+
+   
 	
 
 
@@ -125,7 +132,13 @@ var ShieldItem = {
 	    theContext.lineWidth = 1; // reset linewidth so we don't mess up the other
 	    						  // drawing functions 
 	} ,
-	quantity : 3,
+	quantity: 3,
+
+	reset: function () {
+	    this.quantity = 3;
+
+	},
+
 	
 	activate : function(){
 		for(var i = 0; i < 7; i++) {	//because spirograph shields are awesome.
@@ -164,7 +177,12 @@ var BombItem = {
 	},
 	
 	quantity : 3,
-	
+
+	reset: function () {
+	    this.quantity = 3;
+
+	},
+
 	activate : function (){
 		//allBalls.push( makeBall(Tank.x,Tank.y, "#008800", shieldTeam ) );
 		

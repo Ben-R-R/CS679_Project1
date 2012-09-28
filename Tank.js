@@ -18,7 +18,31 @@
 	"energy" : 0,	//energy of beam
 	"maxEnergy" : 500,	//maximum beam energy
 	"heading" : 0,	//angle of facing
-	"beamOn" : false,	//if the beam is turned on
+	"beamOn": false, //if the beam is turned on
+
+	reset: function () {
+	 this.x  = 500;
+	 this.y = 500;
+	 this.speed = 5; //maximum speed in any cardinal direction (diagonal is faster 'cause why not)
+	 this.accel = 0.5; //acceleration for smoother movement
+	 this.radius = 25; //radius of tank
+	 this.beaml = 200; //length of beam outward from tank center
+	 this.beamsx = 500; //x coordinate of beam start
+	 this.beamsy = 500; //y coordinate of beam start
+	 this.beamex = 550; //x coordinate of beam end
+	 this.beamey = 550; //y coordinate of beam end
+	 this.vX = 0; //current x velocity
+	 this.vY = 0; //current y velocity 
+	 this.health = 200;
+	 this.maxHealth = 200;
+	 this.energy = 0; //energy of beam
+	 this.maxEnergy = 500; //maximum beam energy
+	 this.heading = 0; //angle of facing
+	 this.beamOn = false; //if the beam is turned on
+
+
+	},
+
     draw : function() {
     
         var _X = this.x + originX;

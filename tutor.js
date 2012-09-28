@@ -45,6 +45,7 @@ window.onload = function () {
     var alpha = 1.0;
     var alphaModifier = -0.01;
     allBalls = [];
+    var gameOver = false;
     var gameStarted = false;
     for (var i = 0; i < 3; i++) {
         b = makeBall(50 + Math.random() * 500, 50 + Math.random() * 300, "#0000FF", chomperTeam);
@@ -53,14 +54,32 @@ window.onload = function () {
         allBalls.push(b)
         b = makeBall(50 + Math.random() * 500, 50 + Math.random() * 300, "#FF00FF", 0);
         allBalls.push(b)
-        if(i % 19 == 0){
-		   	//b = makeBall( 50 + Math.random() * (fieldSizeX - 100), 50+Math.random() * (fieldSizeY - 100) , "#FF00FF", lurkerTeam);
-        	
-		}
-        
+        if (i % 19 == 0) {
+            //b = makeBall( 50 + Math.random() * (fieldSizeX - 100), 50+Math.random() * (fieldSizeY - 100) , "#FF00FF", lurkerTeam);
+
+        }
+
     }
-        	
-	allBalls.push(makeBall( fieldSizeX / 2,  fieldSizeY / 2 , "#FF00FF", lurkerTeam))
+    function spawnStart() {
+        allBalls = [];
+        Stuff = []
+        for (var i = 0; i < 3; i++) {
+            b = makeBall(50 + Math.random() * 500, 50 + Math.random() * 300, "#0000FF", chomperTeam);
+            allBalls.push(b)
+            b = makeBall(50 + Math.random() * 500, 50 + Math.random() * 300, "#FF0000", mosquitoTeam);
+            allBalls.push(b)
+            b = makeBall(50 + Math.random() * 500, 50 + Math.random() * 300, "#FF00FF", 0);
+            allBalls.push(b)
+            if (i % 19 == 0) {
+                //b = makeBall( 50 + Math.random() * (fieldSizeX - 100), 50+Math.random() * (fieldSizeY - 100) , "#FF00FF", lurkerTeam);
+                b = makeBall(800, 800, "#FF00FF", lurkerTeam);
+
+                allBalls.push(b)
+            }
+
+        }
+    }
+    allBalls.push(makeBall(fieldSizeX / 2, fieldSizeY / 2, "#FF00FF", lurkerTeam))
     // this function will do the drawing
     function drawBalls(ballList) {
 
@@ -162,11 +181,10 @@ window.onload = function () {
     function moveStuff() {//simple method, just goes through misc objects and runs move commands
         for (var i = 0; i < Stuff.length; i++) {
             Stuff[i].move();
-    		if(Stuff[i].remove)
-    		{
-    			Stuff.sort(cull);
-    			Stuff.pop();
-    		}
+            if (Stuff[i].remove) {
+                Stuff.sort(cull);
+                Stuff.pop();
+            }
         }
     }
 
@@ -190,7 +208,7 @@ window.onload = function () {
             var _Y = this.y + originY;
 
             theContext.strokeStyle = ballstroke;
-    		theContext.fillStyle = "#555555";
+            theContext.fillStyle = "#555555";
             theContext.beginPath();
             theContext.arc(_X, _Y, this.radius, 0, circ, true);
             theContext.closePath();
@@ -215,8 +233,8 @@ window.onload = function () {
     				);
                 }
             }
-    	},
-    	acquire : function() {}
+        },
+        acquire: function () { }
     }
 
     // what to do when things get clicked
@@ -246,6 +264,17 @@ window.onload = function () {
             UserData.useItem();
         }
     }
+
+    function restart() {
+        gameStarted = true;
+        gameOver = false;
+        spawnStart();
+        Tank.reset();
+        UserData.reset();
+        BombItem.reset();
+        ShieldItem.reset();
+    }
+
 
     var keysDown = {}; //holds all keys currently pressed
     window.addEventListener("keydown", function (e) {
@@ -334,7 +363,13 @@ window.onload = function () {
             else if (Tank.vY > 0) { Tank.vY -= Tank.accel; }
             else { Tank.vY += Tank.accel; }
         }
-        if (32 in keysDown) { Tank.beamOn = true; gameStarted = true;} else { Tank.beamOn = false; }
+        if (32 in keysDown) {
+            Tank.beamOn = true;
+            gameStarted = true;
+            if (gameOver) {
+                restart();
+            }
+        } else { Tank.beamOn = false; }
 
     }
 
@@ -376,21 +411,21 @@ window.onload = function () {
         }
     }
 
-	function tankEffects(sList) {	//this function evaluates effect of tank interacting with non-ball objects, such as pickups
-		var dx = 0;
-		var dy = 0;
-		var d = 0;
-		for(var i = 0; i < sList.length; i++) {
-			dx = sList[i].x - Tank.x;
-			dy = sList[i].y - Tank.y;
-			d = Math.sqrt(dx*dx+dy*dy);
-			if(d <= Tank.radius + sList[i].radius) {
-				sList[i].acquire();
-				if(sList[i].remove) {
-					Stuff.sort(cull);
-					Stuff.pop();
-				}
-			}
+    function tankEffects(sList) {	//this function evaluates effect of tank interacting with non-ball objects, such as pickups
+        var dx = 0;
+        var dy = 0;
+        var d = 0;
+        for (var i = 0; i < sList.length; i++) {
+            dx = sList[i].x - Tank.x;
+            dy = sList[i].y - Tank.y;
+            d = Math.sqrt(dx * dx + dy * dy);
+            if (d <= Tank.radius + sList[i].radius) {
+                sList[i].acquire();
+                if (sList[i].remove) {
+                    Stuff.sort(cull);
+                    Stuff.pop();
+                }
+            }
         }
     }
 
@@ -433,17 +468,37 @@ window.onload = function () {
             drawBalls(allBalls);     //show balls
 
             drawBalls(Stuff);
+            if (Tank.health <= 0) {
+                gameStarted = false;
+                gameOver = true;
+                Tank.health = 0;
+            }
             UserData.drawHUD(Tank.health);
+
         } else {
-            displayMenu();
+            if (gameOver) {
+                displayGameOver();
+            } else {
+                displayMenu();
+            }
         }
 
         reqFrame(drawLoop); 	//set up another iteration of loop
 
     }
-    
-    drawLoop();
 
+    drawLoop();
+    function displayGameOver() {
+        theContext.fillStyle = "#000000";
+        theContext.font = "80px Arial";
+        theContext.fillText("Game Over", 100, 100);
+
+        theContext.font = "80px Arial";
+        theContext.fillText("Score: " + UserData.score, 100, 250);
+
+        theContext.font = "50px Arial";
+        theContext.fillText("Press Space to restart", 100, 350);
+    }
     function displayMenu() {
         theContext.fillStyle = "#000000";
         theContext.font = "80px Arial";
